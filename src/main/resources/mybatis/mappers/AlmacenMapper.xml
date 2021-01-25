@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.AlmacenMapper">
+
+    <resultMap id="almacenResultMap" type="com.bcs.ventas.model.entities.Almacen">
+        <result property="id" column="id" />
+        <result property="nombre" column="nombre" />
+        <result property="direccion" column="direccion" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+        <result property="distritoId" column="distrito_id" />
+        <result property="codigo" column="codigo" />
+
+    </resultMap>
+
+    <select id="getAllAlmacens" resultMap="almacenResultMap">
+        select * from almacens
+    </select>
+
+    <select id="listByParameterMap" resultMap="almacenResultMap">
+        select * from almacens
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="DIRECCION != null"> AND direccion = #{DIRECCION}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+            <if test="DISTRITO_ID != null"> AND distrito_id = #{DISTRITO_ID}</if>
+            <if test="CODIGO != null"> AND codigo = #{CODIGO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+    update almacens
+    <set>
+        <if test="NOMBRE != null"> nombre=#{NOMBRE}, </if>
+        <if test="DIRECCION != null"> direccion=#{DIRECCION}, </if>
+        <if test="EMPRESA_ID != null"> empresa_id=#{EMPRESA_ID}, </if>
+        <if test="USER_ID != null"> user_id=#{USER_ID}, </if>
+        <if test="ACTIVO != null"> activo=#{ACTIVO}, </if>
+        <if test="BORRADO != null"> borrado=#{BORRADO}, </if>
+        <if test="DISTRITO_ID != null"> distrito_id=#{DISTRITO_ID}, </if>
+        <if test="CODIGO != null"> codigo=#{CODIGO}, </if>
+    </set>
+    where id=#{ID}
+</update>
+</mapper>
