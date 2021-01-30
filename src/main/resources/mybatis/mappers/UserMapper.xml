@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.UserMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.User">
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="remember_token" column="remember_token" />
+        <result property="tipoUserId" column="tipo_user_id" />
+        <result property="verificationToken" column="verification_token" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from users
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from users
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NAME != null"> AND name = #{NAME}</if>
+            <if test="EMAIL != null"> AND email = #{EMAIL}</if>
+            <if test="PASSWORD != null"> AND password = #{PASSWORD}</if>
+            <if test="REMEMBER_TOKEN != null"> AND remember_token = #{REMEMBER_TOKEN}</if>
+            <if test="TIPO_USER_ID != null"> AND tipo_user_id = #{TIPO_USER_ID}</if>
+            <if test="VERIFICATION_TOKEN != null"> AND verification_token = #{VERIFICATION_TOKEN}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update users
+        <set>
+            <if test="NAME != null"> name = #{NAME}, </if>
+            <if test="EMAIL != null"> email = #{EMAIL}, </if>
+            <if test="PASSWORD != null"> password = #{PASSWORD}, </if>
+            <if test="REMEMBER_TOKEN != null"> remember_token = #{REMEMBER_TOKEN}, </if>
+            <if test="TIPO_USER_ID != null"> tipo_user_id = #{TIPO_USER_ID}, </if>
+            <if test="VERIFICATION_TOKEN != null"> verification_token = #{VERIFICATION_TOKEN}, </if>
+
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

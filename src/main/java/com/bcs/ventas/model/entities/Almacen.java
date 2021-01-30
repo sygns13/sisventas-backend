@@ -34,6 +34,7 @@ public class Almacen implements Serializable {
     private Long id;
 
     @Schema(description = "Nombres del Almacén")
+    @NotNull( message = "{almacen.nombre.notnull}")
     @Size(min = 1, max = 500, message = "{almacen.nombre.size}")
     @Column(name="nombre", nullable = true, length= 500)
     private String nombre;
@@ -54,16 +55,16 @@ public class Almacen implements Serializable {
     private Long userId;
 
     @Schema(description = "Estado de Almacen")
-    @NotNull( message = "{almacen.activo.notnull}")
-    @Min(value = 0, message = "{almacen.activo.min}")
-    @Max(value = 2, message = "{almacen.activo.max}")
+    //@NotNull( message = "{almacen.activo.notnull}")
+    //@Min(value = 0, message = "{almacen.activo.min}")
+    //@Max(value = 2, message = "{almacen.activo.max}")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
     @Schema(description = "Borrado Lógico de Almacen")
-    @NotNull( message = "{almacen.borrado.notnull}")
-    @Min(value = 0, message = "{almacen.borrado.min}")
-    @Max(value = 2, message = "{almacen.borrado.max}")
+    //@NotNull( message = "{almacen.borrado.notnull}")
+    //@Min(value = 0, message = "{almacen.borrado.min}")
+    //@Max(value = 2, message = "{almacen.borrado.max}")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
@@ -73,6 +74,7 @@ public class Almacen implements Serializable {
     private Long distritoId;
 
     @Schema(description = "Código del Almacen")
+    @NotNull( message = "{almacen.codigo.notnull}")
     @Size(min = 1, max = 200, message = "{almacen.codigo.size}")
     @Column(name="codigo", nullable = true, length= 200)
     private String codigo;

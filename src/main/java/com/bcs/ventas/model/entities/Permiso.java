@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "pais")
+@Table(name = "permisos")
 public class Permiso implements Serializable {
 
     public static long getSerialversionuid() {

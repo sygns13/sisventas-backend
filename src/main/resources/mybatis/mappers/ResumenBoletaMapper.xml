@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.ResumenBoletaMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.ResumenBoleta">
+        <result property="id" column="id" />
+        <result property="razonsocial" column="razonsocial" />
+        <result property="ruc" column="ruc" />
+        <result property="fechaEmision" column="fecha_emision" />
+        <result property="fechaEnvio" column="fecha_envio" />
+        <result property="docstatus" column="docstatus" />
+        <result property="hashcode" column="hashcode" />
+        <result property="cdr" column="cdr" />
+        <result property="cdrNota" column="cdr_nota" />
+        <result property="docuLinkPdf" column="docu_link_pdf" />
+        <result property="docuLinkCdr" column="docu_link_cdr" />
+        <result property="docuLinkXml" column="docu_link_xml" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from resumen_boletas
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from resumen_boletas
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="RAZONSOCIAL != null"> AND razonsocial = #{RAZONSOCIAL}</if>
+            <if test="RUC != null"> AND ruc = #{RUC}</if>
+            <if test="FECHA_EMISION != null"> AND fecha_emision = #{FECHA_EMISION}</if>
+            <if test="FECHA_ENVIO != null"> AND fecha_envio = #{FECHA_ENVIO}</if>
+            <if test="DOCSTATUS != null"> AND docstatus = #{DOCSTATUS}</if>
+            <if test="HASHCODE != null"> AND hashcode = #{HASHCODE}</if>
+            <if test="CDR != null"> AND cdr = #{CDR}</if>
+            <if test="CDR_NOTA != null"> AND cdr_nota = #{CDR_NOTA}</if>
+            <if test="DOCU_LINK_PDF != null"> AND docu_link_pdf = #{DOCU_LINK_PDF}</if>
+            <if test="DOCU_LINK_CDR != null"> AND docu_link_cdr = #{DOCU_LINK_CDR}</if>
+            <if test="DOCU_LINK_XML != null"> AND docu_link_xml = #{DOCU_LINK_XML}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update resumen_boletas
+        <set>
+            <if test="RAZONSOCIAL != null"> razonsocial = #{RAZONSOCIAL}, </if>
+            <if test="RUC != null"> ruc = #{RUC}, </if>
+            <if test="FECHA_EMISION != null"> fecha_emision = #{FECHA_EMISION}, </if>
+            <if test="FECHA_ENVIO != null"> fecha_envio = #{FECHA_ENVIO}, </if>
+            <if test="DOCSTATUS != null"> docstatus = #{DOCSTATUS}, </if>
+            <if test="HASHCODE != null"> hashcode = #{HASHCODE}, </if>
+            <if test="CDR != null"> cdr = #{CDR}, </if>
+            <if test="CDR_NOTA != null"> cdr_nota = #{CDR_NOTA}, </if>
+            <if test="DOCU_LINK_PDF != null"> docu_link_pdf = #{DOCU_LINK_PDF}, </if>
+            <if test="DOCU_LINK_CDR != null"> docu_link_cdr = #{DOCU_LINK_CDR}, </if>
+            <if test="DOCU_LINK_XML != null"> docu_link_xml = #{DOCU_LINK_XML}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

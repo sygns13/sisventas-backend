@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.DetalleVentaMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.DetalleVenta">
+        <result property="id" column="id" />
+        <result property="ventaId" column="venta_id" />
+        <result property="productoId" column="producto_id" />
+        <result property="precioVenta" column="precio_venta" />
+        <result property="precioCompra" column="precio_compra" />
+        <result property="cantidad" column="cantidad" />
+        <result property="almacenId" column="almacen_id" />
+        <result property="esGrabado" column="es_grabado" />
+        <result property="descuento" column="descuento" />
+        <result property="tipDescuento" column="tipo_descuento" />
+        <result property="cantidadReal" column="cantidad_real" />
+        <result property="unidad" column="unidad" />
+        <result property="loteId" column="lote_id" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from detalle_ventas
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from detalle_ventas
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="VENTA_ID != null"> AND venta_id = #{VENTA_ID}</if>
+            <if test="PRODUCTO_ID != null"> AND producto_id = #{PRODUCTO_ID}</if>
+            <if test="PRECIO_VENTA != null"> AND precio_venta = #{PRECIO_VENTA}</if>
+            <if test="PRECIO_COMPRA != null"> AND precio_compra = #{PRECIO_COMPRA}</if>
+            <if test="CANTIDAD != null"> AND cantidad = #{CANTIDAD}</if>
+            <if test="ALMACEN_ID != null"> AND almacen_id = #{ALMACEN_ID}</if>
+            <if test="ES_GRABADO != null"> AND es_grabado = #{ES_GRABADO}</if>
+            <if test="DESCUENTO != null"> AND descuento = #{DESCUENTO}</if>
+            <if test="TIPO_DESCUENTO != null"> AND tipo_descuento = #{TIPO_DESCUENTO}</if>
+            <if test="CANTIDAD_REAL != null"> AND cantidad_real = #{CANTIDAD_REAL}</if>
+            <if test="UNIDAD != null"> AND unidad = #{UNIDAD}</if>
+            <if test="LOTE_ID != null"> AND lote_id = #{LOTE_ID}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update detalle_ventas
+        <set>
+            <if test="VENTA_ID != null">  venta_id = #{VENTA_ID}, </if>
+            <if test="PRODUCTO_ID != null">  producto_id = #{PRODUCTO_ID}, </if>
+            <if test="PRECIO_VENTA != null">  precio_venta = #{PRECIO_VENTA}, </if>
+            <if test="PRECIO_COMPRA != null">  precio_compra = #{PRECIO_COMPRA}, </if>
+            <if test="CANTIDAD != null">  cantidad = #{CANTIDAD}, </if>
+            <if test="ALMACEN_ID != null">  almacen_id = #{ALMACEN_ID}, </if>
+            <if test="ES_GRABADO != null">  es_grabado = #{ES_GRABADO}, </if>
+            <if test="DESCUENTO != null">  descuento = #{DESCUENTO}, </if>
+            <if test="TIPO_DESCUENTO != null">  tipo_descuento = #{TIPO_DESCUENTO}, </if>
+            <if test="CANTIDAD_REAL != null">  cantidad_real = #{CANTIDAD_REAL}, </if>
+            <if test="UNIDAD != null">  unidad = #{UNIDAD}, </if>
+            <if test="LOTE_ID != null">  lote_id = #{LOTE_ID}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

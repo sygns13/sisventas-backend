@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.CabeceraComprobanteMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.CabeceraComprobante">
+        <result property="id" column="id" />
+        <result property="idexterno" column="idExterno" />
+        <result property="empRazonsocial" column="empr_razonsocial" />
+        <result property="empUbigeo" column="empr_ubigeo" />
+        <result property="empNombrecomercial" column="empr_nombrecomercial" />
+        <result property="empDireccion" column="empr_direccion" />
+        <result property="empProvincia" column="empr_provincia" />
+        <result property="empDepartamento" column="empr_departamento" />
+        <result property="empDistrito" column="empr_distrito" />
+        <result property="empPais" column="empr_pais" />
+        <result property="empNroruc" column="empr_nroruc" />
+        <result property="empTipodoc" column="empr_tipodoc" />
+        <result property="cliNumero" column="clie_numero" />
+        <result property="cliTipodoc" column="clie_tipodoc" />
+        <result property="cliNombre" column="clie_nombre" />
+        <result property="docFecha" column="docu_fecha" />
+        <result property="docTipodocumento" column="docu_tipodocumento" />
+        <result property="docNumero" column="docu_numero" />
+        <result property="docMoneda" column="docu_moneda" />
+        <result property="docGravada" column="docu_gravada" />
+        <result property="docInafecta" column="docu_inafecta" />
+        <result property="docExonerada" column="docu_exonerada" />
+        <result property="docGratuita" column="docu_gratuita" />
+        <result property="docDescuento" column="docu_descuento" />
+        <result property="docSubtotal" column="docu_subtotal" />
+        <result property="docTotal" column="docu_total" />
+        <result property="docIgv" column="docu_igv" />
+        <result property="tasaIgv" column="tasa_igv" />
+        <result property="docIsc" column="docu_isc" />
+        <result property="tasaIsc" column="tasa_isc" />
+        <result property="docOtrostributos" column="docu_otrostributos" />
+        <result property="tasaOtrostributos" column="tasa_otrostributos" />
+        <result property="docOtroscargos" column="docu_otroscargos" />
+        <result property="docPercepcion" column="docu_percepcion" />
+        <result property="hashcode" column="hashcode" />
+        <result property="cdr" column="cdr" />
+        <result property="cdrNota" column="cdr_nota" />
+        <result property="cdrObservacion" column="cdr_observacion" />
+        <result property="docEnviaws" column="docu_enviaws" />
+        <result property="docProceStatus" column="docu_proce_status" />
+        <result property="docProceFecha" column="docu_proce_fecha" />
+        <result property="docLinkPdf" column="docu_link_pdf" />
+        <result property="docLinkCdr" column="docu_link_cdr" />
+        <result property="docLinkXml" column="docu_link_xml" />
+        <result property="cliCorreoCpe1" column="clie_correo_cpe1" />
+        <result property="cliCorreoCpe2" column="clie_correo_cpe2" />
+        <result property="ventaId" column="venta_id" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from cabeceras
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from cabeceras
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="ID_EXTERNO != null"> AND idexterno = #{ID_EXTERNO}</if>
+            <if test="EMPR_RAZONSOCIAL != null"> AND empr_razonsocial = #{EMPR_RAZONSOCIAL}</if>
+            <if test="EMPR_UBIGEO != null"> AND empr_ubigeo = #{EMPR_UBIGEO}</if>
+            <if test="EMPR_NOMBRECOMERCIAL != null"> AND empr_nombrecomercial = #{EMPR_NOMBRECOMERCIAL}</if>
+            <if test="EMPR_DIRECCION != null"> AND empr_direccion = #{EMPR_DIRECCION}</if>
+            <if test="EMPR_PROVINCIA != null"> AND empr_provincia = #{EMPR_PROVINCIA}</if>
+            <if test="EMPR_DEPARTAMENTO != null"> AND empr_departamento = #{EMPR_DEPARTAMENTO}</if>
+            <if test="EMPR_DISTRITO != null"> AND empr_distrito = #{EMPR_DISTRITO}</if>
+            <if test="EMPR_PAIS != null"> AND empr_pais = #{EMPR_PAIS}</if>
+            <if test="EMPR_NRORUC != null"> AND empr_nroruc = #{EMPR_NRORUC}</if>
+            <if test="EMPR_TIPODOC != null"> AND empr_tipodoc = #{EMPR_TIPODOC}</if>
+            <if test="CLIE_NUMERO != null"> AND clie_numero = #{CLIE_NUMERO}</if>
+            <if test="CLIE_TIPODOC != null"> AND clie_tipodoc = #{CLIE_TIPODOC}</if>
+            <if test="CLIE_NOMBRE != null"> AND clie_nombre = #{CLIE_NOMBRE}</if>
+            <if test="DOCU_FECHA != null"> AND docu_fecha = #{DOCU_FECHA}</if>
+            <if test="DOCU_TIPODOCUMENTO != null"> AND docu_tipodocumento = #{DOCU_TIPODOCUMENTO}</if>
+            <if test="DOCU_NUMERO != null"> AND docu_numero = #{DOCU_NUMERO}</if>
+            <if test="DOCU_MONEDA != null"> AND docu_moneda = #{DOCU_MONEDA}</if>
+            <if test="DOCU_GRAVADA != null"> AND docu_gravada = #{DOCU_GRAVADA}</if>
+            <if test="DOCU_INAFECTA != null"> AND docu_inafecta = #{DOCU_INAFECTA}</if>
+            <if test="DOCU_EXONERADA != null"> AND docu_exonerada = #{DOCU_EXONERADA}</if>
+            <if test="DOCU_GRATUITA != null"> AND docu_gratuita = #{DOCU_GRATUITA}</if>
+            <if test="DOCU_DESCUENTO != null"> AND docu_descuento = #{DOCU_DESCUENTO}</if>
+            <if test="DOCU_SUBTOTAL != null"> AND docu_subtotal = #{DOCU_SUBTOTAL}</if>
+            <if test="DOCU_TOTAL != null"> AND docu_total = #{DOCU_TOTAL}</if>
+            <if test="DOCU_IGV != null"> AND docu_igv = #{DOCU_IGV}</if>
+            <if test="TASA_IGV != null"> AND tasa_igv = #{TASA_IGV}</if>
+            <if test="DOCU_ISC != null"> AND docu_isc = #{DOCU_ISC}</if>
+            <if test="TASA_ISC != null"> AND tasa_isc = #{TASA_ISC}</if>
+            <if test="DOCU_OTROSTRIBUTOS != null"> AND docu_otrostributos = #{DOCU_OTROSTRIBUTOS}</if>
+            <if test="TASA_OTROSTRIBUTOS != null"> AND tasa_otrostributos = #{TASA_OTROSTRIBUTOS}</if>
+            <if test="DOCU_OTROSCARGOS != null"> AND docu_otroscargos = #{DOCU_OTROSCARGOS}</if>
+            <if test="DOCU_PERCEPCION != null"> AND docu_percepcion = #{DOCU_PERCEPCION}</if>
+            <if test="HASHCODE != null"> AND hashcode = #{HASHCODE}</if>
+            <if test="CDR != null"> AND cdr = #{CDR}</if>
+            <if test="CDR_NOTA != null"> AND cdr_nota = #{CDR_NOTA}</if>
+            <if test="CDR_OBSERVACION != null"> AND cdr_observacion = #{CDR_OBSERVACION}</if>
+            <if test="DOCU_ENVIAWS != null"> AND docu_enviaws = #{DOCU_ENVIAWS}</if>
+            <if test="DOCU_PROCE_STATUS != null"> AND docu_proce_status = #{DOCU_PROCE_STATUS}</if>
+            <if test="DOCU_PROCE_FECHA != null"> AND docu_proce_fecha = #{DOCU_PROCE_FECHA}</if>
+            <if test="DOCU_LINK_PDF != null"> AND docu_link_pdf = #{DOCU_LINK_PDF}</if>
+            <if test="DOCU_LINK_CDR != null"> AND docu_link_cdr = #{DOCU_LINK_CDR}</if>
+            <if test="DOCU_LINK_XML != null"> AND docu_link_xml = #{DOCU_LINK_XML}</if>
+            <if test="CLIE_CORREO_CPE1 != null"> AND clie_correo_cpe1 = #{CLIE_CORREO_CPE1}</if>
+            <if test="CLIE_CORREO_CPE2 != null"> AND clie_correo_cpe2 = #{CLIE_CORREO_CPE2}</if>
+            <if test="VENTA_ID != null"> AND venta_id = #{VENTA_ID}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update cabeceras
+        <set>
+            <if test="NOMBRE != null"> nombre = #{NOMBRE}, </if>
+            <if test="ID_EXTERNO != null">  idexterno = #{ID_EXTERNO}, </if>
+            <if test="EMPR_RAZONSOCIAL != null">  empr_razonsocial = #{EMPR_RAZONSOCIAL}, </if>
+            <if test="EMPR_UBIGEO != null">  empr_ubigeo = #{EMPR_UBIGEO}, </if>
+            <if test="EMPR_NOMBRECOMERCIAL != null">  empr_nombrecomercial = #{EMPR_NOMBRECOMERCIAL}, </if>
+            <if test="EMPR_DIRECCION != null">  empr_direccion = #{EMPR_DIRECCION}, </if>
+            <if test="EMPR_PROVINCIA != null">  empr_provincia = #{EMPR_PROVINCIA}, </if>
+            <if test="EMPR_DEPARTAMENTO != null">  empr_departamento = #{EMPR_DEPARTAMENTO}, </if>
+            <if test="EMPR_DISTRITO != null">  empr_distrito = #{EMPR_DISTRITO}, </if>
+            <if test="EMPR_PAIS != null">  empr_pais = #{EMPR_PAIS}, </if>
+            <if test="EMPR_NRORUC != null">  empr_nroruc = #{EMPR_NRORUC}, </if>
+            <if test="EMPR_TIPODOC != null">  empr_tipodoc = #{EMPR_TIPODOC}, </if>
+            <if test="CLIE_NUMERO != null">  clie_numero = #{CLIE_NUMERO}, </if>
+            <if test="CLIE_TIPODOC != null">  clie_tipodoc = #{CLIE_TIPODOC}, </if>
+            <if test="CLIE_NOMBRE != null">  clie_nombre = #{CLIE_NOMBRE}, </if>
+            <if test="DOCU_FECHA != null">  docu_fecha = #{DOCU_FECHA}, </if>
+            <if test="DOCU_TIPODOCUMENTO != null">  docu_tipodocumento = #{DOCU_TIPODOCUMENTO}, </if>
+            <if test="DOCU_NUMERO != null">  docu_numero = #{DOCU_NUMERO}, </if>
+            <if test="DOCU_MONEDA != null">  docu_moneda = #{DOCU_MONEDA}, </if>
+            <if test="DOCU_GRAVADA != null">  docu_gravada = #{DOCU_GRAVADA}, </if>
+            <if test="DOCU_INAFECTA != null">  docu_inafecta = #{DOCU_INAFECTA}, </if>
+            <if test="DOCU_EXONERADA != null">  docu_exonerada = #{DOCU_EXONERADA}, </if>
+            <if test="DOCU_GRATUITA != null">  docu_gratuita = #{DOCU_GRATUITA}, </if>
+            <if test="DOCU_DESCUENTO != null">  docu_descuento = #{DOCU_DESCUENTO}, </if>
+            <if test="DOCU_SUBTOTAL != null">  docu_subtotal = #{DOCU_SUBTOTAL}, </if>
+            <if test="DOCU_TOTAL != null">  docu_total = #{DOCU_TOTAL}, </if>
+            <if test="DOCU_IGV != null">  docu_igv = #{DOCU_IGV}, </if>
+            <if test="TASA_IGV != null">  tasa_igv = #{TASA_IGV}, </if>
+            <if test="DOCU_ISC != null">  docu_isc = #{DOCU_ISC}, </if>
+            <if test="TASA_ISC != null">  tasa_isc = #{TASA_ISC}, </if>
+            <if test="DOCU_OTROSTRIBUTOS != null">  docu_otrostributos = #{DOCU_OTROSTRIBUTOS}, </if>
+            <if test="TASA_OTROSTRIBUTOS != null">  tasa_otrostributos = #{TASA_OTROSTRIBUTOS}, </if>
+            <if test="DOCU_OTROSCARGOS != null">  docu_otroscargos = #{DOCU_OTROSCARGOS}, </if>
+            <if test="DOCU_PERCEPCION != null">  docu_percepcion = #{DOCU_PERCEPCION}, </if>
+            <if test="HASHCODE != null">  hashcode = #{HASHCODE}, </if>
+            <if test="CDR != null">  cdr = #{CDR}, </if>
+            <if test="CDR_NOTA != null">  cdr_nota = #{CDR_NOTA}, </if>
+            <if test="CDR_OBSERVACION != null">  cdr_observacion = #{CDR_OBSERVACION}, </if>
+            <if test="DOCU_ENVIAWS != null">  docu_enviaws = #{DOCU_ENVIAWS}, </if>
+            <if test="DOCU_PROCE_STATUS != null">  docu_proce_status = #{DOCU_PROCE_STATUS}, </if>
+            <if test="DOCU_PROCE_FECHA != null">  docu_proce_fecha = #{DOCU_PROCE_FECHA}, </if>
+            <if test="DOCU_LINK_PDF != null">  docu_link_pdf = #{DOCU_LINK_PDF}, </if>
+            <if test="DOCU_LINK_CDR != null">  docu_link_cdr = #{DOCU_LINK_CDR}, </if>
+            <if test="DOCU_LINK_XML != null">  docu_link_xml = #{DOCU_LINK_XML}, </if>
+            <if test="CLIE_CORREO_CPE1 != null">  clie_correo_cpe1 = #{CLIE_CORREO_CPE1}, </if>
+            <if test="CLIE_CORREO_CPE2 != null">  clie_correo_cpe2 = #{CLIE_CORREO_CPE2}, </if>
+            <if test="VENTA_ID != null">  venta_id = #{VENTA_ID}, </if>
+            <if test="EMPRESA_ID != null">  empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null">  user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null">  activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null">  borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at=#{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

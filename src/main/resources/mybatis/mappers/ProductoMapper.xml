@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.ProductoMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Producto">
+        <result property="id" column="id" />
+        <result property="nombre" column="nombre" />
+        <result property="tipoProductoId" column="tipo_producto_id" />
+        <result property="marcaId" column="marca_id" />
+        <result property="stockMinimo" column="stock_minimo" />
+        <result property="precioUnidad" column="precio_unidad" />
+        <result property="precioCompra" column="precio_compra" />
+        <result property="fecha" column="fecha" />
+        <result property="codigoUnidad" column="codigo_unidad" />
+        <result property="codigoProducto" column="codigo_producto" />
+        <result property="presentacionId" column="presentacion_id" />
+        <result property="composicion" column="composicion" />
+        <result property="prioridad" column="prioridad" />
+        <result property="ubicacion" column="ubicacion" />
+        <result property="activoLotes" column="activo_lotes" />
+        <result property="afectoIsc" column="afecto_isc" />
+        <result property="tipoTasaIsc" column="tipo_tasa_isc" />
+        <result property="tasaIsc" column="tasa_isc" />
+        <result property="afectoIgv" column="afecto_igv" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from productos
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from productos
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="TIPO_PRODUCTO_ID != null"> AND tipo_producto_id = #{TIPO_PRODUCTO_ID}</if>
+            <if test="MARCA_ID != null"> AND marca_id = #{MARCA_ID}</if>
+            <if test="STOCK_MINIMO != null"> AND stock_minimo = #{STOCK_MINIMO}</if>
+            <if test="PRECIO_UNIDAD != null"> AND precio_unidad = #{PRECIO_UNIDAD}</if>
+            <if test="PRECIO_COMPRA != null"> AND precio_compra = #{PRECIO_COMPRA}</if>
+            <if test="FECHA != null"> AND fecha = #{FECHA}</if>
+            <if test="CODIGO_UNIDAD != null"> AND codigo_unidad = #{CODIGO_UNIDAD}</if>
+            <if test="CODIGO_PRODUCTO != null"> AND codigo_producto = #{CODIGO_PRODUCTO}</if>
+            <if test="PRESENTACION_ID != null"> AND presentacion_id = #{PRESENTACION_ID}</if>
+            <if test="COMPOSICION != null"> AND composicion = #{COMPOSICION}</if>
+            <if test="PRIORIDAD != null"> AND prioridad = #{PRIORIDAD}</if>
+            <if test="UBICACION != null"> AND ubicacion = #{UBICACION}</if>
+            <if test="ACTIVO_LOTES != null"> AND activo_lotes = #{ACTIVO_LOTES}</if>
+            <if test="AFECTO_ISC != null"> AND afecto_isc = #{AFECTO_ISC}</if>
+            <if test="TIPO_TASA_ISC != null"> AND tipo_tasa_isc = #{TIPO_TASA_ISC}</if>
+            <if test="TASA_ISC != null"> AND tasa_isc = #{TASA_ISC}</if>
+            <if test="AFECTO_IGV != null"> AND afecto_igv = #{AFECTO_IGV}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update productos
+        <set>
+            <if test="NOMBRE != null"> nombre = #{NOMBRE}, </if>
+            <if test="TIPO_PRODUCTO_ID != null"> tipo_producto_id = #{TIPO_PRODUCTO_ID}, </if>
+            <if test="MARCA_ID != null"> marca_id = #{MARCA_ID}, </if>
+            <if test="STOCK_MINIMO != null"> stock_minimo = #{STOCK_MINIMO}, </if>
+            <if test="PRECIO_UNIDAD != null"> precio_unidad = #{PRECIO_UNIDAD}, </if>
+            <if test="PRECIO_COMPRA != null"> precio_compra = #{PRECIO_COMPRA}, </if>
+            <if test="FECHA != null"> fecha = #{FECHA}, </if>
+            <if test="CODIGO_UNIDAD != null"> codigo_unidad = #{CODIGO_UNIDAD}, </if>
+            <if test="CODIGO_PRODUCTO != null"> codigo_producto = #{CODIGO_PRODUCTO}, </if>
+            <if test="PRESENTACION_ID != null"> presentacion_id = #{PRESENTACION_ID}, </if>
+            <if test="COMPOSICION != null"> composicion = #{COMPOSICION}, </if>
+            <if test="PRIORIDAD != null"> prioridad = #{PRIORIDAD}, </if>
+            <if test="UBICACION != null"> ubicacion = #{UBICACION}, </if>
+            <if test="ACTIVO_LOTES != null"> activo_lotes = #{ACTIVO_LOTES}, </if>
+            <if test="AFECTO_ISC != null"> afecto_isc = #{AFECTO_ISC}, </if>
+            <if test="TIPO_TASA_ISC != null"> tipo_tasa_isc = #{TIPO_TASA_ISC}, </if>
+            <if test="TASA_ISC != null"> tasa_isc = #{TASA_ISC}, </if>
+            <if test="AFECTO_IGV != null"> afecto_igv = #{AFECTO_IGV}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

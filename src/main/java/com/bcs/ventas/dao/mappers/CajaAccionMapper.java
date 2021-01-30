@@ -1,17 +1,17 @@
 package com.bcs.ventas.dao.mappers;
 
-import com.bcs.ventas.model.entities.Almacen;
+import com.bcs.ventas.model.entities.CajaAccion;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface AlmacenMapper {
+public interface CajaAccionMapper {
 
-    List<Almacen> getAllEntities();
+    List<CajaAccion> getAllEntities();
 
-    List<Almacen> listByParameterMap(Map<String, Object> var1);
+    List<CajaAccion> listByParameterMap(Map<String, Object> var1);
 
     public int updateByPrimaryKeySelective(Map<String, Object> var1);
 }

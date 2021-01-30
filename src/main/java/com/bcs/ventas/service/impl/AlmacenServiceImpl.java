@@ -35,6 +35,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
+        if(a.getNombre() == null)    a.setNombre("");
+        if(a.getDireccion() == null) a.setDireccion("");
+        if(a.getCodigo() == null)    a.setCodigo("");
+
         a.setNombre(a.getNombre().trim());
         a.setDireccion(a.getDireccion().trim());
         a.setCodigo(a.getCodigo().trim());
@@ -43,7 +47,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NOMBRE",a.getNombre());
         params.put("EMPRESA_ID",a.getEmpresaId());
-        params.put("BORRADO",a.getBorrado());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<Almacen> almacensV1 = almacenMapper.listByParameterMap(params);
 
@@ -54,7 +58,7 @@ public class AlmacenServiceImpl implements AlmacenService {
 
         params.put("CODIGO",a.getCodigo());
         params.put("EMPRESA_ID",a.getEmpresaId());
-        params.put("BORRADO",a.getBorrado());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         almacensV1 = almacenMapper.listByParameterMap(params);
 
@@ -80,7 +84,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         params.put("NO_ID",a.getId());
         params.put("NOMBRE",a.getNombre());
         params.put("EMPRESA_ID",a.getEmpresaId());
-        params.put("BORRADO",a.getBorrado());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
 
         List<Almacen> almacensV1 = almacenMapper.listByParameterMap(params);
@@ -93,7 +97,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         params.put("NO_ID",a.getId());
         params.put("CODIGO",a.getCodigo());
         params.put("EMPRESA_ID",a.getEmpresaId());
-        params.put("BORRADO",a.getBorrado());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         almacensV1 = almacenMapper.listByParameterMap(params);
 
@@ -105,7 +109,7 @@ public class AlmacenServiceImpl implements AlmacenService {
     }
 
     public List<Almacen> listar() throws Exception {
-        //return almacenMapper.getAllAlmacens();
+        //return almacenMapper.getAllEntities();
         return almacenDAO.listar();
     }
 

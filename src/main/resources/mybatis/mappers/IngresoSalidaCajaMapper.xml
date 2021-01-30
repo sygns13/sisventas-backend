@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.IngresoSalidaCajaMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.IngresoSalidaCaja">
+        <result property="id" column="id" />
+        <result property="monto" column="monto" />
+        <result property="concepto" column="concepto" />
+        <result property="comprobante" column="comprobante" />
+        <result property="fecha" column="fecha" />
+        <result property="sedeId" column="sede_id" />
+        <result property="tipo" column="tipo" />
+        <result property="tipoComprobante" column="tipo_comprobante" />
+        <result property="hora" column="hora" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from ingreso_salida_cajas
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from ingreso_salida_cajas
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="MONTO != null"> AND monto = #{MONTO}</if>
+            <if test="CONCEPTO != null"> AND concepto = #{CONCEPTO}</if>
+            <if test="COMPROBANTE != null"> AND comprobante = #{COMPROBANTE}</if>
+            <if test="FECHA != null"> AND fecha = #{FECHA}</if>
+            <if test="SEDE_ID != null"> AND sede_id = #{SEDE_ID}</if>
+            <if test="TIPO != null"> AND tipo = #{TIPO}</if>
+            <if test="TIPO_COMPROBANTE != null"> AND tipo_comprobante = #{TIPO_COMPROBANTE}</if>
+            <if test="HORA != null"> AND hora = #{HORA}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update ingreso_salida_cajas
+        <set>
+            <if test="MONTO != null"> monto = #{MONTO}, </if>
+            <if test="CONCEPTO != null"> concepto = #{CONCEPTO}, </if>
+            <if test="COMPROBANTE != null"> comprobante = #{COMPROBANTE}, </if>
+            <if test="FECHA != null"> fecha = #{FECHA}, </if>
+            <if test="SEDE_ID != null"> sede_id = #{SEDE_ID}, </if>
+            <if test="TIPO != null"> tipo = #{TIPO}, </if>
+            <if test="TIPO_COMPROBANTE != null"> tipo_comprobante = #{TIPO_COMPROBANTE}, </if>
+            <if test="HORA != null"> hora = #{HORA}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

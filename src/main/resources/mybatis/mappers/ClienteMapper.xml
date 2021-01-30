@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.ClienteMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Cliente">
+        <result property="id" column="id" />
+        <result property="nombre" column="nombre" />
+        <result property="tipoDocumentoId" column="tipo_documento_id" />
+        <result property="documento" column="documento" />
+        <result property="direccion" column="direccion" />
+        <result property="telefono" column="telefono" />
+        <result property="correo1" column="correo1" />
+        <result property="correo2" column="correo2" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from clientes
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from clientes
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="TIPO_DOCUMENTO_ID != null"> AND tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
+            <if test="DOCUMENTO != null"> AND documento = #{DOCUMENTO}</if>
+            <if test="DIRECCION != null"> AND direccion = #{DIRECCION}</if>
+            <if test="TELEFONO != null"> AND telefono = #{TELEFONO}</if>
+            <if test="CORREO1 != null"> AND correo1 = #{CORREO1}</if>
+            <if test="CORREO2 != null"> AND correo2 = #{CORREO2}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update clientes
+        <set>
+            <if test="NOMBRE != null">  nombre = #{NOMBRE}, </if>
+            <if test="TIPO_DOCUMENTO_ID != null">  tipo_documento_id = #{TIPO_DOCUMENTO_ID}, </if>
+            <if test="DOCUMENTO != null">  documento = #{DOCUMENTO}, </if>
+            <if test="DIRECCION != null">  direccion = #{DIRECCION}, </if>
+            <if test="TELEFONO != null">  telefono = #{TELEFONO}, </if>
+            <if test="CORREO1 != null">  correo1 = #{CORREO1}, </if>
+            <if test="CORREO2 != null">  correo2 = #{CORREO2}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

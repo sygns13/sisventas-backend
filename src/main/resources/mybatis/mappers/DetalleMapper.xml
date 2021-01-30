@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.DetalleMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Detalle">
+        <result property="id" column="id" />
+        <result property="cabeceraId" column="cabecera_id" />
+        <result property="itemOrden" column="item_orden" />
+        <result property="itemUnidad" column="item_unidad" />
+        <result property="itemCantidad" column="item_cantidad" />
+        <result property="itemCodproducto" column="item_codproducto" />
+        <result property="itemDescripcion" column="item_descripcion" />
+        <result property="itemAfectacion" column="item_afectacion" />
+        <result property="itemTipoPrecioVenta" column="item_tipo_precio_venta" />
+        <result property="itemPventa" column="item_pventa" />
+        <result property="itemPventaNoOnerosa" column="item_pventa_no_onerosa" />
+        <result property="itemToSubtotal" column="item_to_subtotal" />
+        <result property="itemToIgv" column="item_to_igv" />
+        <result property="itemPreunitfin" column="item_preunitfin" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from detalles
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from detalles
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="CABECERA_ID != null"> AND cabecera_id = #{CABECERA_ID}</if>
+            <if test="ITEM_ORDEN != null"> AND item_orden = #{ITEM_ORDEN}</if>
+            <if test="ITEM_UNIDAD != null"> AND item_unidad = #{ITEM_UNIDAD}</if>
+            <if test="ITEM_CANTIDAD != null"> AND item_cantidad = #{ITEM_CANTIDAD}</if>
+            <if test="ITEM_CODPRODUCTO != null"> AND item_codproducto = #{ITEM_CODPRODUCTO}</if>
+            <if test="ITEM_DESCRIPCION != null"> AND item_descripcion = #{ITEM_DESCRIPCION}</if>
+            <if test="ITEM_AFECTACION != null"> AND item_afectacion = #{ITEM_AFECTACION}</if>
+            <if test="ITEM_TIPO_PRECIO_VENTA != null"> AND item_tipo_precio_venta = #{ITEM_TIPO_PRECIO_VENTA}</if>
+            <if test="ITEM_PVENTA != null"> AND item_pventa = #{ITEM_PVENTA}</if>
+            <if test="ITEM_PVENTA_NO_ONEROSA != null"> AND item_pventa_no_onerosa = #{ITEM_PVENTA_NO_ONEROSA}</if>
+            <if test="ITEM_TO_SUBTOTAL != null"> AND item_to_subtotal = #{ITEM_TO_SUBTOTAL}</if>
+            <if test="ITEM_TO_IGV != null"> AND item_to_igv = #{ITEM_TO_IGV}</if>
+            <if test="ITEM_PREUNITFIN != null"> AND item_preunitfin = #{ITEM_PREUNITFIN}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update detalles
+        <set>
+            <if test="CABECERA_ID != null">  cabecera_id = #{CABECERA_ID}, </if>
+            <if test="ITEM_ORDEN != null">  item_orden = #{ITEM_ORDEN}, </if>
+            <if test="ITEM_UNIDAD != null">  item_unidad = #{ITEM_UNIDAD}, </if>
+            <if test="ITEM_CANTIDAD != null">  item_cantidad = #{ITEM_CANTIDAD}, </if>
+            <if test="ITEM_CODPRODUCTO != null">  item_codproducto = #{ITEM_CODPRODUCTO}, </if>
+            <if test="ITEM_DESCRIPCION != null">  item_descripcion = #{ITEM_DESCRIPCION}, </if>
+            <if test="ITEM_AFECTACION != null">  item_afectacion = #{ITEM_AFECTACION}, </if>
+            <if test="ITEM_TIPO_PRECIO_VENTA != null">  item_tipo_precio_venta = #{ITEM_TIPO_PRECIO_VENTA}, </if>
+            <if test="ITEM_PVENTA != null">  item_pventa = #{ITEM_PVENTA}, </if>
+            <if test="ITEM_PVENTA_NO_ONEROSA != null"> AND item_pventa_no_onerosa = #{ITEM_PVENTA_NO_ONEROSA}, </if>
+            <if test="ITEM_TO_SUBTOTAL != null">  item_to_subtotal = #{ITEM_TO_SUBTOTAL}, </if>
+            <if test="ITEM_TO_IGV != null">  item_to_igv = #{ITEM_TO_IGV}, </if>
+            <if test="ITEM_PREUNITFIN != null">  item_preunitfin = #{ITEM_PREUNITFIN}, </if>
+
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

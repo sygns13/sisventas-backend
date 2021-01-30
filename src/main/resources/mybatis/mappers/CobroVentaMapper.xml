@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.CobroVentaMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.CobroVenta">
+        <result property="id" column="id" />
+        <result property="fecha" column="fecha" />
+        <result property="ventaId" column="venta_id" />
+        <result property="tipoPago" column="tipo_pago" />
+        <result property="importe" column="importe" />
+        <result property="tipoTarjetaId" column="tipo_tarjeta_id" />
+        <result property="bancoId" column="banco_id" />
+        <result property="cuentaId" column="cuenta_id" />
+        <result property="numeroTarjeta" column="numero_tarjeta" />
+        <result property="numeroCheque" column="numero_cheque" />
+        <result property="userId" column="user_id" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from cobro_ventas
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from cobro_ventas
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="VENTA_ID != null"> AND venta_id = #{VENTA_ID}</if>
+            <if test="FECHA != null"> AND fecha = #{FECHA}</if>
+            <if test="TIPO_PAGO != null"> AND tipo_pago = #{TIPO_PAGO}</if>
+            <if test="IMPORTE != null"> AND importe = #{IMPORTE}</if>
+            <if test="TIPO_TARJETA_ID != null"> AND tipo_tarjeta_id = #{TIPO_TARJETA_ID}</if>
+            <if test="BANCO_ID != null"> AND banco_id = #{BANCO_ID}</if>
+            <if test="CUENTA_ID != null"> AND cuenta_id = #{CUENTA_ID}</if>
+            <if test="NUMERO_TARJETA != null"> AND numero_tarjeta = #{NUMERO_TARJETA}</if>
+            <if test="NUMERO_CHEQUE != null"> AND numero_cheque = #{NUMERO_CHEQUE}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update cobro_ventas
+        <set>
+            <if test="VENTA_ID != null">  venta_id = #{VENTA_ID}, </if>
+            <if test="FECHA != null">  fecha = #{FECHA}, </if>
+            <if test="TIPO_PAGO != null">  tipo_pago = #{TIPO_PAGO}, </if>
+            <if test="IMPORTE != null">  importe = #{IMPORTE}, </if>
+            <if test="TIPO_TARJETA_ID != null">  tipo_tarjeta_id = #{TIPO_TARJETA_ID}, </if>
+            <if test="BANCO_ID != null">  banco_id = #{BANCO_ID}, </if>
+            <if test="CUENTA_ID != null">  cuenta_id = #{CUENTA_ID}, </if>
+            <if test="NUMERO_TARJETA != null">  numero_tarjeta = #{NUMERO_TARJETA}, </if>
+            <if test="NUMERO_CHEQUE != null">  numero_cheque = #{NUMERO_CHEQUE}, </if>
+
+
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>

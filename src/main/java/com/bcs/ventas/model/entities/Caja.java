@@ -31,7 +31,7 @@ public class Caja implements Serializable {
     private Long cajaAccionLastId;
 
     @Column(name="sede_id", nullable = true)
-    private Long sede_id;
+    private Long sedeId;
 
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
@@ -58,24 +58,24 @@ public class Caja implements Serializable {
     public Caja() {
     }
 
-    public Caja(Long id, Integer estado, Date fecha, Long cajaAccionLastId, Long sede_id, Long empresaId, Long userId, Integer activo, Integer borrado) {
+    public Caja(Long id, Integer estado, Date fecha, Long cajaAccionLastId, Long sedeId, Long empresaId, Long userId, Integer activo, Integer borrado) {
         this.id = id;
         this.estado = estado;
         this.fecha = fecha;
         this.cajaAccionLastId = cajaAccionLastId;
-        this.sede_id = sede_id;
+        this.sedeId = sedeId;
         this.empresaId = empresaId;
         this.userId = userId;
         this.activo = activo;
         this.borrado = borrado;
     }
 
-    public Caja(Long id, Integer estado, Date fecha, Long cajaAccionLastId, Long sede_id, Long empresaId, Long userId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
+    public Caja(Long id, Integer estado, Date fecha, Long cajaAccionLastId, Long sedeId, Long empresaId, Long userId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
         this.id = id;
         this.estado = estado;
         this.fecha = fecha;
         this.cajaAccionLastId = cajaAccionLastId;
-        this.sede_id = sede_id;
+        this.sedeId = sedeId;
         this.empresaId = empresaId;
         this.userId = userId;
         this.activo = activo;
@@ -116,12 +116,12 @@ public class Caja implements Serializable {
         this.cajaAccionLastId = cajaAccionLastId;
     }
 
-    public Long getSede_id() {
-        return sede_id;
+    public Long getSedeId() {
+        return sedeId;
     }
 
-    public void setSede_id(Long sede_id) {
-        this.sede_id = sede_id;
+    public void setSedeId(Long sedeId) {
+        this.sedeId = sedeId;
     }
 
     public Long getEmpresaId() {

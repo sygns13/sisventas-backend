@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "tipo_productos")
+@Table(name = "tipo_tarjetas")
 public class TipoTarjeta implements Serializable {
 
     public static long getSerialversionuid() {

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.NotasCreditoMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.NotasCredito">
+        <result property="id" column="id" />
+        <result property="cabeceraId" column="cabecera_id" />
+        <result property="docuNumero" column="docu_numero" />
+        <result property="serie" column="serie" />
+        <result property="numero" column="numero" />
+        <result property="codigo" column="codigo" />
+        <result property="descripcion" column="descripcion" />
+        <result property="hashcode" column="hashcode" />
+        <result property="cdr" column="cdr" />
+        <result property="cdrNota" column="cdr_nota" />
+        <result property="cdrObservacion" column="cdr_observacion" />
+        <result property="docuEnviaws" column="docu_enviaws" />
+        <result property="docuProceStatus" column="docu_proce_status" />
+        <result property="tipo" column="tipo" />
+        <result property="proceFecha" column="proce_fecha" />
+        <result property="tipoAnulado" column="tipoanulado" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from notas_creditos
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from notas_creditos
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="CABECERA_ID != null"> AND cabecera_id = #{CABECERA_ID}</if>
+            <if test="DOCU_NUMERO != null"> AND docu_numero = #{DOCU_NUMERO}</if>
+            <if test="SERIE != null"> AND serie = #{SERIE}</if>
+            <if test="NUMERO != null"> AND numero = #{NUMERO}</if>
+            <if test="CODIGO != null"> AND codigo = #{CODIGO}</if>
+            <if test="DESCRIPCION != null"> AND descripcion = #{DESCRIPCION}</if>
+            <if test="HASHCODE != null"> AND hashcode = #{HASHCODE}</if>
+            <if test="CDR != null"> AND cdr = #{CDR}</if>
+            <if test="CDR_NOTA != null"> AND cdr_nota = #{CDR_NOTA}</if>
+            <if test="CDR_OBSERVACION != null"> AND cdr_observacion = #{CDR_OBSERVACION}</if>
+            <if test="DOCU_ENVIAWS != null"> AND docu_enviaws = #{DOCU_ENVIAWS}</if>
+            <if test="DOCU_PROCE_STATUS != null"> AND docu_proce_status = #{DOCU_PROCE_STATUS}</if>
+            <if test="TIPO != null"> AND tipo = #{TIPO}</if>
+            <if test="PROCE_FECHA != null"> AND proce_fecha = #{PROCE_FECHA}</if>
+            <if test="TIPOANULADO != null"> AND tipoanulado = #{TIPOANULADO}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update notas_creditos
+        <set>
+            <if test="CABECERA_ID != null"> cabecera_id = #{CABECERA_ID}, </if>
+            <if test="DOCU_NUMERO != null"> docu_numero = #{DOCU_NUMERO}, </if>
+            <if test="SERIE != null"> serie = #{SERIE}, </if>
+            <if test="NUMERO != null"> numero = #{NUMERO}, </if>
+            <if test="CODIGO != null"> codigo = #{CODIGO}, </if>
+            <if test="DESCRIPCION != null"> descripcion = #{DESCRIPCION}, </if>
+            <if test="HASHCODE != null"> hashcode = #{HASHCODE}, </if>
+            <if test="CDR != null"> cdr = #{CDR}, </if>
+            <if test="CDR_NOTA != null"> cdr_nota = #{CDR_NOTA}, </if>
+            <if test="CDR_OBSERVACION != null"> cdr_observacion = #{CDR_OBSERVACION}, </if>
+            <if test="DOCU_ENVIAWS != null"> docu_enviaws = #{DOCU_ENVIAWS}, </if>
+            <if test="DOCU_PROCE_STATUS != null"> docu_proce_status = #{DOCU_PROCE_STATUS}, </if>
+            <if test="TIPO != null"> tipo = #{TIPO}, </if>
+            <if test="PROCE_FECHA != null"> proce_fecha = #{PROCE_FECHA}, </if>
+            <if test="TIPOANULADO != null"> tipoanulado = #{TIPOANULADO}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+</mapper>
