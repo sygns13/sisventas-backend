@@ -3,15 +3,8 @@ package com.bcs.ventas.dao.mappers;
 import com.bcs.ventas.model.entities.DetalleOrdenPedido;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-import java.util.Map;
 
 @Mapper
-public interface DetalleOrdenPedidoMapper {
+public interface DetalleOrdenPedidoMapper extends GeneralMapper<DetalleOrdenPedido> {
 
-    List<DetalleOrdenPedido> getAllEntities();
-
-    List<DetalleOrdenPedido> listByParameterMap(Map<String, Object> var1);
-
-    public int updateByPrimaryKeySelective(Map<String, Object> var1);
 }

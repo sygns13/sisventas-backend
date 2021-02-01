@@ -3,15 +3,8 @@ package com.bcs.ventas.dao.mappers;
 import com.bcs.ventas.model.entities.MotivoHasGuiaRemision;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-import java.util.Map;
 
 @Mapper
-public interface MotivoHasGuiaRemisionMapper {
+public interface MotivoHasGuiaRemisionMapper extends GeneralMapper<MotivoHasGuiaRemision> {
 
-    List<MotivoHasGuiaRemision> getAllEntities();
-
-    List<MotivoHasGuiaRemision> listByParameterMap(Map<String, Object> var1);
-
-    public int updateByPrimaryKeySelective(Map<String, Object> var1);
 }

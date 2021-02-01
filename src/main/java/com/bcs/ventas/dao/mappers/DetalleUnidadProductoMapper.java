@@ -7,11 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface DetalleUnidadProductoMapper {
+public interface DetalleUnidadProductoMapper extends GeneralMapper<DetalleUnidadProducto> {
 
-    List<DetalleUnidadProducto> getAllEntities();
-
-    List<DetalleUnidadProducto> listByParameterMap(Map<String, Object> var1);
-
-    public int updateByPrimaryKeySelective(Map<String, Object> var1);
 }

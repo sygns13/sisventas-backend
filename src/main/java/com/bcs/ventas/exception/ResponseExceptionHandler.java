@@ -31,6 +31,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    @ExceptionHandler(ValidationServiceException.class)
+    public ResponseEntity<ExceptionResponse> manejarValidationServiceException(ValidationServiceException ex, WebRequest request){
+
+        ExceptionResponse er = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<ExceptionResponse>(er, HttpStatus.UNPROCESSABLE_ENTITY);
+
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {

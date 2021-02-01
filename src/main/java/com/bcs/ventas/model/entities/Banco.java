@@ -1,11 +1,17 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Banco Model")
 @Entity
 @Table(name = "bancos")
 public class Banco implements Serializable {
@@ -20,33 +26,41 @@ public class Banco implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(description = "Nombres del Banco")
+    @NotNull( message = "{banco.nombre.notnull}")
+    @Size(min = 1, max = 250, message = "{banco.nombre.size}")
     @Column(name="nombre", nullable = true, length= 250)
     private String nombre;
 
+    @Schema(description = "Dirección del Banco")
     @Column(name="dir", nullable = true, length= 500)
     private String dir;
 
+    @Schema(description = "ID Empresa Padre")
+    @NotNull( message = "{banco.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "ID User Padre")
+    @NotNull( message = "{banco.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
+    @Schema(description = "Estado de Banco")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Banco")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
 
     public Banco() {
     }
@@ -61,7 +75,7 @@ public class Banco implements Serializable {
         this.borrado = borrado;
     }
 
-    public Banco(Long id, String nombre, String dir, Long empresaId, Long userId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
+    public Banco(Long id, String nombre, String dir, Long empresaId, Long userId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
         this.dir = dir;
@@ -129,19 +143,19 @@ public class Banco implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }

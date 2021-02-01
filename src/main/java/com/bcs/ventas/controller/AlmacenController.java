@@ -31,7 +31,7 @@ public class AlmacenController {
     public ResponseEntity<Almacen> listarPorId(@PathVariable("id") Long id) throws Exception{
         Almacen obj = almacenService.listarPorId(id);
 
-        if(obj.getId()==null) {
+        if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
 
@@ -58,7 +58,7 @@ public class AlmacenController {
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
         Almacen obj = almacenService.listarPorId(id);
 
-        if(obj.getId()==null) {
+        if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
         almacenService.eliminar(id);
