@@ -33,6 +33,7 @@ public class Banco implements Serializable {
     private String nombre;
 
     @Schema(description = "Dirección del Banco")
+    @Size(max = 500, message = "{banco.dir.size}")
     @Column(name="dir", nullable = true, length= 500)
     private String dir;
 
@@ -54,10 +55,12 @@ public class Banco implements Serializable {
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
     private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;

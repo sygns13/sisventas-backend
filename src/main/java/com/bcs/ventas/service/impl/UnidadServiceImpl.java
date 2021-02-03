@@ -1,31 +1,33 @@
 package com.bcs.ventas.service.impl;
 
-import com.bcs.ventas.dao.AlmacenDAO;
-import com.bcs.ventas.dao.mappers.AlmacenMapper;
-import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.dao.UnidadDAO;
+import com.bcs.ventas.dao.mappers.UnidadMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
-import com.bcs.ventas.model.entities.Almacen;
-import com.bcs.ventas.service.AlmacenService;
+import com.bcs.ventas.model.entities.Unidad;
+import com.bcs.ventas.service.UnidadService;
 import com.bcs.ventas.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class AlmacenServiceImpl implements AlmacenService {
+public class UnidadServiceImpl implements UnidadService {
 
     @Autowired
-    private AlmacenDAO almacenDAO;
+    private UnidadDAO unidadDAO;
 
     @Autowired
-    private AlmacenMapper almacenMapper;
+    private UnidadMapper unidadMapper;
 
     @Override
-    public Almacen registrar(Almacen a) throws Exception {
+    public Unidad registrar(Unidad a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setCreatedAt(fechaActual);
@@ -35,12 +37,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
         if(a.getNombre() == null)    a.setNombre("");
-        if(a.getDireccion() == null) a.setDireccion("");
-        if(a.getCodigo() == null)    a.setCodigo("");
+        if(a.getAbreviatura() == null)    a.setAbreviatura("");
 
         a.setNombre(a.getNombre().trim());
-        a.setDireccion(a.getDireccion().trim());
-        a.setCodigo(a.getCodigo().trim());
+        a.setAbreviatura(a.getAbreviatura().trim());
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
@@ -49,7 +49,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         if(validacion)
             return this.grabarRegistro(a);
 
-        String errorValidacion = "Error de validación Método Registrar Local";
+        String errorValidacion = "Error de validación Método Registrar Unidad";
 
         if(resultValidacion.get("errors") != null){
             List<String> errors =   (List<String>) resultValidacion.get("errors");
@@ -62,18 +62,16 @@ public class AlmacenServiceImpl implements AlmacenService {
     }
 
     @Override
-    public Almacen modificar(Almacen a) throws Exception {
+    public Unidad modificar(Unidad a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
 
         if(a.getNombre() == null)    a.setNombre("");
-        if(a.getDireccion() == null) a.setDireccion("");
-        if(a.getCodigo() == null)    a.setCodigo("");
+        if(a.getAbreviatura() == null)    a.setAbreviatura("");
 
         a.setNombre(a.getNombre().trim());
-        a.setDireccion(a.getDireccion().trim());
-        a.setCodigo(a.getCodigo().trim());
+        a.setAbreviatura(a.getAbreviatura().trim());
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
@@ -82,7 +80,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         if(validacion)
             return this.grabarRectificar(a);
 
-        String errorValidacion = "Error de validación Método Eliminar Local";
+        String errorValidacion = "Error de validación Método Modificar Unidad";
 
         if(resultValidacion.get("errors") != null){
             List<String> errors =   (List<String>) resultValidacion.get("errors");
@@ -93,22 +91,22 @@ public class AlmacenServiceImpl implements AlmacenService {
         throw new ValidationServiceException(errorValidacion);
     }
 
-    public List<Almacen> listar() throws Exception {
-        return almacenMapper.getAllEntities();
-        //return almacenDAO.listar();
+    public List<Unidad> listar() throws Exception {
+        return unidadMapper.getAllEntities();
+        //return unidadDAO.listar();
     }
 
     @Override
-    public Almacen listarPorId(Long id) throws Exception {
+    public Unidad listarPorId(Long id) throws Exception {
        // Map<String, Object> params = new HashMap<String, Object>();
         //params.put("ID",id);
-        //return almacenMapper.listByParameterMap(params).get(0);
-        return almacenDAO.listarPorId(id);
+        //return unidadMapper.listByParameterMap(params).get(0);
+        return unidadDAO.listarPorId(id);
     }
 
     @Override
     public void eliminar(Long id) throws Exception {
-       // almacenDAO.eliminar(id);
+       // unidadDAO.eliminar(id);
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
@@ -116,7 +114,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         if(validacion)
             this.grabarEliminar(id);
 
-        String errorValidacion = "Error de validación Método Modificar Local";
+        String errorValidacion = "Error de validación Método Eliminar unidad";
 
         if(resultValidacion.get("errors") != null){
             List<String> errors =   (List<String>) resultValidacion.get("errors");
@@ -133,14 +131,14 @@ public class AlmacenServiceImpl implements AlmacenService {
 
     @Transactional
     @Override
-    public Almacen grabarRegistro(Almacen a) throws Exception {
-        return almacenDAO.registrar(a);
+    public Unidad grabarRegistro(Unidad a) throws Exception {
+        return unidadDAO.registrar(a);
     }
 
     @Transactional
     @Override
-    public Almacen grabarRectificar(Almacen a) throws Exception {
-        return almacenDAO.modificar(a);
+    public Unidad grabarRectificar(Unidad a) throws Exception {
+        return unidadDAO.modificar(a);
     }
 
     @Transactional
@@ -151,10 +149,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
 
-        int res= almacenMapper.updateByPrimaryKeySelective(params);
+        int res= unidadMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
-            throw new RuntimeException("No se pudo eliminar el Local indicado, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+            throw new RuntimeException("No se pudo eliminar la Unidad indicada, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
 
     }
@@ -165,7 +163,7 @@ public class AlmacenServiceImpl implements AlmacenService {
     //TODO: Métodos de Validación
 
     @Override
-    public boolean validacionRegistro(Almacen a, Map<String, Object> resultValidacion){
+    public boolean validacionRegistro(Unidad a, Map<String, Object> resultValidacion){
 
         boolean resultado = true;
         List<String> errors = new ArrayList<String>();
@@ -179,28 +177,28 @@ public class AlmacenServiceImpl implements AlmacenService {
         params.put("EMPRESA_ID",a.getEmpresaId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
-        List<Almacen> almacensV1 = almacenMapper.listByParameterMap(params);
+        List<Unidad> unidadsV1 = unidadMapper.listByParameterMap(params);
 
-
-
-        if(almacensV1.size() > 0){
+        if(unidadsV1.size() > 0){
             resultado = false;
-            error = "El nombre del local ingresado ya se encuentra registrado";
+            error = "El nombre del Unidad ingresado ya se encuentra registrado";
             errors.add(error);
         }
         params.clear();
 
-        params.put("CODIGO",a.getCodigo());
+
+        params.put("ABREVIATURA",a.getAbreviatura());
         params.put("EMPRESA_ID",a.getEmpresaId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
-        almacensV1 = almacenMapper.listByParameterMap(params);
+        List<Unidad> unidadsV2 = unidadMapper.listByParameterMap(params);
 
-        if(almacensV1.size() > 0){
+        if(unidadsV2.size() > 0){
             resultado = false;
-            error = "El código del local ingresado ya se encuentra registrado";
+            error = "La Abreviatura de la Unidad ingresada ya se encuentra registrada";
             errors.add(error);
         }
+        params.clear();
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
@@ -209,7 +207,7 @@ public class AlmacenServiceImpl implements AlmacenService {
     }
 
     @Override
-    public boolean validacionModificado(Almacen a , Map<String, Object> resultValidacion){
+    public boolean validacionModificado(Unidad a , Map<String, Object> resultValidacion){
 
         boolean resultado = true;
         List<String> errors = new ArrayList<String>();
@@ -224,27 +222,27 @@ public class AlmacenServiceImpl implements AlmacenService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
 
-        List<Almacen> almacensV1 = almacenMapper.listByParameterMap(params);
+        List<Unidad> unidadsV1 = unidadMapper.listByParameterMap(params);
 
-        if(almacensV1.size() > 0){
+        if(unidadsV1.size() > 0){
             resultado = false;
-            error = "El nombre del local ingresado ya se encuentra registrado";
+            error = "El nombre del Unidad ingresado ya se encuentra registrado";
             errors.add(error);
         }
         params.clear();
-
         params.put("NO_ID",a.getId());
-        params.put("CODIGO",a.getCodigo());
+        params.put("ABREVIATURA",a.getAbreviatura());
         params.put("EMPRESA_ID",a.getEmpresaId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
-        almacensV1 = almacenMapper.listByParameterMap(params);
+        List<Unidad> unidadsV2 = unidadMapper.listByParameterMap(params);
 
-        if(almacensV1.size() > 0){
+        if(unidadsV2.size() > 0){
             resultado = false;
-            error = "El código del local ingresado ya se encuentra registrado";
+            error = "La Abreviatura de la Unidad ingresada ya se encuentra registrada";
             errors.add(error);
         }
+        params.clear();
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
@@ -262,7 +260,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         String error;
         String warning;
 
-        //Lógica de Validaciones para Eliminación Almacén
+        //Lógica de Validaciones para Eliminación Unidad
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);

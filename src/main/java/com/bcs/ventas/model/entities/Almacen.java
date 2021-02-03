@@ -41,7 +41,7 @@ public class Almacen implements Serializable {
     private String nombre;
 
     @Schema(description = "Dirección del Almacén")
-    //@Size(min = 1, max = 500, message = "{almacen.direccion.size}")
+    @Size(max = 500, message = "{almacen.direccion.size}")
     @Column(name="direccion", nullable = true, length= 500)
     private String direccion;
 
@@ -84,6 +84,7 @@ public class Almacen implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createdAt;*/
+    @Schema(description = "Fecha de Creación del Registro")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
     private LocalDateTime createdAt;
@@ -93,6 +94,7 @@ public class Almacen implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date updatedAd;*/
+    @Schema(description = "Fecha de Update del Registro")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
