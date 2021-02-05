@@ -63,7 +63,16 @@ public class Marca implements Serializable {
     public Marca() {
     }
 
-    public Marca(Long id, @NotNull(message = "{marca.nombre.notnull}") @Size(min = 1, max = 250, message = "{marca.nombre.size}") String nombre, @NotNull(message = "{marca.user_id.notnull}") Long userId, @NotNull(message = "{marca.empresa_id.notnull}") Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Marca(Long id, String nombre, Long userId, Long empresaId, Integer activo, Integer borrado) {
+        this.id = id;
+        this.nombre = nombre;
+        this.userId = userId;
+        this.empresaId = empresaId;
+        this.activo = activo;
+        this.borrado = borrado;
+    }
+
+    public Marca(Long id,String nombre, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
         this.userId = userId;

@@ -27,7 +27,7 @@ public interface GeneralService<T, ID> {
 
     boolean validacionRegistro(T t, Map<String, Object> resultValidacion);
 
-    boolean validacionModificado(T t, Map<String, Object> resultValidacion);
+    boolean validacionModificado(T t, Map<String, Object> resultValidacion) throws Exception;
 
     boolean validacionEliminacion(ID id, Map<String, Object> resultValidacion);
 

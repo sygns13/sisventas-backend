@@ -62,7 +62,16 @@ public class TipoProducto implements Serializable {
     public TipoProducto() {
     }
 
-    public TipoProducto(Long id, @NotNull(message = "{tipoproducto.nombre.notnull}") @Size(min = 1, max = 250, message = "{tipoproducto.nombre.size}") String tipo, @NotNull(message = "{tipoproducto.user_id.notnull}") Long userId, @NotNull(message = "{tipoproducto.empresa_id.notnull}") Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public TipoProducto(Long id,String tipo, Long userId, Long empresaId, Integer activo, Integer borrado) {
+        this.id = id;
+        this.tipo = tipo;
+        this.userId = userId;
+        this.empresaId = empresaId;
+        this.activo = activo;
+        this.borrado = borrado;
+    }
+
+    public TipoProducto(Long id,String tipo, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.tipo = tipo;
         this.userId = userId;

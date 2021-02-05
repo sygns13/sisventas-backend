@@ -41,6 +41,7 @@
             <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
 
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_PRODUCTO_ID != null"> AND producto_id != #{PRODUCTO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
         </where>

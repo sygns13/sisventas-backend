@@ -76,7 +76,18 @@ public class Unidad implements Serializable {
     public Unidad() {
     }
 
-    public Unidad(Long id, @NotNull(message = "{unidad.nombre.notnull}") @Size(min = 1, max = 200, message = "{unidad.nombre.size}") String nombre, @NotNull(message = "{unidad.cantidad.notnull}") @Min(value = 0, message = "{unidad.cantidad.min}") @Max(value = 99999999, message = "{unidad.cantidad.max}") Double cantidad, @Size(max = 45, message = "{unidad.abreviatura.size}") String abreviatura, @NotNull(message = "{unidad.user_id.notnull}") Long userId, @NotNull(message = "{unidad.empresa_id.notnull}") Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Unidad(Long id, String nombre, Double cantidad, String abreviatura,Long userId, Long empresaId, Integer activo, Integer borrado) {
+        this.id = id;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.abreviatura = abreviatura;
+        this.userId = userId;
+        this.empresaId = empresaId;
+        this.activo = activo;
+        this.borrado = borrado;
+    }
+
+    public Unidad(Long id, String nombre, Double cantidad, String abreviatura,Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
         this.cantidad = cantidad;

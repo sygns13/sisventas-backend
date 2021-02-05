@@ -1,11 +1,19 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Detalle Unidades Producto Model")
 @Entity
 @Table(name = "detalle_unidad_productos")
 public class DetalleUnidadProducto implements Serializable {
@@ -19,43 +27,67 @@ public class DetalleUnidadProducto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(description = "ID del Producto")
+    @NotNull( message = "{detalleunidadproducto.producto_id.notnull}")
     @Column(name="producto_id", nullable = true)
     private Long productoId;
 
+    @Schema(description = "ID de la Unidad")
+    @NotNull( message = "{detalleunidadproducto.unidad_id.notnull}")
     @Column(name="unidad_id", nullable = true)
     private Long unidadId;
 
+    @Schema(description = "Código Unitario de la Unidad del Producto")
+    @NotNull( message = "{detalleunidadproducto.codigo_unidad.notnull}")
+    @Size(min = 1, max = 200, message = "{detalleunidadproducto.codigo_unidad.size}")
     @Column(name="codigo_unidad", nullable = true, length= 50)
     private String codigoUnidad;
 
+
+    @Schema(description = "Precio de Venta de Unidad de Producto")
+    @NotNull( message = "{detalleunidadproducto.precio.notnull}")
+    @DecimalMin(value = "0.01", message = "{detalleunidadproducto.precio.min}")
+    @DecimalMax(value = "999999999", message = "{detalleunidadproducto.precio.max}")
     @Column(name="precio", nullable = true)
     private Double precio;
 
+    @Schema(description = "Precio de Compra de Unidad de Producto")
+    @NotNull( message = "{detalleunidadproducto.costo_compra.notnull}")
+    @DecimalMin(value = "0.01", message = "{detalleunidadproducto.costo_compra.min}")
+    @DecimalMax(value = "999999999", message = "{detalleunidadproducto.costo_compra.max}")
     @Column(name="costo_compra", nullable = true)
     private Double costoCompra;
 
+    @Schema(description = "ID User Padre")
+    @NotNull( message = "{detalleunidadproducto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
+    @Schema(description = "ID Empresa Padre")
+    @NotNull( message = "{detalleunidadproducto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de Detalle de Unidad de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Detalle de Unidad de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
 
+    @Schema(description = "ID del Local")
+    @NotNull( message = "{detalleunidadproducto.almacen_id.notnull}")
     @Column(name="almacen_id", nullable = true)
     private Long almacenId;
 
@@ -76,7 +108,7 @@ public class DetalleUnidadProducto implements Serializable {
         this.almacenId = almacenId;
     }
 
-    public DetalleUnidadProducto(Long id, Long productoId, Long unidadId, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd, Long almacenId) {
+    public DetalleUnidadProducto(Long id, Long productoId, Long unidadId, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, Long almacenId) {
         this.id = id;
         this.productoId = productoId;
         this.unidadId = unidadId;
@@ -172,19 +204,19 @@ public class DetalleUnidadProducto implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 

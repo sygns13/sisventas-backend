@@ -14,10 +14,15 @@ public class Constantes {
 
     public static final String SUPER_ADMINISTRADOR = "1";
 
-    public static final String ALMACEN_GENERAL = "0";
+    public static final Long ALMACEN_GENERAL = 0L;
     public static final String CANTIDAD_UNIDAD = "1";
 
     public static final Integer CANTIDAD_ZERO = 0;
+    public static final Integer CANTIDAD_UNIDAD_INTEGER = 1;
+
+    public static final Double CANTIDAD_ZERO_DOUBLE = 0.0;
+
+    public static final Double CANTIDAD_CIEN_DOUBLE = 100.0;
 
     //Intreso Retiro Lotes
     public static final String TIPO_ENTRADA_PRODUCTOS = "1";

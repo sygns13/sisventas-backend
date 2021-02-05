@@ -62,7 +62,16 @@ public class Presentacion implements Serializable {
     public Presentacion() {
     }
 
-    public Presentacion(Long id, @NotNull(message = "{presentacion.nombre.notnull}") @Size(min = 1, max = 250, message = "{presentacion.nombre.size}") String presentacion, @NotNull(message = "{presentacion.user_id.notnull}") Long userId, @NotNull(message = "{presentacion.empresa_id.notnull}") Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Presentacion(Long id, String presentacion, Long userId, Long empresaId, Integer activo, Integer borrado) {
+        this.id = id;
+        this.presentacion = presentacion;
+        this.userId = userId;
+        this.empresaId = empresaId;
+        this.activo = activo;
+        this.borrado = borrado;
+    }
+
+    public Presentacion(Long id, String presentacion, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.presentacion = presentacion;
         this.userId = userId;

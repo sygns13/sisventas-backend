@@ -37,6 +37,8 @@
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="CANTIDAD_MAS != null"> AND cantidad > #{CANTIDAD_MAS}</if>
         </where>
     </select>
 
