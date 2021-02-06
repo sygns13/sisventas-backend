@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.TipoProductoDAO;
 import com.bcs.ventas.dao.mappers.TipoProductoMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.model.entities.TipoProducto;
 import com.bcs.ventas.service.TipoProductoService;
 import com.bcs.ventas.utils.Constantes;
@@ -33,6 +34,11 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setEmpresaId(1L);
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
@@ -60,7 +66,7 @@ public class TipoProductoServiceImpl implements TipoProductoService {
     }
 
     @Override
-    public TipoProducto modificar(TipoProducto a) throws Exception {
+    public int modificar(TipoProducto a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
@@ -88,8 +94,11 @@ public class TipoProductoServiceImpl implements TipoProductoService {
     }
 
     public List<TipoProducto> listar() throws Exception {
-        return tipoProductoMapper.getAllEntities();
+        //return tipoProductoMapper.getAllEntities();
         //return tipoProductoDAO.listar();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return tipoProductoMapper.listByParameterMap(params);
     }
 
     @Override
@@ -97,7 +106,17 @@ public class TipoProductoServiceImpl implements TipoProductoService {
        // Map<String, Object> params = new HashMap<String, Object>();
         //params.put("ID",id);
         //return tipoProductoMapper.listByParameterMap(params).get(0);
-        return tipoProductoDAO.listarPorId(id);
+        //return tipoProductoDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<TipoProducto> tipoProductos = tipoProductoMapper.listByParameterMap(params);
+
+        if(tipoProductos.size() > 0)
+            return tipoProductos.get(0);
+        else
+            return null;
     }
 
     @Override
@@ -107,18 +126,20 @@ public class TipoProductoServiceImpl implements TipoProductoService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion) {
             this.grabarEliminar(id);
-
-        String errorValidacion = "Error de validación Método Eliminar Tipo de Producto";
-
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
         }
+        {
+            String errorValidacion = "Error de validación Método Eliminar Tipo de Producto";
 
-        throw new ValidationServiceException(errorValidacion);
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
     }
 
 
@@ -133,8 +154,17 @@ public class TipoProductoServiceImpl implements TipoProductoService {
 
     @Transactional
     @Override
-    public TipoProducto grabarRectificar(TipoProducto a) throws Exception {
-        return tipoProductoDAO.modificar(a);
+    public int grabarRectificar(TipoProducto t) throws Exception {
+        //return tipoProductoDAO.modificar(a);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", t.getId());
+        params.put("TIPO", t.getTipo());
+        params.put("TIPO_PRODUCTO_ID", t.getTipoProductoId());
+        params.put("USER_ID", t.getUserId());
+        params.put("UPDATED_AT", t.getUpdatedAd());
+
+        return tipoProductoMapper.updateByPrimaryKeySelective(params);
     }
 
     @Transactional

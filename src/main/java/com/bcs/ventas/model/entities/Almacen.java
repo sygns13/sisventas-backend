@@ -46,12 +46,12 @@ public class Almacen implements Serializable {
     private String direccion;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{almacen.empresa_id.notnull}")
+    //@NotNull( message = "{almacen.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{almacen.user_id.notnull}")
+    //@NotNull( message = "{almacen.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 

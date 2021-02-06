@@ -32,12 +32,12 @@ public class Presentacion implements Serializable {
     private String presentacion;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{presentacion.user_id.notnull}")
+    //@NotNull( message = "{presentacion.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{presentacion.empresa_id.notnull}")
+    //@NotNull( message = "{presentacion.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 

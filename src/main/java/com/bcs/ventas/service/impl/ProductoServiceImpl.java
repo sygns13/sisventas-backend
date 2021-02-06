@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,6 +69,11 @@ public class ProductoServiceImpl implements ProductoService {
         LocalDateTime fechaActual = LocalDateTime.now();
         p.setCreatedAt(fechaActual);
         p.setUpdatedAd(fechaActual);
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        p.setEmpresaId(1L);
+        p.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
 
         p.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         p.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -141,10 +149,15 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public Producto modificar(Producto p) throws Exception {
+    public int modificar(Producto p) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         p.setUpdatedAd(fechaActual);
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        p.setEmpresaId(1L);
+        p.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -215,8 +228,11 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     public List<Producto> listar() throws Exception {
-        return productoMapper.getAllEntities();
-        //return productoDAO.listar();
+        //return productoMapper.getAllEntities();
+        return productoDAO.listar();
+        /*Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return productoMapper.listByParameterMap(params);*/
     }
 
     @Override
@@ -224,7 +240,17 @@ public class ProductoServiceImpl implements ProductoService {
        // Map<String, Object> params = new HashMap<String, Object>();
         //params.put("ID",id);
         //return productoMapper.listByParameterMap(params).get(0);
-        return productoDAO.listarPorId(id);
+        //return productoDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Producto> productos = productoMapper.listByParameterMap(params);
+
+        if(productos.size() > 0)
+            return productos.get(0);
+        else
+            return null;
     }
 
     @Override
@@ -234,18 +260,20 @@ public class ProductoServiceImpl implements ProductoService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion) {
             this.grabarEliminar(id);
-
-        String errorValidacion = "Error de validación Método Eliminar producto";
-
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
         }
+        else {
+            String errorValidacion = "Error de validación Método Eliminar producto";
 
-        throw new ValidationServiceException(errorValidacion);
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
     }
 
 
@@ -290,13 +318,50 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Transactional
     @Override
-    public Producto grabarRectificar(Producto p) throws Exception {
-        Producto producto = productoDAO.modificar(p);
+    public int grabarRectificar(Producto p) throws Exception {
+        //Producto producto = productoDAO.modificar(p);
+
+        //Grabar Rectificacion Producto
+
+        BigDecimal stockMinimo = new BigDecimal(p.getStockMinimo());
+        stockMinimo.setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal precioUnidad = new BigDecimal(p.getPrecioUnidad());
+        precioUnidad.setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal precioCompra = new BigDecimal(p.getPrecioCompra());
+        precioCompra.setScale(2, RoundingMode.HALF_UP);
 
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", p.getId());
+        params.put("NOMBRE", p.getNombre());
+        params.put("TIPO_PRODUCTO_ID", p.getTipoProducto().getId());
+        params.put("MARCA_ID", p.getMarca().getId());
+        params.put("STOCK_MINIMO", stockMinimo);
+        params.put("PRECIO_UNIDAD", precioUnidad);
+        params.put("PRECIO_COMPRA", precioCompra);
+        params.put("FECHA", p.getFecha());
+        params.put("CODIGO_UNIDAD", p.getCodigoUnidad());
+        params.put("CODIGO_PRODUCTO", p.getCodigoProducto());
+        params.put("PRESENTACION_ID", p.getPresentacion().getId());
+        params.put("COMPOSICION", p.getComposicion());
+        params.put("PRIORIDAD", p.getPrioridad());
+        params.put("UBICACION", p.getUbicacion());
+        params.put("ACTIVO_LOTES", p.getActivoLotes());
+        params.put("AFECTO_ISC", p.getAfectoIsc());
+        params.put("TIPO_TASA_ISC", p.getTipoTasaIsc());
+        params.put("TASA_ISC", p.getTasaIsc());
+        params.put("AFECTO_IGV", p.getAfectoIgv());
+        params.put("USER_ID", p.getUserId());
+        params.put("UPDATED_AT", p.getUpdatedAd());
+
+        int resultado = productoMapper.updateByPrimaryKeySelective(params);
+
+        //Grabar Unidades
+        params.clear();
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID",producto.getEmpresaId());
+        params.put("EMPRESA_ID",p.getEmpresaId());
         params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
 
         List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
@@ -304,8 +369,8 @@ public class ProductoServiceImpl implements ProductoService {
         params.clear();
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID",producto.getEmpresaId());
-        params.put("PRODUCTO_ID",producto.getId());
+        params.put("EMPRESA_ID",p.getEmpresaId());
+        params.put("PRODUCTO_ID",p.getId());
         params.put("UNIDAD_ID", unidadG1.get(0).getId());
         params.put("ALMACEN_ID", Constantes.ALMACEN_GENERAL);
 
@@ -316,24 +381,24 @@ public class ProductoServiceImpl implements ProductoService {
 
             detalleUnidad = detalleUnidadBD.get(0);
 
-            detalleUnidad.setCodigoUnidad(producto.getCodigoUnidad());
-            detalleUnidad.setPrecio(producto.getPrecioUnidad());
-            detalleUnidad.setCostoCompra(producto.getPrecioCompra());
-            detalleUnidad.setUserId(producto.getUserId());
+            detalleUnidad.setCodigoUnidad(p.getCodigoUnidad());
+            detalleUnidad.setPrecio(p.getPrecioUnidad());
+            detalleUnidad.setCostoCompra(p.getPrecioCompra());
+            detalleUnidad.setUserId(p.getUserId());
 
             detalleUnidadProductoDAO.modificar(detalleUnidad);
         }
 
         else{
-            detalleUnidad.setProductoId(producto.getId());
+            detalleUnidad.setProductoId(p.getId());
             detalleUnidad.setUnidadId(unidadG1.get(0).getId());
-            detalleUnidad.setCodigoUnidad(producto.getCodigoUnidad());
-            detalleUnidad.setPrecio(producto.getPrecioUnidad());
-            detalleUnidad.setCostoCompra(producto.getPrecioCompra());
-            detalleUnidad.setUserId(producto.getUserId());
-            detalleUnidad.setEmpresaId(producto.getEmpresaId());
-            detalleUnidad.setCreatedAt(producto.getCreatedAt());
-            detalleUnidad.setUpdatedAd(producto.getUpdatedAd());
+            detalleUnidad.setCodigoUnidad(p.getCodigoUnidad());
+            detalleUnidad.setPrecio(p.getPrecioUnidad());
+            detalleUnidad.setCostoCompra(p.getPrecioCompra());
+            detalleUnidad.setUserId(p.getUserId());
+            detalleUnidad.setEmpresaId(p.getEmpresaId());
+            detalleUnidad.setCreatedAt(p.getCreatedAt());
+            detalleUnidad.setUpdatedAd(p.getUpdatedAd());
             detalleUnidad.setAlmacenId(Constantes.ALMACEN_GENERAL);
 
             detalleUnidad.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -343,7 +408,7 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
 
-        return producto;
+        return resultado;
     }
 
     @Transactional

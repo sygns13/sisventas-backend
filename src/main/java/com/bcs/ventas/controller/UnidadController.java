@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/unidad")
+@RequestMapping("/unidads")
 public class UnidadController {
 
     @Autowired
@@ -40,6 +40,7 @@ public class UnidadController {
 
     @PostMapping
     public ResponseEntity<Unidad> registrar(@Valid @RequestBody Unidad a) throws Exception{
+        a.setId(null);
         Unidad obj = unidadService.registrar(a);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -48,10 +49,16 @@ public class UnidadController {
     }
 
     @PutMapping
-    public ResponseEntity<Unidad> modificar(@Valid @RequestBody Unidad a) throws Exception{
-        Unidad obj = unidadService.modificar(a);
+    public ResponseEntity<Integer> modificar(@Valid @RequestBody Unidad a) throws Exception{
+        Unidad objBD = unidadService.listarPorId(a.getId());
 
-        return new ResponseEntity<Unidad>(obj, HttpStatus.OK);
+        if(objBD == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ a.getId());
+        }
+
+        int obj = unidadService.modificar(a);
+
+        return new ResponseEntity<Integer>(obj, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

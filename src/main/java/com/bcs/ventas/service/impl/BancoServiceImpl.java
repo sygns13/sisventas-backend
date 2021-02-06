@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.BancoDAO;
 import com.bcs.ventas.dao.mappers.BancoMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.entities.Almacen;
 import com.bcs.ventas.model.entities.Banco;
 import com.bcs.ventas.service.BancoService;
 import com.bcs.ventas.utils.Constantes;
@@ -33,6 +34,11 @@ public class BancoServiceImpl implements BancoService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setEmpresaId(1L);
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
@@ -62,7 +68,7 @@ public class BancoServiceImpl implements BancoService {
     }
 
     @Override
-    public Banco modificar(Banco a) throws Exception {
+    public int modificar(Banco a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
@@ -92,16 +98,27 @@ public class BancoServiceImpl implements BancoService {
     }
 
     public List<Banco> listar() throws Exception {
-        return bancoMapper.getAllEntities();
         //return bancoDAO.listar();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return bancoMapper.listByParameterMap(params);
     }
 
     @Override
     public Banco listarPorId(Long id) throws Exception {
-       // Map<String, Object> params = new HashMap<String, Object>();
-        //params.put("ID",id);
-        //return bancoMapper.listByParameterMap(params).get(0);
-        return bancoDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Banco> bancos = bancoMapper.listByParameterMap(params);
+
+        if(bancos.size() > 0)
+            return bancos.get(0);
+        else
+            return null;
+
+        //return bancoDAO.listarPorId(id);
     }
 
     @Override
@@ -111,18 +128,21 @@ public class BancoServiceImpl implements BancoService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion) {
             this.grabarEliminar(id);
+        }
+        else{
+            String errorValidacion = "Error de validación Método Eliminar banco";
 
-        String errorValidacion = "Error de validación Método Eliminar banco";
+            if(resultValidacion.get("errors") != null){
+                List<String> errors =   (List<String>) resultValidacion.get("errors");
+                if(errors.size() >0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
 
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            throw new ValidationServiceException(errorValidacion);
         }
 
-        throw new ValidationServiceException(errorValidacion);
     }
 
 
@@ -137,8 +157,16 @@ public class BancoServiceImpl implements BancoService {
 
     @Transactional
     @Override
-    public Banco grabarRectificar(Banco a) throws Exception {
-        return bancoDAO.modificar(a);
+    public int grabarRectificar(Banco b) throws Exception {
+        //return bancoDAO.modificar(a);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", b.getId());
+        params.put("NOMBRE", b.getNombre());
+        params.put("DIR", b.getDir());
+        params.put("USER_ID", b.getUserId());
+        params.put("UPDATED_AT", b.getUpdatedAd());
+
+        return bancoMapper.updateByPrimaryKeySelective(params);
     }
 
     @Transactional

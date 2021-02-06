@@ -32,12 +32,12 @@ public class Marca implements Serializable {
     private String nombre;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{marca.user_id.notnull}")
+    //@NotNull( message = "{marca.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{marca.empresa_id.notnull}")
+    //@NotNull( message = "{marca.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 

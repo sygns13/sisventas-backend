@@ -14,7 +14,7 @@ import java.util.List;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/almacen")
+@RequestMapping("/almacens")
 public class AlmacenController {
 
     @Autowired
@@ -40,6 +40,7 @@ public class AlmacenController {
 
     @PostMapping
     public ResponseEntity<Almacen> registrar(@Valid @RequestBody Almacen a) throws Exception{
+        a.setId(null);
         Almacen obj = almacenService.registrar(a);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -48,10 +49,20 @@ public class AlmacenController {
     }
 
     @PutMapping
-    public ResponseEntity<Almacen> modificar(@Valid @RequestBody Almacen a) throws Exception{
-        Almacen obj = almacenService.modificar(a);
+    public ResponseEntity<Integer> modificar(@Valid @RequestBody Almacen a) throws Exception{
+        if(a.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
 
-        return new ResponseEntity<Almacen>(obj, HttpStatus.OK);
+        Almacen objBD = almacenService.listarPorId(a.getId());
+
+        if(objBD == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO " + a.getId());
+        }
+
+        int obj = almacenService.modificar(a);
+
+        return new ResponseEntity<Integer>(obj, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

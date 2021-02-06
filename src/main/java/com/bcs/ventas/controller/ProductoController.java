@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/producto")
+@RequestMapping("/productos")
 public class ProductoController {
 
     @Autowired
@@ -40,6 +40,7 @@ public class ProductoController {
 
     @PostMapping
     public ResponseEntity<Producto> registrar(@Valid @RequestBody Producto a) throws Exception{
+        a.setId(null);
         Producto obj = productoService.registrar(a);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -48,10 +49,21 @@ public class ProductoController {
     }
 
     @PutMapping
-    public ResponseEntity<Producto> modificar(@Valid @RequestBody Producto a) throws Exception{
-        Producto obj = productoService.modificar(a);
+    public ResponseEntity<Integer> modificar(@Valid @RequestBody Producto a) throws Exception{
+        if(a.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
 
-        return new ResponseEntity<Producto>(obj, HttpStatus.OK);
+        Producto objBD = productoService.listarPorId(a.getId());
+
+        if(objBD == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ a.getId());
+        }
+
+
+        int obj = productoService.modificar(a);
+
+        return new ResponseEntity<Integer>(obj, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -122,12 +122,12 @@ public class Producto implements Serializable {
     private Integer afectoIgv;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{producto.user_id.notnull}")
+    //@NotNull( message = "{producto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{producto.empresa_id.notnull}")
+    //@NotNull( message = "{producto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 

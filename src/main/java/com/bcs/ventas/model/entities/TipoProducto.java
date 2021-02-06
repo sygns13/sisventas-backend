@@ -32,12 +32,12 @@ public class TipoProducto implements Serializable {
     private String tipo;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{tipoproducto.user_id.notnull}")
+    //@NotNull( message = "{tipoproducto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{tipoproducto.empresa_id.notnull}")
+    //@NotNull( message = "{tipoproducto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
@@ -59,19 +59,24 @@ public class TipoProducto implements Serializable {
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
 
+    @Schema(description = "Tipo Producto Padre")
+    @Column(name="tipo_producto_id", nullable = true)
+    private Long tipoProductoId;
+
     public TipoProducto() {
     }
 
-    public TipoProducto(Long id,String tipo, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public TipoProducto(Long id,String tipo, Long userId, Long empresaId, Integer activo, Integer borrado, Long tipoProductoId) {
         this.id = id;
         this.tipo = tipo;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
         this.borrado = borrado;
+        this.tipoProductoId = tipoProductoId;
     }
 
-    public TipoProducto(Long id,String tipo, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public TipoProducto(Long id,String tipo, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, Long tipoProductoId) {
         this.id = id;
         this.tipo = tipo;
         this.userId = userId;
@@ -80,6 +85,7 @@ public class TipoProducto implements Serializable {
         this.borrado = borrado;
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
+        this.tipoProductoId = tipoProductoId;
     }
 
     public Long getId() {
@@ -144,5 +150,13 @@ public class TipoProducto implements Serializable {
 
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public Long getTipoProductoId() {
+        return tipoProductoId;
+    }
+
+    public void setTipoProductoId(Long tipoProductoId) {
+        this.tipoProductoId = tipoProductoId;
     }
 }

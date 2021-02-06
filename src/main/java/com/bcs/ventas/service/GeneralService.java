@@ -9,7 +9,7 @@ public interface GeneralService<T, ID> {
 
     T registrar(T t) throws Exception;
 
-    T modificar(T t) throws Exception;
+    int modificar(T t) throws Exception;
 
     List<T> listar() throws Exception;
 
@@ -21,7 +21,7 @@ public interface GeneralService<T, ID> {
     //Metodos Complementarios
     T grabarRegistro(T t) throws Exception;
 
-    T grabarRectificar(T t) throws Exception;
+    int grabarRectificar(T t) throws Exception;
 
     void grabarEliminar(ID id);
 

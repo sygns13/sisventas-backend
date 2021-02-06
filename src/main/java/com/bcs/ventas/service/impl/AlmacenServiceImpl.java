@@ -31,6 +31,11 @@ public class AlmacenServiceImpl implements AlmacenService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setEmpresaId(1L);
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
@@ -62,7 +67,7 @@ public class AlmacenServiceImpl implements AlmacenService {
     }
 
     @Override
-    public Almacen modificar(Almacen a) throws Exception {
+    public int modificar(Almacen a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
@@ -94,16 +99,28 @@ public class AlmacenServiceImpl implements AlmacenService {
     }
 
     public List<Almacen> listar() throws Exception {
-        return almacenMapper.getAllEntities();
+        //return almacenMapper.getAllEntities();
         //return almacenDAO.listar();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return almacenMapper.listByParameterMap(params);
     }
 
     @Override
     public Almacen listarPorId(Long id) throws Exception {
-       // Map<String, Object> params = new HashMap<String, Object>();
-        //params.put("ID",id);
-        //return almacenMapper.listByParameterMap(params).get(0);
-        return almacenDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Almacen> almacens = almacenMapper.listByParameterMap(params);
+
+        if(almacens.size() > 0)
+            return almacens.get(0);
+        else
+            return null;
+
+        //return almacenDAO.listarPorId(id);
     }
 
     @Override
@@ -113,18 +130,20 @@ public class AlmacenServiceImpl implements AlmacenService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion) {
             this.grabarEliminar(id);
-
-        String errorValidacion = "Error de validación Método Modificar Local";
-
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
         }
+        else{
+            String errorValidacion = "Error de validación Método Modificar Local";
 
-        throw new ValidationServiceException(errorValidacion);
+            if(resultValidacion.get("errors") != null){
+                List<String> errors =   (List<String>) resultValidacion.get("errors");
+                if(errors.size() >0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
     }
 
 
@@ -139,8 +158,19 @@ public class AlmacenServiceImpl implements AlmacenService {
 
     @Transactional
     @Override
-    public Almacen grabarRectificar(Almacen a) throws Exception {
-        return almacenDAO.modificar(a);
+    public int grabarRectificar(Almacen a) throws Exception {
+        //return almacenDAO.modificar(a);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", a.getId());
+        params.put("NOMBRE", a.getNombre());
+        params.put("DIRECCION", a.getDireccion());
+        params.put("CODIGO", a.getCodigo());
+        params.put("DISTRITO_ID", a.getDistritoId());
+        params.put("USER_ID", a.getUserId());
+        params.put("UPDATED_AT", a.getUpdatedAd());
+
+        return almacenMapper.updateByPrimaryKeySelective(params);
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.UnidadDAO;
 import com.bcs.ventas.dao.mappers.UnidadMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Unidad;
 import com.bcs.ventas.service.UnidadService;
 import com.bcs.ventas.utils.Constantes;
@@ -33,6 +34,11 @@ public class UnidadServiceImpl implements UnidadService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setEmpresaId(1L);
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
@@ -62,7 +68,7 @@ public class UnidadServiceImpl implements UnidadService {
     }
 
     @Override
-    public Unidad modificar(Unidad a) throws Exception {
+    public int modificar(Unidad a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
@@ -92,8 +98,11 @@ public class UnidadServiceImpl implements UnidadService {
     }
 
     public List<Unidad> listar() throws Exception {
-        return unidadMapper.getAllEntities();
+        //return unidadMapper.getAllEntities();
         //return unidadDAO.listar();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return unidadMapper.listByParameterMap(params);
     }
 
     @Override
@@ -101,7 +110,17 @@ public class UnidadServiceImpl implements UnidadService {
        // Map<String, Object> params = new HashMap<String, Object>();
         //params.put("ID",id);
         //return unidadMapper.listByParameterMap(params).get(0);
-        return unidadDAO.listarPorId(id);
+        //return unidadDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Unidad> unidads = unidadMapper.listByParameterMap(params);
+
+        if(unidads.size() > 0)
+            return unidads.get(0);
+        else
+            return null;
     }
 
     @Override
@@ -111,18 +130,20 @@ public class UnidadServiceImpl implements UnidadService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion) {
             this.grabarEliminar(id);
-
-        String errorValidacion = "Error de validación Método Eliminar unidad";
-
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
         }
+        else {
+            String errorValidacion = "Error de validación Método Eliminar unidad";
 
-        throw new ValidationServiceException(errorValidacion);
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
     }
 
 
@@ -137,8 +158,18 @@ public class UnidadServiceImpl implements UnidadService {
 
     @Transactional
     @Override
-    public Unidad grabarRectificar(Unidad a) throws Exception {
-        return unidadDAO.modificar(a);
+    public int grabarRectificar(Unidad u) throws Exception {
+        //return unidadDAO.modificar(a);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", u.getId());
+        params.put("NOMBRE", u.getNombre());
+        params.put("CANTIDAD", u.getCantidad());
+        params.put("ABREVIATURA", u.getAbreviatura());
+        params.put("USER_ID", u.getUserId());
+        params.put("UPDATED_AT", u.getUpdatedAd());
+
+        return unidadMapper.updateByPrimaryKeySelective(params);
     }
 
     @Transactional

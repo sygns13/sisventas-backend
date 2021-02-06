@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/banco")
+@RequestMapping("/bancos")
 public class BancoController {
 
     @Autowired
@@ -40,6 +40,7 @@ public class BancoController {
 
     @PostMapping
     public ResponseEntity<Banco> registrar(@Valid @RequestBody Banco a) throws Exception{
+        a.setId(null);
         Banco obj = bancoService.registrar(a);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -48,10 +49,20 @@ public class BancoController {
     }
 
     @PutMapping
-    public ResponseEntity<Banco> modificar(@Valid @RequestBody Banco a) throws Exception{
-        Banco obj = bancoService.modificar(a);
+    public ResponseEntity<Integer> modificar(@Valid @RequestBody Banco a) throws Exception{
+        if(a.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
 
-        return new ResponseEntity<Banco>(obj, HttpStatus.OK);
+        Banco objBD = bancoService.listarPorId(a.getId());
+
+        if(objBD == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ a.getId());
+        }
+
+        int obj = bancoService.modificar(a);
+
+        return new ResponseEntity<Integer>(obj, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

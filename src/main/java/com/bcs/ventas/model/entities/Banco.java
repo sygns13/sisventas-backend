@@ -38,12 +38,12 @@ public class Banco implements Serializable {
     private String dir;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{banco.empresa_id.notnull}")
+    //@NotNull( message = "{banco.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{banco.user_id.notnull}")
+    //@NotNull( message = "{banco.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 

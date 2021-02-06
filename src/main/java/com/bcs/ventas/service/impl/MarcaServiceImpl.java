@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.MarcaDAO;
 import com.bcs.ventas.dao.mappers.MarcaMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.entities.Banco;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.service.MarcaService;
 import com.bcs.ventas.utils.Constantes;
@@ -33,6 +34,11 @@ public class MarcaServiceImpl implements MarcaService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setEmpresaId(1L);
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
@@ -60,7 +66,7 @@ public class MarcaServiceImpl implements MarcaService {
     }
 
     @Override
-    public Marca modificar(Marca a) throws Exception {
+    public int modificar(Marca a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
@@ -88,8 +94,11 @@ public class MarcaServiceImpl implements MarcaService {
     }
 
     public List<Marca> listar() throws Exception {
-        return marcaMapper.getAllEntities();
+        //return marcaMapper.getAllEntities();
         //return marcaDAO.listar();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return marcaMapper.listByParameterMap(params);
     }
 
     @Override
@@ -97,7 +106,18 @@ public class MarcaServiceImpl implements MarcaService {
        // Map<String, Object> params = new HashMap<String, Object>();
         //params.put("ID",id);
         //return marcaMapper.listByParameterMap(params).get(0);
-        return marcaDAO.listarPorId(id);
+        //return marcaDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Marca> marcas = marcaMapper.listByParameterMap(params);
+
+        if(marcas.size() > 0)
+            return marcas.get(0);
+        else
+            return null;
+
     }
 
     @Override
@@ -107,18 +127,20 @@ public class MarcaServiceImpl implements MarcaService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion){
             this.grabarEliminar(id);
-
-        String errorValidacion = "Error de validación Método Eliminar marca";
-
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
         }
+        else {
+            String errorValidacion = "Error de validación Método Eliminar marca";
 
-        throw new ValidationServiceException(errorValidacion);
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
     }
 
 
@@ -133,8 +155,16 @@ public class MarcaServiceImpl implements MarcaService {
 
     @Transactional
     @Override
-    public Marca grabarRectificar(Marca a) throws Exception {
-        return marcaDAO.modificar(a);
+    public int grabarRectificar(Marca m) throws Exception {
+       // return marcaDAO.modificar(a);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", m.getId());
+        params.put("NOMBRE", m.getNombre());
+        params.put("USER_ID", m.getUserId());
+        params.put("UPDATED_AT", m.getUpdatedAd());
+
+        return marcaMapper.updateByPrimaryKeySelective(params);
     }
 
     @Transactional

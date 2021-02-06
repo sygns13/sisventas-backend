@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.PresentacionDAO;
 import com.bcs.ventas.dao.mappers.PresentacionMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.service.PresentacionService;
 import com.bcs.ventas.utils.Constantes;
@@ -33,6 +34,11 @@ public class PresentacionServiceImpl implements PresentacionService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setEmpresaId(1L);
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
 
@@ -60,7 +66,7 @@ public class PresentacionServiceImpl implements PresentacionService {
     }
 
     @Override
-    public Presentacion modificar(Presentacion a) throws Exception {
+    public int modificar(Presentacion a) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
@@ -88,8 +94,11 @@ public class PresentacionServiceImpl implements PresentacionService {
     }
 
     public List<Presentacion> listar() throws Exception {
-        return presentacionMapper.getAllEntities();
+       // return presentacionMapper.getAllEntities();
         //return presentacionDAO.listar();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        return presentacionMapper.listByParameterMap(params);
     }
 
     @Override
@@ -97,7 +106,17 @@ public class PresentacionServiceImpl implements PresentacionService {
        // Map<String, Object> params = new HashMap<String, Object>();
         //params.put("ID",id);
         //return presentacionMapper.listByParameterMap(params).get(0);
-        return presentacionDAO.listarPorId(id);
+        //return presentacionDAO.listarPorId(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Presentacion> presentacions = presentacionMapper.listByParameterMap(params);
+
+        if(presentacions.size() > 0)
+            return presentacions.get(0);
+        else
+            return null;
     }
 
     @Override
@@ -107,18 +126,20 @@ public class PresentacionServiceImpl implements PresentacionService {
 
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
-        if(validacion)
+        if(validacion) {
             this.grabarEliminar(id);
-
-        String errorValidacion = "Error de validación Método Eliminar presentacion";
-
-        if(resultValidacion.get("errors") != null){
-            List<String> errors =   (List<String>) resultValidacion.get("errors");
-            if(errors.size() >0)
-                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
         }
+        else {
+            String errorValidacion = "Error de validación Método Eliminar presentacion";
 
-        throw new ValidationServiceException(errorValidacion);
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
     }
 
 
@@ -133,8 +154,16 @@ public class PresentacionServiceImpl implements PresentacionService {
 
     @Transactional
     @Override
-    public Presentacion grabarRectificar(Presentacion a) throws Exception {
-        return presentacionDAO.modificar(a);
+    public int grabarRectificar(Presentacion p) throws Exception {
+        //return presentacionDAO.modificar(a);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", p.getId());
+        params.put("PRESENTACION", p.getPresentacion());
+        params.put("USER_ID", p.getUserId());
+        params.put("UPDATED_AT", p.getUpdatedAd());
+
+        return presentacionMapper.updateByPrimaryKeySelective(params);
     }
 
     @Transactional
