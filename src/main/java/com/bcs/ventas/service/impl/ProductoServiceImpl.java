@@ -229,10 +229,10 @@ public class ProductoServiceImpl implements ProductoService {
 
     public List<Producto> listar() throws Exception {
         //return productoMapper.getAllEntities();
-        return productoDAO.listar();
-        /*Map<String, Object> params = new HashMap<String, Object>();
+        //return productoDAO.listar();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        return productoMapper.listByParameterMap(params);*/
+        return productoMapper.listByParameterMap(params);
     }
 
     @Override
@@ -484,25 +484,29 @@ public class ProductoServiceImpl implements ProductoService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<Producto> productosV2 = productoMapper.listByParameterMap(params);
+        boolean auxValidateCodigo = false;
 
         if(productosV2.size() > 0){
             resultado = false;
             error = "El código ingresado ya se encuentra registrado";
             errors.add(error);
+            auxValidateCodigo = true;
         }
 
         params.clear();
 
-        params.put("CODIGO_UNIDAD",p.getCodigoUnidad());
-        params.put("EMPRESA_ID",p.getEmpresaId());
-        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        if(!auxValidateCodigo){
+            params.put("CODIGO_UNIDAD",p.getCodigoUnidad());
+            params.put("EMPRESA_ID",p.getEmpresaId());
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
-        List<DetalleUnidadProducto> detalleUnidadProductosV3 = detalleUnidadProductoMapper.listByParameterMap(params);
+            List<DetalleUnidadProducto> detalleUnidadProductosV3 = detalleUnidadProductoMapper.listByParameterMap(params);
 
-        if(detalleUnidadProductosV3.size() > 0){
-            resultado = false;
-            error = "El código ingresado ya se encuentra registrado";
-            errors.add(error);
+            if(detalleUnidadProductosV3.size() > 0){
+                resultado = false;
+                error = "El código ingresado ya se encuentra registrado";
+                errors.add(error);
+            }
         }
 
 
@@ -565,28 +569,32 @@ public class ProductoServiceImpl implements ProductoService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<Producto> productosV2 = productoMapper.listByParameterMap(params);
+        boolean auxValidateCodigo = false;
 
         if(productosV2.size() > 0){
             resultado = false;
             error = "El código ingresado ya se encuentra registrado";
             errors.add(error);
+            auxValidateCodigo = true;
         }
 
         params.clear();
 
-        params.put("NO_PRODUCTO_ID",p.getId());
-        params.put("CODIGO_UNIDAD",p.getCodigoUnidad());
-        params.put("EMPRESA_ID",p.getEmpresaId());
-        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        if(!auxValidateCodigo){
+            params.put("NO_PRODUCTO_ID",p.getId());
+            params.put("CODIGO_UNIDAD",p.getCodigoUnidad());
+            params.put("EMPRESA_ID",p.getEmpresaId());
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
-        List<DetalleUnidadProducto> detalleUnidadProductosV3 = detalleUnidadProductoMapper.listByParameterMap(params);
+            List<DetalleUnidadProducto> detalleUnidadProductosV3 = detalleUnidadProductoMapper.listByParameterMap(params);
 
-        if(detalleUnidadProductosV3.size() > 0){
-            resultado = false;
-            error = "El código ingresado ya se encuentra registrado";
-            errors.add(error);
+            if(detalleUnidadProductosV3.size() > 0){
+                resultado = false;
+                error = "El código ingresado ya se encuentra registrado";
+                errors.add(error);
+            }
+            params.clear();
         }
-        params.clear();
 
         Producto productoBD = productoDAO.listarPorId(p.getId());
 

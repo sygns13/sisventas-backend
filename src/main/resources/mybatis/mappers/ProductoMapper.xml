@@ -8,15 +8,15 @@
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Producto">
         <result property="id" column="id" />
         <result property="nombre" column="nombre" />
-        <result property="tipoProductoId" column="tipo_producto_id" />
-        <result property="marcaId" column="marca_id" />
+       <!-- <result property="tipoProducto.id" column="tipo_producto_id" />
+        <result property="marca.id" column="marca_id" />-->
         <result property="stockMinimo" column="stock_minimo" />
         <result property="precioUnidad" column="precio_unidad" />
         <result property="precioCompra" column="precio_compra" />
         <result property="fecha" column="fecha" />
         <result property="codigoUnidad" column="codigo_unidad" />
         <result property="codigoProducto" column="codigo_producto" />
-        <result property="presentacionId" column="presentacion_id" />
+        <!--<result property="presentacion.id" column="presentacion_id" /> -->
         <result property="composicion" column="composicion" />
         <result property="prioridad" column="prioridad" />
         <result property="ubicacion" column="ubicacion" />
@@ -31,7 +31,69 @@
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+        <association property="tipoProducto" column="tipo_producto_id" select="getTipoProducto" />
+        <association property="marca" column="marca_id" select="getMarca" />
+        <association property="presentacion" column="presentacion_id" select="getPresentacion" />
+
     </resultMap>
+
+    <resultMap id="tipoProductoResultMap" type="com.bcs.ventas.model.entities.TipoProducto">
+        <result property="id" column="id" />
+        <result property="tipo" column="tipo" />
+        <result property="tipoProductoId" column="tipo_producto_id" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <resultMap id="marcaResultMap" type="com.bcs.ventas.model.entities.Marca">
+        <result property="id" column="id" />
+        <result property="nombre" column="nombre" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <resultMap id="presentacionResultMap" type="com.bcs.ventas.model.entities.Presentacion">
+        <result property="id" column="id" />
+        <result property="presentacion" column="presentacion" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getTipoProducto" resultMap="tipoProductoResultMap">
+        select
+        *
+        from tipo_productos
+        where
+        id = #{id}
+    </select>
+    <select id="getMarca" resultMap="marcaResultMap">
+        select
+        *
+        from marcas
+        where
+        id = #{id}
+    </select>
+    <select id="getPresentacion" resultMap="presentacionResultMap">
+        select
+        *
+        from presentacions
+        where
+        id = #{id}
+    </select>
+
+
 
     <select id="getAllEntities" resultMap="principalResultMap">
         select * from productos
