@@ -47,15 +47,16 @@ public class Pais implements Serializable {
     public Pais() {
     }
 
-    public Pais(String nombre, String inicial, String codigo, Integer activo, Integer borrado) {
+    public Pais(String nombre, String inicial, String codigo, Integer activo, Integer borrado, Long id) {
         this.nombre = nombre;
         this.inicial = inicial;
         this.codigo = codigo;
         this.activo = activo;
         this.borrado = borrado;
+        this.id = id;
     }
 
-    public Pais(String nombre, String inicial, String codigo, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
+    public Pais(String nombre, String inicial, String codigo, Integer activo, Integer borrado, Date createdAt, Date updatedAd, Long id) {
         this.nombre = nombre;
         this.inicial = inicial;
         this.codigo = codigo;
@@ -63,6 +64,15 @@ public class Pais implements Serializable {
         this.borrado = borrado;
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {

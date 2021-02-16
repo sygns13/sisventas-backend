@@ -2,6 +2,9 @@ package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.Almacen;
+import com.bcs.ventas.model.entities.Departamento;
+import com.bcs.ventas.model.entities.Distrito;
+import com.bcs.ventas.model.entities.Provincia;
 import com.bcs.ventas.service.AlmacenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,6 +78,44 @@ public class AlmacenController {
         almacenService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/altabaja/{id}/{valor}")
+    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+        Almacen obj = almacenService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        almacenService.altabaja(id, valor);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+
+
+
+    //Otros Endpoints
+
+    @GetMapping("departamentos/{idPais}")
+    public ResponseEntity<List<Departamento>> getDepartamentos(@PathVariable("idPais") Long idPais) throws Exception{
+        List<Departamento> obj = almacenService.getDepartamentos(idPais);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping("provincias/{idDep}")
+    public ResponseEntity<List<Provincia>> getProvincias(@PathVariable("idDep") Long idDep) throws Exception{
+        List<Provincia> obj = almacenService.getProvincias(idDep);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping("distritos/{idProv}")
+    public ResponseEntity<List<Distrito>> getDistritos(@PathVariable("idProv") Long idProv) throws Exception{
+        List<Distrito> obj = almacenService.getDistritos(idProv);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
 }

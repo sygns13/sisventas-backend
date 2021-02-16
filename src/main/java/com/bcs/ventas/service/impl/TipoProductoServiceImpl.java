@@ -129,7 +129,7 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         if(validacion) {
             this.grabarEliminar(id);
         }
-        {
+        else{
             String errorValidacion = "Error de validación Método Eliminar Tipo de Producto";
 
             if (resultValidacion.get("errors") != null) {
@@ -139,6 +139,21 @@ public class TipoProductoServiceImpl implements TipoProductoService {
             }
 
             throw new ValidationServiceException(errorValidacion);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void altabaja(Long id, Integer valor) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("ACTIVO", valor);
+
+        int res= tipoProductoMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
     }
 

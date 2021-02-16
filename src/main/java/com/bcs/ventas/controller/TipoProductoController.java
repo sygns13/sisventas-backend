@@ -77,4 +77,16 @@ public class TipoProductoController {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/altabaja/{id}/{valor}")
+    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+        TipoProducto obj = tipoProductoService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        tipoProductoService.altabaja(id, valor);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
 }

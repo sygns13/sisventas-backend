@@ -2,9 +2,15 @@ package com.bcs.ventas.service.impl;
 
 import com.bcs.ventas.dao.AlmacenDAO;
 import com.bcs.ventas.dao.mappers.AlmacenMapper;
+import com.bcs.ventas.dao.mappers.DepartamentoMapper;
+import com.bcs.ventas.dao.mappers.DistritoMapper;
+import com.bcs.ventas.dao.mappers.ProvinciaMapper;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.Almacen;
+import com.bcs.ventas.model.entities.Departamento;
+import com.bcs.ventas.model.entities.Distrito;
+import com.bcs.ventas.model.entities.Provincia;
 import com.bcs.ventas.service.AlmacenService;
 import com.bcs.ventas.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,15 @@ public class AlmacenServiceImpl implements AlmacenService {
     @Autowired
     private AlmacenMapper almacenMapper;
 
+    @Autowired
+    private DepartamentoMapper departamentoMapper;
+
+    @Autowired
+    private ProvinciaMapper provinciaMapper;
+
+    @Autowired
+    private DistritoMapper distritoMapper;
+
     @Override
     public Almacen registrar(Almacen a) throws Exception {
         //Date fechaActual = new Date();
@@ -37,7 +52,6 @@ public class AlmacenServiceImpl implements AlmacenService {
         //Todo: Temporal hasta incluir Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
-        a.setActivo(Constantes.REGISTRO_ACTIVO);
 
         if(a.getNombre() == null)    a.setNombre("");
         if(a.getDireccion() == null) a.setDireccion("");
@@ -71,6 +85,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        a.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
 
         if(a.getNombre() == null)    a.setNombre("");
         if(a.getDireccion() == null) a.setDireccion("");
@@ -143,6 +161,21 @@ public class AlmacenServiceImpl implements AlmacenService {
             }
 
             throw new ValidationServiceException(errorValidacion);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void altabaja(Long id, Integer valor) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("ACTIVO", valor);
+
+        int res= almacenMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
     }
 
@@ -298,5 +331,38 @@ public class AlmacenServiceImpl implements AlmacenService {
         resultValidacion.put("warnings",warnings);
 
         return resultado;
+    }
+
+    @Override
+    public List<Departamento> getDepartamentos(Long idPais) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+        params.put("PAIS_ID", idPais);
+
+        return departamentoMapper.listByParameterMap(params);
+    }
+
+    @Override
+    public List<Provincia> getProvincias(Long idDep) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+        params.put("DEPARTAMENTO_ID", idDep);
+
+        return provinciaMapper.listByParameterMap(params);
+    }
+
+    @Override
+    public List<Distrito> getDistritos(Long idProv) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+        params.put("PROVINCIA_ID", idProv);
+
+        return distritoMapper.listByParameterMap(params);
     }
 }

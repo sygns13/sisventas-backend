@@ -3,14 +3,8 @@ package com.bcs.ventas.model.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -99,10 +93,26 @@ public class Almacen implements Serializable {
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
 
+    @Schema(description = "País del Almacén")
+    @Transient
+    private Pais pais;
+
+    @Schema(description = "Departamento del Almacén")
+    @Transient
+    private Departamento departamento;
+
+    @Schema(description = "Provincia del Almacén")
+    @Transient
+    private  Provincia provincia;
+
+    @Schema(description = "Distrito del Almacén")
+    @Transient
+    private Distrito distrito;
+
     public Almacen() {
     }
 
-    public Almacen(Long id, String nombre, String direccion, Long empresaId, Long userId, Integer activo, Integer borrado, Long distritoId, String codigo) {
+    public Almacen(Long id, String nombre, String direccion, Long empresaId, Long userId, Integer activo, Integer borrado, Long distritoId, String codigo, Pais pais, Departamento departamento, Provincia provincia, Distrito distrito) {
         this.id = id;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -112,9 +122,13 @@ public class Almacen implements Serializable {
         this.borrado = borrado;
         this.distritoId = distritoId;
         this.codigo = codigo;
+        this.pais = pais;
+        this.departamento = departamento;
+        this.provincia = provincia;
+        this.distrito = distrito;
     }
 
-    public Almacen(Long id, String nombre, String direccion, Long empresaId, Long userId, Integer activo, Integer borrado, Long distritoId, String codigo, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Almacen(Long id, String nombre, String direccion, Long empresaId, Long userId, Integer activo, Integer borrado, Long distritoId, String codigo, LocalDateTime createdAt, LocalDateTime updatedAd , Pais pais, Departamento departamento, Provincia provincia, Distrito distrito) {
         this.id = id;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -126,6 +140,10 @@ public class Almacen implements Serializable {
         this.codigo = codigo;
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
+        this.pais = pais;
+        this.departamento = departamento;
+        this.provincia = provincia;
+        this.distrito = distrito;
     }
 
     public Long getId() {
@@ -214,5 +232,37 @@ public class Almacen implements Serializable {
 
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public Pais getPais() {
+        return pais;
+    }
+
+    public void setPais(Pais pais) {
+        this.pais = pais;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    public Provincia getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(Provincia provincia) {
+        this.provincia = provincia;
+    }
+
+    public Distrito getDistrito() {
+        return distrito;
+    }
+
+    public void setDistrito(Distrito distrito) {
+        this.distrito = distrito;
     }
 }
