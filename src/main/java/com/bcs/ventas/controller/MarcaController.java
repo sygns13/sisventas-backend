@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -21,10 +24,13 @@ public class MarcaController {
     private MarcaService marcaService;
 
     @GetMapping
-    public ResponseEntity<List<Marca>> listar() throws Exception{
-        List<Marca> obj = marcaService.listar();
+    public ResponseEntity<Page<Marca>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                              @RequestParam(name = "size", defaultValue = "5") int size,
+                                              @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Marca> resultado = marcaService.listar(pageable, buscar);
 
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -76,6 +82,18 @@ public class MarcaController {
         marcaService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/altabaja/{id}/{valor}")
+    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+        Marca obj = marcaService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        marcaService.altabaja(id, valor);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

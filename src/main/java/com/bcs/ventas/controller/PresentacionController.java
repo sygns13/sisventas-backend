@@ -12,6 +12,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/presentacions")
@@ -21,10 +24,13 @@ public class PresentacionController {
     private PresentacionService presentacionService;
 
     @GetMapping
-    public ResponseEntity<List<Presentacion>> listar() throws Exception{
-        List<Presentacion> obj = presentacionService.listar();
+    public ResponseEntity<Page<Presentacion>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                     @RequestParam(name = "size", defaultValue = "5") int size,
+                                                     @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Presentacion> resultado = presentacionService.listar(pageable, buscar);
 
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -50,10 +56,6 @@ public class PresentacionController {
 
     @PutMapping
     public ResponseEntity<Integer> modificar(@Valid @RequestBody Presentacion a) throws Exception{
-        a.setId(null);
-        if(a.getId() == null){
-            throw new ModeloNotFoundException("ID NO ENVIADO ");
-        }
 
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
@@ -80,6 +82,18 @@ public class PresentacionController {
         presentacionService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/altabaja/{id}/{valor}")
+    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+        Presentacion obj = presentacionService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        presentacionService.altabaja(id, valor);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

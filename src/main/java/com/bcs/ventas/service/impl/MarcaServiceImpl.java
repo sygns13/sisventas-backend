@@ -3,11 +3,13 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.MarcaDAO;
 import com.bcs.ventas.dao.mappers.MarcaMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
-import com.bcs.ventas.model.entities.Banco;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.service.MarcaService;
 import com.bcs.ventas.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,8 +99,27 @@ public class MarcaServiceImpl implements MarcaService {
         //return marcaMapper.getAllEntities();
         //return marcaDAO.listar();
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
         return marcaMapper.listByParameterMap(params);
+    }
+
+    public Page<Marca> listar(Pageable page, String buscar) throws Exception {
+        //return bancoDAO.listar();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("BUSCAR","%"+buscar+"%");
+
+        int total = marcaMapper.getTotalElements(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<Marca> marcas = marcaMapper.listByParameterMap(params);
+
+        return new PageImpl<>(marcas, page, total);
     }
 
     @Override
@@ -140,6 +161,21 @@ public class MarcaServiceImpl implements MarcaService {
             }
 
             throw new ValidationServiceException(errorValidacion);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void altabaja(Long id, Integer valor) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("ACTIVO", valor);
+
+        int res= marcaMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
     }
 

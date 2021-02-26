@@ -12,6 +12,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/unidads")
@@ -21,10 +24,13 @@ public class UnidadController {
     private UnidadService unidadService;
 
     @GetMapping
-    public ResponseEntity<List<Unidad>> listar() throws Exception{
-        List<Unidad> obj = unidadService.listar();
+    public ResponseEntity<Page<Unidad>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                               @RequestParam(name = "size", defaultValue = "5") int size,
+                                               @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Unidad> resultado = unidadService.listar(pageable, buscar);
 
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -71,6 +77,18 @@ public class UnidadController {
         unidadService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/altabaja/{id}/{valor}")
+    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+        Unidad obj = unidadService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        unidadService.altabaja(id, valor);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

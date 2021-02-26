@@ -21,6 +21,26 @@
         select * from bancos
     </select>
 
+    <select id="getTotalElements" resultType="int">
+        select COUNT(*) from bancos
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="DIR != null"> AND dir = #{DIR}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND nombre like #{BUSCAR}</if>
+        </where>
+        order by nombre, id
+    </select>
+
     <select id="listByParameterMap" resultMap="principalResultMap">
         select * from bancos
         <where>
@@ -35,7 +55,12 @@
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND nombre like #{BUSCAR}</if>
         </where>
+        order by nombre, id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">

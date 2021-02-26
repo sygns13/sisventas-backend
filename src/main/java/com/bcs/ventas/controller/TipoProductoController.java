@@ -12,6 +12,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/tipoproductos")
@@ -21,10 +24,13 @@ public class TipoProductoController {
     private TipoProductoService tipoProductoService;
 
     @GetMapping
-    public ResponseEntity<List<TipoProducto>> listar() throws Exception{
-        List<TipoProducto> obj = tipoProductoService.listar();
+    public ResponseEntity<Page<TipoProducto>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                     @RequestParam(name = "size", defaultValue = "5") int size,
+                                                     @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+        Pageable pageable = PageRequest.of(page,size);
+        Page<TipoProducto> resultado = tipoProductoService.listar(pageable, buscar);
 
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

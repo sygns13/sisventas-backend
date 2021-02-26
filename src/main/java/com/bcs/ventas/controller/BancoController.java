@@ -4,6 +4,9 @@ import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.Banco;
 import com.bcs.ventas.service.BancoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +24,14 @@ public class BancoController {
     private BancoService bancoService;
 
     @GetMapping
-    public ResponseEntity<List<Banco>> listar() throws Exception{
-        List<Banco> obj = bancoService.listar();
+    public ResponseEntity<Page<Banco>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                              @RequestParam(name = "size", defaultValue = "5") int size,
+                                              @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
 
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Banco> resultado = bancoService.listar(pageable, buscar);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -75,6 +82,18 @@ public class BancoController {
         bancoService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/altabaja/{id}/{valor}")
+    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+        Banco obj = bancoService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        bancoService.altabaja(id, valor);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

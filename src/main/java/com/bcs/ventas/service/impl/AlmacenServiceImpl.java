@@ -14,6 +14,9 @@ import com.bcs.ventas.model.entities.Provincia;
 import com.bcs.ventas.service.AlmacenService;
 import com.bcs.ventas.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,6 +126,27 @@ public class AlmacenServiceImpl implements AlmacenService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         return almacenMapper.listByParameterMap(params);
+    }
+
+    public Page<Almacen> listar(Pageable page, String buscar) throws Exception {
+        //return almacenMapper.getAllEntities();
+        //return almacenDAO.listar();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("BUSCAR","%"+buscar+"%");
+
+        int total = almacenMapper.getTotalElements(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<Almacen> almacenes = almacenMapper.listByParameterMap(params);
+        //Page<Almacen> resultado = new PageImpl<>(almacenes, page, totalPages);
+
+        return new PageImpl<>(almacenes, page, total);
     }
 
     @Override

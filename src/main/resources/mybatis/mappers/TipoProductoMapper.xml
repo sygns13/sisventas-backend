@@ -21,6 +21,26 @@
         select * from tipo_productos
     </select>
 
+    <select id="getTotalElements" resultType="int">
+        select COUNT(*) from tipo_productos
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="TIPO != null"> AND tipo = #{TIPO}</if>
+            <if test="TIPO_PRODUCTO_ID != null"> AND tipo_producto_id = #{TIPO_PRODUCTO_ID}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND tipo like #{BUSCAR}</if>
+        </where>
+        order by tipo, id
+    </select>
+
     <select id="listByParameterMap" resultMap="principalResultMap">
         select * from tipo_productos
         <where>
@@ -35,7 +55,12 @@
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND tipo like #{BUSCAR}</if>
         </where>
+        order by tipo, id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">

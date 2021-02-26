@@ -7,6 +7,9 @@ import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -233,6 +236,25 @@ public class ProductoServiceImpl implements ProductoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         return productoMapper.listByParameterMap(params);
+    }
+
+    public Page<Producto> listar(Pageable page, String buscar) throws Exception {
+        //return bancoDAO.listar();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("BUSCAR","%"+buscar+"%");
+
+        int total = productoMapper.getTotalElements(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<Producto> productos = productoMapper.listByParameterMap(params);
+
+        return new PageImpl<>(productos, page, total);
     }
 
     @Override
@@ -637,5 +659,35 @@ public class ProductoServiceImpl implements ProductoService {
         resultValidacion.put("warnings",warnings);
 
         return resultado;
+    }
+
+    @Override
+    public List<TipoProducto> getTipoProductos() throws Exception{
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("NO_ACTIVO",Constantes.REGISTRO_INACTIVO);
+
+        return productoMapper.getTipoProducto(params);
+    }
+
+    @Override
+    public List<Marca> getMarcas() throws Exception{
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("NO_ACTIVO",Constantes.REGISTRO_INACTIVO);
+
+        return productoMapper.getMarca(params);
+    }
+
+    @Override
+    public List<Presentacion> getPresentaciones() throws Exception{
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("NO_ACTIVO",Constantes.REGISTRO_INACTIVO);
+
+        return productoMapper.getPresentacion(params);
     }
 }

@@ -3,11 +3,13 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.PresentacionDAO;
 import com.bcs.ventas.dao.mappers.PresentacionMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
-import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.service.PresentacionService;
 import com.bcs.ventas.utils.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,8 +99,27 @@ public class PresentacionServiceImpl implements PresentacionService {
        // return presentacionMapper.getAllEntities();
         //return presentacionDAO.listar();
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
         return presentacionMapper.listByParameterMap(params);
+    }
+
+    public Page<Presentacion> listar(Pageable page, String buscar) throws Exception {
+        //return bancoDAO.listar();
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("BUSCAR","%"+buscar+"%");
+
+        int total = presentacionMapper.getTotalElements(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<Presentacion> presentacions = presentacionMapper.listByParameterMap(params);
+
+        return new PageImpl<>(presentacions, page, total);
     }
 
     @Override
@@ -180,6 +201,21 @@ public class PresentacionServiceImpl implements PresentacionService {
             throw new RuntimeException("No se pudo eliminar el Presentacion indicada, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
 
+    }
+
+    @Transactional
+    @Override
+    public void altabaja(Long id, Integer valor) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("ACTIVO", valor);
+
+        int res= presentacionMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+        }
     }
 
 
@@ -267,4 +303,6 @@ public class PresentacionServiceImpl implements PresentacionService {
 
         return resultado;
     }
+
+
 }

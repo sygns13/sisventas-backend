@@ -22,6 +22,27 @@
         select * from unidads
     </select>
 
+    <select id="getTotalElements" resultType="int">
+        select COUNT(*) from unidads
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="CANTIDAD != null"> AND cantidad = #{CANTIDAD}</if>
+            <if test="ABREVIATURA != null"> AND abreviatura = #{ABREVIATURA}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (nombre like #{BUSCAR} OR abreviatura like #{BUSCAR} OR  cantidad = #{BUSCAR_CANT} )</if>
+        </where>
+        order by cantidad, nombre, abreviatura, id
+    </select>
+
     <select id="listByParameterMap" resultMap="principalResultMap">
         select * from unidads
         <where>
@@ -37,7 +58,12 @@
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (nombre like #{BUSCAR} OR abreviatura like #{BUSCAR} OR  cantidad = #{BUSCAR_CANT} )</if>
         </where>
+        order by cantidad, nombre, abreviatura, id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">

@@ -7,12 +7,16 @@ import com.bcs.ventas.model.entities.Distrito;
 import com.bcs.ventas.model.entities.Provincia;
 import com.bcs.ventas.service.AlmacenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.net.URI;
 
@@ -24,10 +28,14 @@ public class AlmacenController {
     private AlmacenService almacenService;
 
     @GetMapping
-    public ResponseEntity<List<Almacen>> listar() throws Exception{
-        List<Almacen> obj = almacenService.listar();
+    public ResponseEntity<Page<Almacen>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                @RequestParam(name = "size", defaultValue = "5") int size,
+                                                @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
 
-        return new ResponseEntity<>(obj, HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Almacen> resultado = almacenService.listar(pageable, buscar);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
