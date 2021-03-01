@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,9 +70,11 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public Producto registrar(Producto p) throws Exception {
         //Date fechaActual = new Date();
-        LocalDateTime fechaActual = LocalDateTime.now();
-        p.setCreatedAt(fechaActual);
-        p.setUpdatedAd(fechaActual);
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        LocalDate fechaActual = LocalDate.now();
+        p.setCreatedAt(fechaActualTime);
+        p.setUpdatedAd(fechaActualTime);
+        p.setFecha(fechaActual);
 
         //TODO: Temporal hasta incluir Oauth inicio
         p.setEmpresaId(1L);
@@ -83,7 +86,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        if(p.getTipoProducto() == null || p.getTipoProducto().getId() == null){
+        if(p.getTipoProducto() == null || p.getTipoProducto().getId() == null || p.getTipoProducto().getId() == 0L){
             params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO_2_DEFAULT);
             params.put("EMPRESA_ID",p.getEmpresaId());
 
@@ -93,7 +96,7 @@ public class ProductoServiceImpl implements ProductoService {
         }
         params.clear();
 
-        if(p.getMarca() == null || p.getMarca().getId() == null){
+        if(p.getMarca() == null || p.getMarca().getId() == null || p.getMarca().getId() == 0L){
             params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO_2_DEFAULT);
             params.put("EMPRESA_ID",p.getEmpresaId());
 
@@ -103,7 +106,7 @@ public class ProductoServiceImpl implements ProductoService {
         }
         params.clear();
 
-        if(p.getPresentacion() == null || p.getPresentacion().getId() == null){
+        if(p.getPresentacion() == null || p.getPresentacion().getId() == null || p.getPresentacion().getId() == 0L) {
             params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO_2_DEFAULT);
             params.put("EMPRESA_ID",p.getEmpresaId());
 
@@ -319,7 +322,7 @@ public class ProductoServiceImpl implements ProductoService {
         DetalleUnidadProducto detalleUnidad = new  DetalleUnidadProducto();
 
         detalleUnidad.setProductoId(producto.getId());
-        detalleUnidad.setUnidadId(unidadG1.get(0).getId());
+        detalleUnidad.setUnidad(unidadG1.get(0));
         detalleUnidad.setCodigoUnidad(producto.getCodigoUnidad());
         detalleUnidad.setPrecio(producto.getPrecioUnidad());
         detalleUnidad.setCostoCompra(producto.getPrecioCompra());
@@ -403,17 +406,20 @@ public class ProductoServiceImpl implements ProductoService {
 
             detalleUnidad = detalleUnidadBD.get(0);
 
-            detalleUnidad.setCodigoUnidad(p.getCodigoUnidad());
-            detalleUnidad.setPrecio(p.getPrecioUnidad());
-            detalleUnidad.setCostoCompra(p.getPrecioCompra());
-            detalleUnidad.setUserId(p.getUserId());
+            params.clear();
+            params.put("ID", detalleUnidad.getId());
+            params.put("CODIGO_UNIDAD", p.getCodigoUnidad());
+            params.put("PRECIO", p.getPrecioUnidad());
+            params.put("COSTO_COMPRA", p.getPrecioCompra());
+            params.put("USER_ID", p.getUserId());
+            params.put("UPDATED_AT", p.getUpdatedAd());
 
-            detalleUnidadProductoDAO.modificar(detalleUnidad);
+            int resultado2 = detalleUnidadProductoMapper.updateByPrimaryKeySelective(params);
         }
 
         else{
             detalleUnidad.setProductoId(p.getId());
-            detalleUnidad.setUnidadId(unidadG1.get(0).getId());
+            detalleUnidad.setUnidad(unidadG1.get(0));
             detalleUnidad.setCodigoUnidad(p.getCodigoUnidad());
             detalleUnidad.setPrecio(p.getPrecioUnidad());
             detalleUnidad.setCostoCompra(p.getPrecioCompra());
@@ -466,21 +472,28 @@ public class ProductoServiceImpl implements ProductoService {
 
         if(p.getAfectoIsc().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
             if(p.getTipoTasaIsc() == null){
+                resultado = false;
                 error = "Ingrese el Tipo de Tasa de ISC";
                 errors.add(error);
             }
             if(p.getTasaIsc() == null || p.getTasaIsc() <= Constantes.CANTIDAD_ZERO_DOUBLE){
+                resultado = false;
                 error = "Ingrese la Tasa del ISC";
                 errors.add(error);
             }
 
-            if(p.getTipoTasaIsc().intValue() == Constantes.CANTIDAD_UNIDAD_INTEGER.intValue()){
-                if(p.getTasaIsc() < Constantes.CANTIDAD_ZERO_DOUBLE ||
-                        p.getTasaIsc() > Constantes.CANTIDAD_CIEN_DOUBLE){
+            if(p.getTipoTasaIsc() != null && p.getTipoTasaIsc().intValue() == Constantes.CANTIDAD_UNIDAD_INTEGER.intValue()){
+                if(p.getTasaIsc() != null && ( p.getTasaIsc() < Constantes.CANTIDAD_ZERO_DOUBLE ||
+                        p.getTasaIsc() > Constantes.CANTIDAD_CIEN_DOUBLE)){
+                    resultado = false;
                     error = "Si la Tasa de ISC es porcentual, el valor no puede ser menor a cero o mayor a 100";
                     errors.add(error);
                 }
             }
+        }
+        else{
+            p.setTasaIsc(null);
+            p.setTipoTasaIsc(null);
         }
 
 
@@ -549,21 +562,28 @@ public class ProductoServiceImpl implements ProductoService {
 
         if(p.getAfectoIsc().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
             if(p.getTipoTasaIsc() == null){
+                resultado = false;
                 error = "Ingrese el Tipo de Tasa de ISC";
                 errors.add(error);
             }
             if(p.getTasaIsc() == null || p.getTasaIsc() <= Constantes.CANTIDAD_ZERO_DOUBLE){
+                resultado = false;
                 error = "Ingrese la Tasa del ISC";
                 errors.add(error);
             }
 
-            if(p.getTipoTasaIsc().intValue() == Constantes.CANTIDAD_UNIDAD_INTEGER.intValue()){
-                if(p.getTasaIsc() < Constantes.CANTIDAD_ZERO_DOUBLE ||
-                        p.getTasaIsc() > Constantes.CANTIDAD_CIEN_DOUBLE){
+            if(p.getTipoTasaIsc() != null && p.getTipoTasaIsc().intValue() == Constantes.CANTIDAD_UNIDAD_INTEGER.intValue()){
+                if(p.getTasaIsc() != null && ( p.getTasaIsc() < Constantes.CANTIDAD_ZERO_DOUBLE ||
+                        p.getTasaIsc() > Constantes.CANTIDAD_CIEN_DOUBLE)){
+                    resultado = false;
                     error = "Si la Tasa de ISC es porcentual, el valor no puede ser menor a cero o mayor a 100";
                     errors.add(error);
                 }
             }
+        }
+        else{
+            p.setTasaIsc(null);
+            p.setTipoTasaIsc(null);
         }
 
 

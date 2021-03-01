@@ -22,7 +22,13 @@ public class Constantes {
 
     public static final Double CANTIDAD_ZERO_DOUBLE = 0.0;
 
+    public static final Double CANTIDAD_UNIDAD_DOUBLE = 1.0;
+
     public static final Double CANTIDAD_CIEN_DOUBLE = 100.0;
+
+    public static final Long CANTIDAD_ZERO_LONG = 0L;
+
+    public static final Long CANTIDAD_UNIDAD_LONG = 1L;
 
     //Intreso Retiro Lotes
     public static final String TIPO_ENTRADA_PRODUCTOS = "1";

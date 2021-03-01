@@ -62,7 +62,7 @@ public class Producto implements Serializable {
     private Double precioCompra;
 
     @Schema(description = "Fecha de registro del Producto")
-    @NotNull( message = "{producto.fecha.notnull}")
+    //@NotNull( message = "{producto.fecha.notnull}")
     @Column(name="fecha", nullable = true)
     private LocalDate fecha;
 
@@ -107,12 +107,12 @@ public class Producto implements Serializable {
     private Integer afectoIsc;
 
     @Schema(description = "Tipo de Tasa de ISC del Producto")
-    @NotNull( message = "{producto.tipo_tasa_isc.notnull}")
+    //@NotNull( message = "{producto.tipo_tasa_isc.notnull}")
     @Column(name="tipo_tasa_isc", nullable = true)
     private Integer tipoTasaIsc;
 
     @Schema(description = "Tasa de ISC del Producto")
-    @NotNull( message = "{producto.tasa_isc.notnull}")
+    //@NotNull( message = "{producto.tasa_isc.notnull}")
     @Column(name="tasa_isc", nullable = true)
     private Double tasaIsc;
 

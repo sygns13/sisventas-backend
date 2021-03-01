@@ -32,10 +32,17 @@ public class DetalleUnidadProducto implements Serializable {
     @Column(name="producto_id", nullable = true)
     private Long productoId;
 
+    /*
     @Schema(description = "ID de la Unidad")
     @NotNull( message = "{detalleunidadproducto.unidad_id.notnull}")
     @Column(name="unidad_id", nullable = true)
     private Long unidadId;
+     */
+
+    @Schema(description = "Unidad")
+    @ManyToOne
+    @JoinColumn(name = "unidad_id", nullable = false, foreignKey = @ForeignKey(name = "FK_unidad"))
+    private Unidad unidad;
 
     @Schema(description = "Código Unitario de la Unidad del Producto")
     @NotNull( message = "{detalleunidadproducto.codigo_unidad.notnull}")
@@ -59,12 +66,12 @@ public class DetalleUnidadProducto implements Serializable {
     private Double costoCompra;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{detalleunidadproducto.user_id.notnull}")
+    //@NotNull( message = "{detalleunidadproducto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{detalleunidadproducto.empresa_id.notnull}")
+    //@NotNull( message = "{detalleunidadproducto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
@@ -94,10 +101,10 @@ public class DetalleUnidadProducto implements Serializable {
     public DetalleUnidadProducto() {
     }
 
-    public DetalleUnidadProducto(Long id, Long productoId, Long unidadId, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, Long almacenId) {
+    public DetalleUnidadProducto(Long id, Long productoId, Unidad unidad, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, Long almacenId) {
         this.id = id;
         this.productoId = productoId;
-        this.unidadId = unidadId;
+        this.unidad = unidad;
         this.codigoUnidad = codigoUnidad;
         this.precio = precio;
         this.costoCompra = costoCompra;
@@ -108,10 +115,10 @@ public class DetalleUnidadProducto implements Serializable {
         this.almacenId = almacenId;
     }
 
-    public DetalleUnidadProducto(Long id, Long productoId, Long unidadId, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, Long almacenId) {
+    public DetalleUnidadProducto(Long id, Long productoId, Unidad unidad, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, Long almacenId) {
         this.id = id;
         this.productoId = productoId;
-        this.unidadId = unidadId;
+        this.unidad = unidad;
         this.codigoUnidad = codigoUnidad;
         this.precio = precio;
         this.costoCompra = costoCompra;
@@ -140,12 +147,12 @@ public class DetalleUnidadProducto implements Serializable {
         this.productoId = productoId;
     }
 
-    public Long getUnidadId() {
-        return unidadId;
+    public Unidad getUnidad() {
+        return unidad;
     }
 
-    public void setUnidadId(Long unidadId) {
-        this.unidadId = unidadId;
+    public void setUnidad(Unidad unidad) {
+        this.unidad = unidad;
     }
 
     public String getCodigoUnidad() {

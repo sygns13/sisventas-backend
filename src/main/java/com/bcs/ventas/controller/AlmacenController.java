@@ -105,21 +105,21 @@ public class AlmacenController {
 
     //Otros Endpoints
 
-    @GetMapping("departamentos/{idPais}")
+    @GetMapping("/departamentos/{idPais}")
     public ResponseEntity<List<Departamento>> getDepartamentos(@PathVariable("idPais") Long idPais) throws Exception{
         List<Departamento> obj = almacenService.getDepartamentos(idPais);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
-    @GetMapping("provincias/{idDep}")
+    @GetMapping("/provincias/{idDep}")
     public ResponseEntity<List<Provincia>> getProvincias(@PathVariable("idDep") Long idDep) throws Exception{
         List<Provincia> obj = almacenService.getProvincias(idDep);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
-    @GetMapping("distritos/{idProv}")
+    @GetMapping("/distritos/{idProv}")
     public ResponseEntity<List<Distrito>> getDistritos(@PathVariable("idProv") Long idProv) throws Exception{
         List<Distrito> obj = almacenService.getDistritos(idProv);
 
