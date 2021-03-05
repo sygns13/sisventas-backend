@@ -23,7 +23,7 @@ public interface GeneralService<T, ID> {
 
     int grabarRectificar(T t) throws Exception;
 
-    void grabarEliminar(ID id);
+    void grabarEliminar(ID id) throws Exception;
 
     boolean validacionRegistro(T t, Map<String, Object> resultValidacion);
 

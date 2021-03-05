@@ -38,27 +38,27 @@ public class Stock implements Serializable {
 
     @Schema(description = "Cantidad de Stock de Producto por Local")
     @NotNull( message = "{stocks.cantidad.notnull}")
-    @DecimalMin(value = "0.01", message = "{stocks.cantidad.min}")
+    @DecimalMin(value = "0.00", message = "{stocks.cantidad.min}")
     @DecimalMax(value = "999999999", message = "{stocks.cantidad.max}")
     @Column(name="cantidad", nullable = true)
     private Double cantidad;
 
     @Schema(description = "ID User Padre")
-    @NotNull( message = "{stocks.user_id.notnull}")
+    //@NotNull( message = "{stocks.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
     @Schema(description = "ID Empresa Padre")
-    @NotNull( message = "{stocks.empresa_id.notnull}")
+    //@NotNull( message = "{stocks.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
     @Schema(description = "Estado de Stock de Producto")
-    @Column(name="activo", nullable = true)
+    //@Column(name="activo", nullable = true)
     private Integer activo;
 
     @Schema(description = "Borrado Lógico de Stock de Producto")
-    @Column(name="borrado", nullable = true)
+    //@Column(name="borrado", nullable = true)
     private Integer borrado;
 
     @Schema(description = "Fecha de Creación del Registro")

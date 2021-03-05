@@ -18,6 +18,115 @@
         <result property="updatedAd" column="updated_at" />
     </resultMap>
 
+    <resultMap id="principalResultMapDTOLoteAlmacenUnidad" type="com.bcs.ventas.model.dto.LoteAlmacenUnidadDTO">
+
+        <result property="cantidadTotal" column="cantidad_total" />
+        <result property="lote.id" column="l_id" />
+        <result property="lote.nombre" column="l_nombre" />
+        <result property="lote.fechaIngreso" column="l_fecha_ingreso" />
+        <result property="lote.fechaVencimiento" column="l_fecha_vencimiento" />
+        <result property="lote.activoVencimiento" column="l_activo_vencimiento" />
+        <result property="lote.productoId" column="l_producto_id" />
+        <result property="lote.cantidad" column="l_cantidad" />
+        <result property="lote.observacion" column="l_observacion" />
+        <result property="lote.activo" column="l_activo" />
+        <result property="lote.borrado" column="l_borrado" />
+        <result property="almacen.id" column="a_id" />
+        <result property="almacen.nombre" column="a_nombre" />
+        <result property="almacen.direccion" column="a_direccion" />
+        <result property="almacen.activo" column="a_activo" />
+        <result property="almacen.borrado" column="a_borrado" />
+        <result property="almacen.codigo" column="a_codigo" />
+        <result property="unidad.id" column="u_id" />
+        <result property="unidad.nombre" column="u_nombre" />
+        <result property="unidad.cantidad" column="u_cantidad" />
+        <result property="unidad.abreviatura" column="u_abreviatura" />
+        <result property="unidad.activo" column="u_activo" />
+        <result property="unidad.borrado" column="u_borrado" />
+
+    </resultMap>
+
+
+    <resultMap id="principalResultMapDTOAlmacenStock" type="com.bcs.ventas.model.dto.AlmacenStockDTO">
+
+        <result property="cantidadTotal" column="cantidad_total" />
+        <result property="editar" column="editar" />
+        <result property="almacen.id" column="a_id" />
+        <result property="almacen.nombre" column="a_nombre" />
+        <result property="almacen.direccion" column="a_direccion" />
+        <result property="almacen.activo" column="a_activo" />
+        <result property="almacen.borrado" column="a_borrado" />
+        <result property="almacen.codigo" column="a_codigo" />
+
+        <result property="stock.id" column="s_id" />
+        <result property="stock.productoId" column="s_producto_id" />
+        <result property="stock.cantidad" column="s_cantidad" />
+        <result property="stock.activo" column="s_activo" />
+        <result property="stock.borrado" column="s_borrado" />
+
+    </resultMap>
+
+
+    <select id="listDTOByParameterMapLoteAlmacenStock" resultMap="principalResultMapDTOAlmacenStock">
+        select
+        a.id as a_id, a.nombre as a_nombre, a.direccion as a_direccion, a.activo as a_activo, a.borrado as a_borrado, a.codigo as a_codigo,
+        ifnull(s.id, '0') as s_id,
+        ifnull(s.producto_id, '0') as s_producto_id,
+        ifnull(s.cantidad, '0' ) as s_cantidad,
+        ifnull(s.cantidad, '0' ) as cantidadTotal,
+        '0' as editar,
+        s.activo as s_activo, s.borrado as s_borrado
+        from almacens a
+        left join stocks s on  s.almacen_id = a.id
+                        <if test="PRODUCTO_ID != null"> AND s.producto_id = #{PRODUCTO_ID}</if>
+                        <if test="ACTIVO_STOCK != null"> AND s.activo = #{ACTIVO_STOCK}</if>
+                        <if test="NO_BORRADO_STOCK != null"> AND s.borrado != #{NO_BORRADO_STOCK}</if>
+        <where>
+            <if test="EMPRESA_ID != null"> AND a.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO_ALMACEN != null"> AND a.activo = #{ACTIVO_ALMACEN}</if>
+            <if test="NO_BORRADO_ALMACEN != null"> AND a.borrado != #{NO_BORRADO_ALMACEN}</if>
+        </where>
+        ORDER BY a.id, s.cantidad, s.id
+    </select>
+
+
+    <select id="listDTOByParameterMapLoteAlmacenUnidad" resultMap="principalResultMapDTOLoteAlmacenUnidad">
+        select
+            a.id as a_id, a.nombre as a_nombre, a.direccion as a_direccion, a.activo as a_activo, a.borrado as a_borrado, a.codigo as a_codigo,
+            u.id as u_id,
+            u.nombre as u_nombre,
+            u.cantidad as u_cantidad,
+            u.abreviatura as u_abreviatura,
+            u.activo as u_activo,
+            u.borrado as u_borrado,
+            l.id as l_id,
+            l.nombre as l_nombre,
+            l.fecha_ingreso as l_fecha_ingreso,
+            l.fecha_vencimiento as l_fecha_vencimiento,
+            l.activo_vencimiento as l_activo_vencimiento,
+            l.producto_id as l_producto_id,
+            l.cantidad as l_cantidad,
+            l.observacion as l_observacion,
+            l.activo as l_activo,
+            l.borrado as l_borrado,
+            (l.cantidad * u.cantidad) as cantidad_total
+            from almacens a
+            inner join lotes l on  l.almacen_id = a.id
+                                <if test="PRODUCTO_ID != null"> AND l.producto_id = #{PRODUCTO_ID}</if>
+                                <if test="CANTIDAD_ZERO != null"> AND l.cantidad > #{CANTIDAD_ZERO}</if>
+                                <if test="ACTIVO_LOTE != null"> AND l.activo = #{ACTIVO_LOTE}</if>
+                                <if test="NO_BORRADO_LOTE != null"> AND l.borrado != #{NO_BORRADO_LOTE}</if>
+            inner join unidads u on u.id = l.unidad_id
+        <where>
+            <if test="EMPRESA_ID != null"> AND a.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO_ALMACEN != null"> AND a.activo = #{ACTIVO_ALMACEN}</if>
+            <if test="NO_BORRADO_ALMACEN != null"> AND a.borrado != #{NO_BORRADO_ALMACEN}</if>
+        </where>
+        ORDER BY a.id, l.id, u.cantidad, u.id
+    </select>
+
+
+
     <select id="getAllEntities" resultMap="principalResultMap">
         select * from stocks
     </select>

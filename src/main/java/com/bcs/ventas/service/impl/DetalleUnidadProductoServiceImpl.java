@@ -20,12 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoService {
 
@@ -160,7 +162,7 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
 
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public DetalleUnidadProducto grabarRegistro(DetalleUnidadProducto detalleUnidadProducto) throws Exception {
 
@@ -202,19 +204,24 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
         return detalleUnidadProducto;
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public int grabarRectificar(DetalleUnidadProducto detalleUnidadProducto) throws Exception {
         return 0;
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void grabarEliminar(Long id) {
+
+        LocalDateTime fechaActualDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fechaUpdate = fechaActualDateTime.format(formatter);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("UPDATED_AT",fechaUpdate);
 
         int res= detalleUnidadProductoMapper.updateByPrimaryKeySelective(params);
 

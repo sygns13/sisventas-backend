@@ -31,15 +31,15 @@ public class Constantes {
     public static final Long CANTIDAD_UNIDAD_LONG = 1L;
 
     //Intreso Retiro Lotes
-    public static final String TIPO_ENTRADA_PRODUCTOS = "1";
-    public static final String TIPO_RETIRO_PRODUCTOS = "0";
+    public static final Integer TIPO_ENTRADA_PRODUCTOS = 1;
+    public static final Integer TIPO_RETIRO_PRODUCTOS = 0;
     public static final String MOTIVO_INGRESO_CREACION_LOTE = "Ingreso de Productos por Creación de Lote en el Módulo de Gestión de Stocks";
     public static final String MOTIVO_SALIDA_ELIMINACION_LOTE = "Salida de Productos por Eliminación de Lote en el Módulo de Gestión de Stocks";
     public static final String MOTIVO_INGRESO_MODIFICACION_LOTE = "Ingreso de Productos por Modificación de Lote en el Módulo de Gestión de Stocks";
     public static final String MOTIVO_SALIDA_MODIFICACION_LOTE = "Salida de Productos por Modificación de Lote en el Módulo de Gestión de Stocks";
 
     //Intreso Retiro Stocks
-    public static final String ID_INGRESO_SALIDA_STOCK_NO_LOTE = "0";
+    public static final Long ID_INGRESO_SALIDA_STOCK_NO_LOTE = 0L;
     public static final String MOTIVO_INGRESO_CREACION_STOCK = "Ingreso de Productos por Definición de Nuevo Stock en el Módulo de Gestión de Stocks";
     public static final String MOTIVO_INGRESO_MODIFICACION_STOCK = "Ingreso de Productos por Modificación de Stock en el Módulo de Gestión de Stocks";
     public static final String MOTIVO_SALIDA_MODIFICACION_STOCK = "Salida de Productos por Modificación de Stock en el Módulo de Gestión de Stocks";

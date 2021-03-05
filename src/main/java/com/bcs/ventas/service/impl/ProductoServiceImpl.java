@@ -18,12 +18,14 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class ProductoServiceImpl implements ProductoService {
 
@@ -305,7 +307,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     //TODO: Métodos de Grabado
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public Producto grabarRegistro(Producto p) throws Exception {
 
@@ -341,7 +343,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public int grabarRectificar(Producto p) throws Exception {
         //Producto producto = productoDAO.modificar(p);
@@ -439,13 +441,18 @@ public class ProductoServiceImpl implements ProductoService {
         return resultado;
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void grabarEliminar(Long id) {
+
+        LocalDateTime fechaActualDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fechaUpdate = fechaActualDateTime.format(formatter);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("UPDATED_AT",fechaUpdate);
 
 
         int res= productoMapper.updateByPrimaryKeySelective(params);

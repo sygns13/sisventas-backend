@@ -103,6 +103,43 @@
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
+
+
+
+    <select id="listByParameterMapOrderId" resultMap="principalResultMap">
+        select a.id, a.nombre, a.direccion, a.empresa_id, a.user_id, a.activo, a.borrado, a.created_at, a.updated_at, a.distrito_id, a.codigo
+        , d.id as id_istrito, d.nombre as distrito
+        , p.id as id_provincia, p.nombre as provincia
+        , de.id as id_departamento, de.nombre as departamento
+        , pa.id as id_pais, pa.nombre as pais , pa.inicial as pais_inicial
+        from almacens a
+        inner join distritos d on a.distrito_id = d.id
+        inner join provincias p on d.provincia_id = p.id
+        inner join departamentos de on p.departamento_id = de.id
+        inner join pais pa on de.pais_id = pa.id
+        <where>
+            <if test="ID != null"> AND a.id = #{ID}</if>
+            <if test="NOMBRE != null"> AND a.nombre = #{NOMBRE}</if>
+            <if test="DIRECCION != null"> AND a.direccion = #{DIRECCION}</if>
+            <if test="EMPRESA_ID != null"> AND a.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND a.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND a.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND a.borrado = #{BORRADO}</if>
+            <if test="DISTRITO_ID != null"> AND a.distrito_id = #{DISTRITO_ID}</if>
+            <if test="CODIGO != null"> AND a.codigo = #{CODIGO}</if>
+
+            <if test="NO_ID != null"> AND a.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND a.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND a.activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (a.nombre like #{BUSCAR} or pa.nombre like #{BUSCAR} or  de.nombre like #{BUSCAR} or p.nombre like #{BUSCAR}
+                or  d.nombre like #{BUSCAR} or a.direccion like #{BUSCAR})</if>
+        </where>
+        order by a.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+    </select>
+
     <update id="updateByPrimaryKeySelective">
     update almacens
     <set>

@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class TipoProductoServiceImpl implements TipoProductoService {
 
@@ -164,13 +166,18 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void altabaja(Long id, Integer valor) throws Exception {
+
+        LocalDateTime fechaActualDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fechaUpdate = fechaActualDateTime.format(formatter);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("UPDATED_AT",fechaUpdate);
 
         int res= tipoProductoMapper.updateByPrimaryKeySelective(params);
 
@@ -183,13 +190,13 @@ public class TipoProductoServiceImpl implements TipoProductoService {
 
     //TODO: Métodos de Grabado
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public TipoProducto grabarRegistro(TipoProducto a) throws Exception {
         return tipoProductoDAO.registrar(a);
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public int grabarRectificar(TipoProducto t) throws Exception {
         //return tipoProductoDAO.modificar(a);
@@ -204,13 +211,18 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         return tipoProductoMapper.updateByPrimaryKeySelective(params);
     }
 
-    @Transactional
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public void grabarEliminar(Long id) {
+
+        LocalDateTime fechaActualDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fechaUpdate = fechaActualDateTime.format(formatter);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("UPDATED_AT",fechaUpdate);
 
         int res= tipoProductoMapper.updateByPrimaryKeySelective(params);
 
