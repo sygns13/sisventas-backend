@@ -3,9 +3,11 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.*;
 import com.bcs.ventas.dao.mappers.*;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.FiltroInventario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -260,6 +262,81 @@ public class ProductoServiceImpl implements ProductoService {
         List<Producto> productos = productoMapper.listByParameterMap(params);
 
         return new PageImpl<>(productos, page, total);
+    }
+
+    @Override
+    public Page<InventarioDTO> getInventario(Pageable page, FiltroInventario filtros) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        Integer empresa_id = 1;
+
+        // params.put("BUSCAR","%"+buscar+"%");
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", empresa_id);
+        params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+
+        List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
+        params.clear();
+
+        if(unidadG1.size() > 0 && unidadG1.get(0) != null && unidadG1.get(0).getId() != null){
+            params.put("UNIDAD_ID", unidadG1.get(0).getId());
+        }
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+        }
+        /*else{
+            params.put("ALMACEN_ID", Constantes.CANTIDAD_ZERO);
+        }*/
+
+        if(filtros.getTipoProductoId() != null && filtros.getTipoProductoId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("TIPO_PRODUCTO_ID",filtros.getTipoProductoId());
+        }
+
+        if(filtros.getMarcaId() != null && filtros.getMarcaId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("MARCA_ID",filtros.getMarcaId());
+        }
+
+        if(filtros.getPresentacionId() != null && filtros.getPresentacionId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("PRESENTACION_ID",filtros.getPresentacionId());
+        }
+
+        if(filtros.getPrioridad() != null && filtros.getPrioridad().trim().length() > 0){
+            params.put("PRIORIDAD", filtros.getPrioridad());
+        }
+
+        if(filtros.getCodigo() != null && filtros.getCodigo().trim().length() > 0){
+            params.put("CODIGO", "%"+filtros.getCodigo()+"%");
+        }
+
+        if(filtros.getNombre() != null && filtros.getNombre().trim().length() > 0){
+            params.put("NOMBRE", "%"+filtros.getNombre()+"%");
+        }
+
+        if(filtros.getComposicion() != null && filtros.getComposicion().trim().length() > 0){
+            params.put("COMPOSICION", "%"+filtros.getComposicion()+"%");
+        }
+
+        if(filtros.getUbicacion() != null && filtros.getUbicacion().trim().length() > 0){
+            params.put("UBICACION", "%"+filtros.getUbicacion()+"%");
+        }
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+
+        int total = productoMapper.getTotalElementsInventario(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<InventarioDTO> inventario = productoMapper.listByParameterMapInventario(params);
+
+        return new PageImpl<>(inventario, page, total);
+
     }
 
     @Override

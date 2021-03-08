@@ -1,5 +1,6 @@
 package com.bcs.ventas.dao.mappers;
 
+import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.model.entities.Producto;
@@ -20,4 +21,8 @@ public interface ProductoMapper extends GeneralMapper<Producto> {
     List<Presentacion> getPresentacion(Map<String, Object> params);
 
     int getTotalElements(Map<String, Object> var1);
+
+    int getTotalElementsInventario(Map<String, Object> var1);
+
+    List<InventarioDTO> listByParameterMapInventario(Map<String, Object> var1);
 }

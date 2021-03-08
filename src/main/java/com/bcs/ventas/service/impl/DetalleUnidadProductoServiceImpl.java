@@ -58,7 +58,7 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
         params.put("EMPRESA_ID", idEmpresa);
-        return almacenMapper.listByParameterMap(params);
+        return almacenMapper.listByParameterMapOrderId(params);
     }
 
     @Override

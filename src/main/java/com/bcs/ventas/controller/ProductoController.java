@@ -1,8 +1,11 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
+import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.FiltroInventario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +85,20 @@ public class ProductoController {
         productoService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    //EndPoint Inventario
+
+    @PostMapping("/productoinventario")
+    public ResponseEntity<Page<InventarioDTO>> getProductoInventario(@RequestBody FiltroInventario filtros) throws Exception{
+
+        if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
+        if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
+
+        Pageable pageable = PageRequest.of(filtros.getPage().intValue(), filtros.getSize().intValue());
+        Page<InventarioDTO> inventario = productoService.getInventario(pageable, filtros);
+
+        return new ResponseEntity<>(inventario, HttpStatus.OK);
     }
 
 
