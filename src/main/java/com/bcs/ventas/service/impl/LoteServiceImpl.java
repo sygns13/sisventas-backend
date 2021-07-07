@@ -87,6 +87,41 @@ public class LoteServiceImpl implements LoteService {
     }
 
     @Override
+    public Lote registrarNuevoLote(Lote lote) throws Exception {
+        LocalDateTime fechaActual = LocalDateTime.now();
+        lote.setCreatedAt(fechaActual);
+        lote.setUpdatedAd(fechaActual);
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        lote.setEmpresaId(1L);
+        lote.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
+        lote.setActivo(Constantes.REGISTRO_ACTIVO);
+        lote.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+
+        if(lote.getNombre() == null)    lote.setNombre("");
+        lote.setNombre(lote.getNombre());
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionRegistroNuevoLote(lote, resultValidacion);
+
+        if(validacion)
+            return this.grabarRegistroNuevoLote(lote);
+
+        String errorValidacion = "Error de validación Método Registrar Lote";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    @Override
     public int modificar(Lote lote) throws Exception {
         //Date fechaActual = new Date();
         LocalDateTime fechaActual = LocalDateTime.now();
@@ -218,6 +253,80 @@ public class LoteServiceImpl implements LoteService {
 
         retiroEntradaProducto.setFecha(fechaActual);
         retiroEntradaProducto.setMotivo(Constantes.MOTIVO_INGRESO_CREACION_LOTE);
+        retiroEntradaProducto.setLoteId(lote.getId());
+        retiroEntradaProducto.setHora(horaActual);
+        retiroEntradaProducto.setCantidadReal(lote.getCantidad());
+        retiroEntradaProducto.setUserId(lote.getUserId());
+        retiroEntradaProducto.setEmpresaId(lote.getEmpresaId());
+        retiroEntradaProducto.setActivo(Constantes.REGISTRO_ACTIVO);
+        retiroEntradaProducto.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+        retiroEntradaProducto.setTipo(Constantes.TIPO_ENTRADA_PRODUCTOS);
+        retiroEntradaProducto.setAlmacenId(lote.getAlmacenId());
+        retiroEntradaProducto.setProductoId(lote.getProductoId());
+        retiroEntradaProducto.setCreatedAt(fechaActualDateTime);
+        retiroEntradaProducto.setUpdatedAd(fechaActualDateTime);
+
+
+        retiroEntradaProductoDAO.registrar(retiroEntradaProducto);
+
+        return lote;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private Lote grabarRegistroNuevoLote(Lote lote) throws Exception {
+
+        if(lote.getActivoVencimiento().intValue() == Constantes.REGISTRO_INACTIVO.intValue()){
+            lote.setFechaVencimiento(null);
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",lote.getEmpresaId());
+        params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+
+        List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
+
+        lote.setUnidadId(unidadG1.get(0).getId());
+
+        lote = loteDAO.registrar(lote);
+
+        params.clear();
+        params.put("PRODUCTO_ID",lote.getProductoId());
+        params.put("ALMACEN_ID",lote.getAlmacenId());
+        params.put("EMPRESA_ID",lote.getEmpresaId());
+
+        List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+        if(stockG1.size()>0){
+            Stock stockModificar = stockG1.get(0);
+            stockModificar.setCantidad(stockModificar.getCantidad() + lote.getCantidad());
+            stockModificar.setUpdatedAd(lote.getUpdatedAd());
+
+            stockDAO.modificar(stockModificar);
+        }
+        else{
+            Stock stockRegistrar = new Stock();
+            stockRegistrar.setAlmacenId(lote.getAlmacenId());
+            stockRegistrar.setProductoId(lote.getProductoId());
+            stockRegistrar.setCantidad(lote.getCantidad());
+            stockRegistrar.setActivo(Constantes.REGISTRO_ACTIVO);
+            stockRegistrar.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+            stockRegistrar.setUserId(lote.getUserId());
+            stockRegistrar.setEmpresaId(lote.getEmpresaId());
+            stockRegistrar.setCreatedAt(lote.getCreatedAt());
+            stockRegistrar.setUpdatedAd(lote.getUpdatedAd());
+
+            stockDAO.registrar(stockRegistrar);
+        }
+
+        LocalDate fechaActual = LocalDate.now();
+        LocalTime horaActual = LocalTime.now();
+        LocalDateTime fechaActualDateTime = LocalDateTime.now();
+
+        RetiroEntradaProducto retiroEntradaProducto = new RetiroEntradaProducto();
+
+        retiroEntradaProducto.setFecha(fechaActual);
+        retiroEntradaProducto.setMotivo(lote.getMotivo());
         retiroEntradaProducto.setLoteId(lote.getId());
         retiroEntradaProducto.setHora(horaActual);
         retiroEntradaProducto.setCantidadReal(lote.getCantidad());
@@ -423,6 +532,34 @@ public class LoteServiceImpl implements LoteService {
         {
             resultado = false;
             error = "Debe de ingresar la fecha de Vencimiento si indicó que el vencimiento del lote está activo.";
+            errors.add(error);
+        }
+
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+
+    private boolean validacionRegistroNuevoLote(Lote lote, Map<String, Object> resultValidacion) {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(lote.getActivoVencimiento().intValue() == Constantes.REGISTRO_ACTIVO.intValue() && lote.getFechaVencimiento() == null)
+        {
+            resultado = false;
+            error = "Debe de ingresar la fecha de Vencimiento si indicó que el vencimiento del lote está activo.";
+            errors.add(error);
+        }
+
+        if(lote.getMotivo() == null || lote.getMotivo().isEmpty()){
+            resultado = false;
+            error = "Debe de ingresar el motivo del Ingreso del Nuevo Lote.";
             errors.add(error);
         }
 

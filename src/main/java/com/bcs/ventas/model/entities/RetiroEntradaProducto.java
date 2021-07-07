@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -31,10 +35,13 @@ public class RetiroEntradaProducto implements Serializable {
     private LocalDate fecha;
 
     @Schema(description = "Motivo de Entrada - Retiro de Producto")
+    @NotNull( message = "{retiroEntradaProductos.motivo.notnull}")
+    @Size(min = 1, max = 5000, message = "{retiroEntradaProductos.motivo.size}")
     @Column(name="motivo", nullable = true)
     private String motivo;
 
     @Schema(description = "Id Lote Padre")
+    @NotNull( message = "{retiroEntradaProductos.loteId.notnull}")
     @Column(name="lote_id", nullable = true)
     private Long loteId;
 
@@ -45,18 +52,24 @@ public class RetiroEntradaProducto implements Serializable {
     private LocalTime hora;
 
     @Schema(description = "Cantidad Real de Entrada - Retiro de Producto")
+    @NotNull( message = "{retiroEntradaProductos.cantidadReal.notnull}")
+    @Min(value = 0, message = "{retiroEntradaProductos.cantidadReal.min}")
+    @Max(value = 999999999, message = "{retiroEntradaProductos.cantidadReal.max}")
     @Column(name="cantidad_real", nullable = true)
     private Double cantidadReal;
 
     @Schema(description = "Tipo de Entrada - Retiro de Producto")
+    @NotNull( message = "{retiroEntradaProductos.tipo.notnull}")
     @Column(name="tipo", nullable = true)
     private Integer tipo;
 
     @Schema(description = "Id Almacen Padre")
+    @NotNull( message = "{retiroEntradaProductos.almacenId.notnull}")
     @Column(name="almacen_id", nullable = true)
     private Long almacenId;
 
     @Schema(description = "Id Producto Padre")
+    @NotNull( message = "{retiroEntradaProductos.productoId.notnull}")
     @Column(name="producto_id", nullable = true)
     private Long productoId;
 

@@ -7,6 +7,7 @@ import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroInventario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -322,6 +323,51 @@ public class ProductoServiceImpl implements ProductoService {
         if(filtros.getUbicacion() != null && filtros.getUbicacion().trim().length() > 0){
             params.put("UBICACION", "%"+filtros.getUbicacion()+"%");
         }
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+
+        int total = productoMapper.getTotalElementsInventario(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<InventarioDTO> inventario = productoMapper.listByParameterMapInventario(params);
+
+        return new PageImpl<>(inventario, page, total);
+
+    }
+
+    @Override
+    public Page<InventarioDTO> getProductosGestionLotes(Pageable page, FiltroGeneral filtros) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        Integer empresa_id = 1;
+
+        // params.put("BUSCAR","%"+buscar+"%");
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", empresa_id);
+        params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+
+        List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
+        params.clear();
+
+        if(unidadG1.size() > 0 && unidadG1.get(0) != null && unidadG1.get(0).getId() != null){
+            params.put("UNIDAD_ID", unidadG1.get(0).getId());
+        }
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+        }
+
+        if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
+            params.put("BUSCAR",filtros.getPalabraClave());
+        }
+
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);

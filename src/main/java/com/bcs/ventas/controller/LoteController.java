@@ -22,7 +22,6 @@ public class LoteController {
     @PostMapping
     public ResponseEntity<Lote> registrar(@Valid @RequestBody Lote a) throws Exception{
         a.setId(null);
-        a.setId(null);
         Lote obj = loteService.registrar(a);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
@@ -56,5 +55,16 @@ public class LoteController {
         loteService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    //Otros endpoints
+    @PostMapping("/ingresolote")
+    public ResponseEntity<Lote> registrarEntradaNuevoLote(@Valid @RequestBody Lote a) throws Exception{
+        a.setId(null);
+        a.setId(null);
+        Lote obj = loteService.registrarNuevoLote(a);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+
+        return  ResponseEntity.created(location).build();
     }
 }

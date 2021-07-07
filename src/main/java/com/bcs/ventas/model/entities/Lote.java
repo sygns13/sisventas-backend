@@ -103,10 +103,14 @@ public class Lote implements Serializable {
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
 
+    @Schema(description = "Motivo de Ingreso o Salida de Lotes")
+    @Transient
+    private String motivo;
+
     public Lote() {
     }
 
-    public Lote(Long id, String nombre, LocalDate fechaIngreso, LocalDate fechaVencimiento, Integer activoVencimiento, Long productoId, Double cantidad, String observacion, Long almacenId, Long unidadId, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public Lote(Long id, String nombre, LocalDate fechaIngreso, LocalDate fechaVencimiento, Integer activoVencimiento, Long productoId, Double cantidad, String observacion, Long almacenId, Long unidadId, Long userId, Long empresaId, Integer activo, Integer borrado, String motivo) {
         this.id = id;
         this.nombre = nombre;
         this.fechaIngreso = fechaIngreso;
@@ -121,9 +125,10 @@ public class Lote implements Serializable {
         this.empresaId = empresaId;
         this.activo = activo;
         this.borrado = borrado;
+        this.motivo = motivo;
     }
 
-    public Lote(Long id, String nombre, LocalDate fechaIngreso, LocalDate fechaVencimiento, Integer activoVencimiento, Long productoId, Double cantidad, String observacion, Long almacenId, Long unidadId, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Lote(Long id, String nombre, LocalDate fechaIngreso, LocalDate fechaVencimiento, Integer activoVencimiento, Long productoId, Double cantidad, String observacion, Long almacenId, Long unidadId, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, String motivo) {
         this.id = id;
         this.nombre = nombre;
         this.fechaIngreso = fechaIngreso;
@@ -140,6 +145,7 @@ public class Lote implements Serializable {
         this.borrado = borrado;
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
+        this.motivo = motivo;
     }
 
     public Long getId() {
@@ -268,5 +274,13 @@ public class Lote implements Serializable {
 
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
     }
 }

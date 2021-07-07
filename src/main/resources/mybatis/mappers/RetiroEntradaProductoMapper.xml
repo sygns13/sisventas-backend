@@ -23,9 +23,155 @@
         <result property="updatedAd" column="updated_at" />
     </resultMap>
 
+    <resultMap id="principalResultMapGeneral" type="com.bcs.ventas.model.dto.RetiroEntradaProductoDTO">
+        <result property="retiroEntradaProducto.id" column="r_id" />
+        <result property="retiroEntradaProducto.fecha" column="r_fecha" />
+        <result property="retiroEntradaProducto.loteId" column="r_lote_id" />
+        <result property="retiroEntradaProducto.motivo" column="r_motivo" />
+        <result property="retiroEntradaProducto.hora" column="r_hora" />
+        <result property="retiroEntradaProducto.cantidadReal" column="r_cantidad_real" />
+        <result property="retiroEntradaProducto.tipo" column="r_tipo" />
+        <result property="retiroEntradaProducto.almacenId" column="r_almacen_id" />
+        <result property="retiroEntradaProducto.productoId" column="r_producto_id" />
+        <result property="retiroEntradaProducto.userId" column="u_id" />
+        <result property="retiroEntradaProducto.activo" column="r_activo" />
+        <result property="bretiroEntradaProducto.orrado" column="r_borrado" />
+        <result property="retiroEntradaProducto.createdAt" column="created_at" />
+        <result property="retiroEntradaProducto.updatedAd" column="updated_at" />
+
+        <result property="producto.id" column="id" />
+        <result property="producto.nombre" column="nombre" />
+        <result property="producto.stockMinimo" column="stock_minimo" />
+        <result property="producto.precioUnidad" column="precio_unidad" />
+        <result property="producto.precioCompra" column="precio_compra" />
+        <result property="producto.fecha" column="fecha" />
+        <result property="producto.codigoUnidad" column="codigo_unidad" />
+        <result property="producto.codigoProducto" column="codigo_producto" />
+        <result property="producto.composicion" column="composicion" />
+        <result property="producto.prioridad" column="prioridad" />
+        <result property="producto.ubicacion" column="ubicacion" />
+        <result property="producto.activoLotes" column="activo_lotes" />
+        <result property="producto.afectoIsc" column="afecto_isc" />
+        <result property="producto.tipoTasaIsc" column="tipo_tasa_isc" />
+        <result property="producto.tasaIsc" column="tasa_isc" />
+        <result property="producto.afectoIgv" column="afecto_igv" />
+        <result property="producto.empresaId" column="empresa_id" />
+        <result property="producto.userId" column="user_id" />
+        <result property="producto.activo" column="activo" />
+        <result property="producto.borrado" column="borrado" />
+        <result property="producto.createdAt" column="created_at" />
+        <result property="producto.updatedAd" column="updated_at" />
+        <result property="producto.tipoProducto.id" column="tp_id" />
+        <result property="producto.tipoProducto.tipo" column="tp_tipo" />
+        <result property="producto.tipoProducto.tipoProductoId" column="tp_tipo_producto_id" />
+        <result property="producto.tipoProducto.activo" column="tp_activo" />
+        <result property="producto.tipoProducto.borrado" column="tp_borrado" />
+        <result property="producto.marca.id" column="m_id" />
+        <result property="producto.marca.nombre" column="m_nombre" />
+        <result property="producto.marca.activo" column="m_activo" />
+        <result property="producto.marca.borrado" column="m_borrado" />
+        <result property="producto.presentacion.id" column="pe_id" />
+        <result property="producto.presentacion.presentacion" column="pe_presentacion" />
+        <result property="producto.presentacion.activo" column="pe_activo" />
+        <result property="producto.presentacion.borrado" column="pe_borrado" />
+
+        <result property="almacen.id" column="a_id" />
+        <result property="almacen.nombre" column="a_nombre" />
+        <result property="almacen.direccion" column="a_direccion" />
+
+        <result property="lote.id" column="l_id" />
+        <result property="lote.nombre" column="l_nombre" />
+        <result property="lote.fechaIngreso" column="l_fecha_ingreso" />
+        <result property="lote.fechaVencimiento" column="l_fecha_vencimiento" />
+        <result property="lote.activoVencimiento" column="l_activo_vencimiento" />
+        <result property="lote.productoId" column="l_producto_id" />
+        <result property="lote.cantidad" column="l_cantidad" />
+        <result property="lote.observacion" column="l_observacion" />
+
+        <result property="user.id" column="id" />
+        <result property="user.name" column="name" />
+        <result property="user.email" column="email" />
+    </resultMap>
+
     <select id="getAllEntities" resultMap="principalResultMap">
         select * from retiro_entrada_productos
     </select>
+
+
+    <select id="getAllEntitiesGeneral" resultMap="principalResultMapGeneral">
+        select
+        r.id as r_id, r.fecha as r_fecha, r.motivo as r_motivo, r.lote_id as r_lote_id, r.hora as r_hora, r.cantidad_real as r_cantidad_real, r.activo as r_activo, r.borrado as r_borrado, r.tipo as r_tipo, r.almacen_id as r_almacen_id, r.producto_id as r_producto_id,
+        p.id,
+        p.nombre,
+        p.stock_minimo,
+        p.precio_unidad,
+        p.precio_compra,
+        p.fecha,
+        p.codigo_unidad,
+        p.codigo_producto,
+        p.composicion,
+        p.prioridad,
+        p.ubicacion,
+        p.activo_lotes,
+        p.afecto_isc,
+        p.tipo_tasa_isc,
+        p.tasa_isc,
+        p.afecto_igv,
+        p.empresa_id,
+        p.user_id,
+        p.activo,
+        p.borrado,
+        p.created_at,
+        p.updated_at,
+        tp.id as tp_id,
+        tp.tipo as tp_tipo,
+        tp.tipo_producto_id as tp_tipo_producto_id,
+        tp.activo as tp_activo,
+        tp.borrado as tp_borrado,
+        m.id as m_id,
+        m.nombre as m_nombre,
+        m.activo as m_activo,
+        m.borrado as m_borrado,
+        pe.id as pe_id,
+        pe.presentacion as pe_presentacion,
+        pe.activo as pe_activo,
+        pe.borrado as pe_borrado,
+        u.id as u_id,
+        u.name as u_name,
+        u.email as u_email,
+        a.id as a_id, a.nombre as a_nombre, a.direccion as a_direccion,
+        ifnull(l.id, 0 ) as l_id,
+        ifnull(l.nombre, '' ) as l_nombre,
+        ifnull(l.fecha_ingreso, '' ) as l_fecha_ingreso,
+        ifnull(l.fecha_vencimiento, 0 ) as l_fecha_vencimiento,
+        ifnull(l.activo_vencimiento, 0 ) as l_activo_vencimiento,
+        ifnull(l.producto_id, 0 ) as l_producto_id,
+        ifnull(l.observacion, 0 ) as l_observacion,
+        ifnull(l.cantidad, 0 ) as l_cantidad
+        from retiro_entrada_productos r
+        inner join users u on r.user_id = u.id
+        inner join productos p on p.id = r.producto_id
+        inner join tipo_productos tp on p.tipo_producto_id = tp.id
+        inner join marcas m on p.marca_id=m.id
+        inner join presentacions pe on p.presentacion_id=pe.id
+        inner join almacens a on r.almacen_id = a.id
+        left join lotes l on r.lote_id = l.id
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <select id="listByParameterMap" resultMap="principalResultMap">
         select * from retiro_entrada_productos
