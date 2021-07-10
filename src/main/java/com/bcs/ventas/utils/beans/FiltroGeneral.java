@@ -1,5 +1,7 @@
 package com.bcs.ventas.utils.beans;
 
+import java.time.LocalDate;
+
 public class FiltroGeneral {
 
     private Long almacenId;
@@ -10,14 +12,23 @@ public class FiltroGeneral {
 
     private Integer size;
 
+    private Integer tipo;
+
+     private LocalDate fechaInicio;
+
+     private LocalDate fechaFinal;
+
     public FiltroGeneral() {
     }
 
-    public FiltroGeneral(Long almacenId, String palabraClave, Integer page, Integer size) {
+    public FiltroGeneral(Long almacenId, String palabraClave, Integer page, Integer size, Integer tipo, LocalDate fechaInicio, LocalDate fechaFinal) {
         this.almacenId = almacenId;
         this.palabraClave = palabraClave;
         this.page = page;
         this.size = size;
+        this.tipo = tipo;
+        this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
     }
 
     public String getPalabraClave() {
@@ -50,5 +61,29 @@ public class FiltroGeneral {
 
     public void setAlmacenId(Long almacenId) {
         this.almacenId = almacenId;
+    }
+
+    public Integer getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFinal() {
+        return fechaFinal;
+    }
+
+    public void setFechaFinal(LocalDate fechaFinal) {
+        this.fechaFinal = fechaFinal;
     }
 }

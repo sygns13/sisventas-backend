@@ -3,6 +3,7 @@ package com.bcs.ventas.service;
 
 import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.dto.ProductoBajoStockDTO;
+import com.bcs.ventas.model.dto.ProductoVencidoDTO;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.model.entities.Producto;
@@ -30,5 +31,7 @@ public interface ProductoService extends GeneralService<Producto, Long> {
     Page<InventarioDTO> getProductosGestionLotes(Pageable pageable, FiltroGeneral filtros) throws Exception;
 
     Page<ProductoBajoStockDTO> getProductosBajoStock(Pageable pageable, FiltroGeneral filtros) throws Exception;
+
+    Page<ProductoVencidoDTO> getProductosVencidos(Pageable pageable, FiltroGeneral filtros) throws Exception;
 
 }

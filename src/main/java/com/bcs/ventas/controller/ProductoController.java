@@ -3,6 +3,7 @@ package com.bcs.ventas.controller;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.dto.ProductoBajoStockDTO;
+import com.bcs.ventas.model.dto.ProductoVencidoDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.utils.Constantes;
@@ -118,7 +119,7 @@ public class ProductoController {
     }
 
 
-    //EndPoint Inventario
+    //EndPoint Productos Bajos de Stock
 
     @PostMapping("/productosbajostock")
     public ResponseEntity<Page<ProductoBajoStockDTO>> getProductosBajoStock(@RequestBody FiltroGeneral filtros) throws Exception{
@@ -130,6 +131,20 @@ public class ProductoController {
         Page<ProductoBajoStockDTO> productosBajoStock = productoService.getProductosBajoStock(pageable, filtros);
 
         return new ResponseEntity<>(productosBajoStock, HttpStatus.OK);
+    }
+
+    //EndPoint Productos Vencidos
+
+    @PostMapping("/productosvencidos")
+    public ResponseEntity<Page<ProductoVencidoDTO>> getProductosVencidos(@RequestBody FiltroGeneral filtros) throws Exception{
+
+        if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
+        if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
+
+        Pageable pageable = PageRequest.of(filtros.getPage().intValue(), filtros.getSize().intValue());
+        Page<ProductoVencidoDTO> productosVencidos = productoService.getProductosVencidos(pageable, filtros);
+
+        return new ResponseEntity<>(productosVencidos, HttpStatus.OK);
     }
 
 
