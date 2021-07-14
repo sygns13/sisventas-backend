@@ -35,7 +35,7 @@
         <result property="retiroEntradaProducto.productoId" column="r_producto_id" />
         <result property="retiroEntradaProducto.userId" column="u_id" />
         <result property="retiroEntradaProducto.activo" column="r_activo" />
-        <result property="bretiroEntradaProducto.orrado" column="r_borrado" />
+        <result property="retiroEntradaProducto.borrado" column="r_borrado" />
         <result property="retiroEntradaProducto.createdAt" column="created_at" />
         <result property="retiroEntradaProducto.updatedAd" column="updated_at" />
 
@@ -88,9 +88,9 @@
         <result property="lote.cantidad" column="l_cantidad" />
         <result property="lote.observacion" column="l_observacion" />
 
-        <result property="user.id" column="id" />
-        <result property="user.name" column="name" />
-        <result property="user.email" column="email" />
+        <result property="user.id" column="u_id" />
+        <result property="user.name" column="u_name" />
+        <result property="user.email" column="u_email" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
@@ -142,8 +142,8 @@
         a.id as a_id, a.nombre as a_nombre, a.direccion as a_direccion,
         ifnull(l.id, 0 ) as l_id,
         ifnull(l.nombre, '' ) as l_nombre,
-        ifnull(l.fecha_ingreso, '' ) as l_fecha_ingreso,
-        ifnull(l.fecha_vencimiento, 0 ) as l_fecha_vencimiento,
+        ifnull(l.fecha_ingreso, null ) as l_fecha_ingreso,
+        ifnull(l.fecha_vencimiento, null) as l_fecha_vencimiento,
         ifnull(l.activo_vencimiento, 0 ) as l_activo_vencimiento,
         ifnull(l.producto_id, 0 ) as l_producto_id,
         ifnull(l.observacion, 0 ) as l_observacion,
@@ -156,6 +156,140 @@
         inner join presentacions pe on p.presentacion_id=pe.id
         inner join almacens a on r.almacen_id = a.id
         left join lotes l on r.lote_id = l.id
+    </select>
+
+
+
+    <select id="getTotalElementsMovimientosProductos" resultType="int">
+        select COUNT(*)
+        from retiro_entrada_productos r
+        inner join users u on r.user_id = u.id
+        inner join productos p on p.id = r.producto_id
+        inner join tipo_productos tp on p.tipo_producto_id = tp.id
+        inner join marcas m on p.marca_id=m.id
+        inner join presentacions pe on p.presentacion_id=pe.id
+        inner join almacens a on r.almacen_id = a.id
+        left join lotes l on r.lote_id = l.id
+
+        <where>
+            <if test="ID != null"> AND r.id = #{ID}</if>
+            <if test="FECHA != null"> AND r.fecha = #{FECHA}</if>
+            <if test="MOTIVO != null"> AND r.motivo = #{MOTIVO}</if>
+            <if test="LOTE_ID != null"> AND r.lote_id = #{LOTE_ID}</if>
+            <if test="HORA != null"> AND r.hora = #{HORA}</if>
+            <if test="CANTIDAD_REAL != null"> AND r.cantidad_real = #{CANTIDAD_REAL}</if>
+            <if test="TIPO != null"> AND r.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND r.almacen_id = #{ALMACEN_ID}</if>
+            <if test="PRODUCTO_ID != null"> AND r.producto_id = #{PRODUCTO_ID}</if>
+            <if test="EMPRESA_ID != null"> AND r.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND r.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND r.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND r.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND r.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND r.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND r.activo != #{NO_ACTIVO}</if>
+
+            <if test="1 == 1"> AND (r.fecha between  #{FECHA_INICIO} and #{FECHA_FINAL} ) </if>
+
+            <if test="BUSCAR != null"> AND (p.nombre like #{BUSCAR} or p.codigo_unidad like #{BUSCAR} or  tp.tipo like #{BUSCAR} or  m.nombre like #{BUSCAR}
+                or  pe.presentacion like #{BUSCAR}
+                or p.composicion like #{BUSCAR} or p.ubicacion like #{BUSCAR} or u.name like #{BUSCAR} or u.email like #{BUSCAR}  )</if>
+        </where>
+
+        order by r.fecha, r.hora, r.id
+    </select>
+
+
+    <select id="listByParameterMapMovientosProductos" resultMap="principalResultMapGeneral">
+        select
+        r.id as r_id, r.fecha as r_fecha, r.motivo as r_motivo, r.lote_id as r_lote_id, r.hora as r_hora, r.cantidad_real as r_cantidad_real, r.activo as r_activo, r.borrado as r_borrado, r.tipo as r_tipo, r.almacen_id as r_almacen_id, r.producto_id as r_producto_id,
+        p.id,
+        p.nombre,
+        p.stock_minimo,
+        p.precio_unidad,
+        p.precio_compra,
+        p.fecha,
+        p.codigo_unidad,
+        p.codigo_producto,
+        p.composicion,
+        p.prioridad,
+        p.ubicacion,
+        p.activo_lotes,
+        p.afecto_isc,
+        p.tipo_tasa_isc,
+        p.tasa_isc,
+        p.afecto_igv,
+        p.empresa_id,
+        p.user_id,
+        p.activo,
+        p.borrado,
+        p.created_at,
+        p.updated_at,
+        tp.id as tp_id,
+        tp.tipo as tp_tipo,
+        tp.tipo_producto_id as tp_tipo_producto_id,
+        tp.activo as tp_activo,
+        tp.borrado as tp_borrado,
+        m.id as m_id,
+        m.nombre as m_nombre,
+        m.activo as m_activo,
+        m.borrado as m_borrado,
+        pe.id as pe_id,
+        pe.presentacion as pe_presentacion,
+        pe.activo as pe_activo,
+        pe.borrado as pe_borrado,
+        u.id as u_id,
+        u.name as u_name,
+        u.email as u_email,
+        a.id as a_id, a.nombre as a_nombre, a.direccion as a_direccion,
+        ifnull(l.id, 0 ) as l_id,
+        ifnull(l.nombre, '' ) as l_nombre,
+        ifnull(l.fecha_ingreso, null ) as l_fecha_ingreso,
+        ifnull(l.fecha_vencimiento, null ) as l_fecha_vencimiento,
+        ifnull(l.activo_vencimiento, 0 ) as l_activo_vencimiento,
+        ifnull(l.producto_id, 0 ) as l_producto_id,
+        ifnull(l.observacion, 0 ) as l_observacion,
+        ifnull(l.cantidad, 0 ) as l_cantidad
+        from retiro_entrada_productos r
+        inner join users u on r.user_id = u.id
+        inner join productos p on p.id = r.producto_id
+        inner join tipo_productos tp on p.tipo_producto_id = tp.id
+        inner join marcas m on p.marca_id=m.id
+        inner join presentacions pe on p.presentacion_id=pe.id
+        inner join almacens a on r.almacen_id = a.id
+        left join lotes l on r.lote_id = l.id
+
+        <where>
+            <if test="ID != null"> AND r.id = #{ID}</if>
+            <if test="FECHA != null"> AND r.fecha = #{FECHA}</if>
+            <if test="MOTIVO != null"> AND r.motivo = #{MOTIVO}</if>
+            <if test="LOTE_ID != null"> AND r.lote_id = #{LOTE_ID}</if>
+            <if test="HORA != null"> AND r.hora = #{HORA}</if>
+            <if test="CANTIDAD_REAL != null"> AND r.cantidad_real = #{CANTIDAD_REAL}</if>
+            <if test="TIPO != null"> AND r.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND r.almacen_id = #{ALMACEN_ID}</if>
+            <if test="PRODUCTO_ID != null"> AND r.producto_id = #{PRODUCTO_ID}</if>
+            <if test="EMPRESA_ID != null"> AND r.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND r.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND r.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND r.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND r.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND r.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND r.activo != #{NO_ACTIVO}</if>
+
+            <if test="1 == 1"> AND (r.fecha between  #{FECHA_INICIO} and #{FECHA_FINAL} ) </if>
+
+            <if test="BUSCAR != null"> AND (p.nombre like #{BUSCAR} or p.codigo_unidad like #{BUSCAR} or  tp.tipo like #{BUSCAR} or  m.nombre like #{BUSCAR}
+                or  pe.presentacion like #{BUSCAR}
+                or p.composicion like #{BUSCAR} or p.ubicacion like #{BUSCAR} or u.name like #{BUSCAR} or u.email like #{BUSCAR}  )</if>
+        </where>
+
+        order by r.fecha, r.hora, r.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+
     </select>
 
 

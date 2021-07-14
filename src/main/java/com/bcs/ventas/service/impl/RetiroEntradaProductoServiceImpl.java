@@ -4,16 +4,18 @@ import com.bcs.ventas.dao.*;
 import com.bcs.ventas.dao.mappers.AlmacenMapper;
 import com.bcs.ventas.dao.mappers.RetiroEntradaProductoMapper;
 import com.bcs.ventas.dao.mappers.StockMapper;
+import com.bcs.ventas.dao.mappers.UnidadMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.dto.ProductoVencidoDTO;
 import com.bcs.ventas.model.dto.RetiroEntradaProductoDTO;
-import com.bcs.ventas.model.entities.Almacen;
-import com.bcs.ventas.model.entities.Lote;
-import com.bcs.ventas.model.entities.RetiroEntradaProducto;
-import com.bcs.ventas.model.entities.Stock;
+import com.bcs.ventas.model.dto.SalidasIngresosProductosDTO;
+import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.RetiroEntradaProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.FiltroGeneral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,9 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
     @Autowired
     private StockDAO stockDAO;
 
+    @Autowired
+    private UnidadMapper unidadMapper;
+
 
     @Override
     public Page<RetiroEntradaProductoDTO> listar(Pageable pageable, String buscar) throws Exception {
@@ -67,6 +72,67 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
         params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
         params.put("EMPRESA_ID", idEmpresa);
         return almacenMapper.listByParameterMapOrderId(params);
+    }
+
+    @Override
+    public Page<RetiroEntradaProductoDTO> getMovimientosLibresProductos(Pageable page, FiltroGeneral filtros) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        Integer empresa_id = 1;
+
+        // params.put("BUSCAR","%"+buscar+"%");
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", empresa_id);
+        params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+
+
+        List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
+        params.clear();
+
+        LocalDate fechaActual = LocalDate.now();
+        params.put("FECHA_ACTUAL", fechaActual.toString());
+
+        if(unidadG1.size() > 0 && unidadG1.get(0) != null && unidadG1.get(0).getId() != null){
+            params.put("UNIDAD_ID", unidadG1.get(0).getId());
+        }
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+        }
+
+        if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
+            params.put("BUSCAR",filtros.getPalabraClave());
+        }
+
+        if(filtros.getTipo() != null){
+            params.put("TIPO",filtros.getTipo());
+        }
+
+        if(filtros.getFechaInicio() != null){
+            params.put("FECHA_INICIO", filtros.getFechaInicio().toString());
+        }
+
+        if(filtros.getFechaFinal() != null){
+            params.put("FECHA_FINAL", filtros.getFechaFinal().toString());
+        }
+
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+
+        int total = retiroEntradaProductoMapper.getTotalElementsMovimientosProductos(params);
+        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
+        int offset = page.getPageSize()*(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<RetiroEntradaProductoDTO> movimientosProductos = retiroEntradaProductoMapper.listByParameterMapMovientosProductos(params);
+
+        return new PageImpl<>(movimientosProductos, page, total);
+
     }
 
 
