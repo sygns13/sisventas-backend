@@ -25,7 +25,7 @@ public interface GeneralService<T, ID> {
 
     void grabarEliminar(ID id) throws Exception;
 
-    boolean validacionRegistro(T t, Map<String, Object> resultValidacion);
+    boolean validacionRegistro(T t, Map<String, Object> resultValidacion) throws Exception;
 
     boolean validacionModificado(T t, Map<String, Object> resultValidacion) throws Exception;
 
