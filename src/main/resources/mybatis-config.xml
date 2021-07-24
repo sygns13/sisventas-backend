@@ -66,5 +66,6 @@
         <mapper resource="mybatis/mappers/UnidadMapper.xml"/>
         <mapper resource="mybatis/mappers/UserMapper.xml"/>
         <mapper resource="mybatis/mappers/VentaMapper.xml"/>
+        <mapper resource="mybatis/mappers/ServicioMapper.xml"/>
     </mappers>
 </configuration>

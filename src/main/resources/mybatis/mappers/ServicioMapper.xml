@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.ServicioMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Servicio">
+        <result property="id" column="id" />
+        <result property="nombre" column="nombre" />
+        <result property="descripcion" column="descripcion" />
+        <result property="precioUnidad" column="precio_unidad" />
+        <result property="codigo" column="codigo" />
+        <result property="afectoIsc" column="afecto_isc" />
+        <result property="tipoTasaIsc" column="tipo_tasa_isc" />
+        <result property="tasaIsc" column="tasa_isc" />
+        <result property="afectoIgv" column="afecto_igv" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select * from servicios
+    </select>
+
+    <select id="getTotalElements" resultType="int">
+        select COUNT(*) from servicios
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="DESCRIPCION != null"> AND descripcion = #{DESCRIPCION}</if>
+            <if test="PRECIO_UNIDAD != null"> AND precio_unidad = #{PRECIO_UNIDAD}</if>
+            <if test="CODIGO != null"> AND codigo = #{CODIGO}</if>
+            <if test="AFECTO_ISC != null"> AND afecto_isc = #{AFECTO_ISC}</if>
+            <if test="TIPO_TASA_ISC != null"> AND tipo_tasa_isc = #{TIPO_TASA_ISC}</if>
+            <if test="TASA_ISC != null"> AND tasa_isc = #{TASA_ISC}</if>
+            <if test="AFECTO_IGV != null"> AND afecto_igv = #{AFECTO_IGV}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND ( nombre like #{BUSCAR} or codigo like #{BUSCAR} or  descripcion like #{BUSCAR} )</if>
+        </where>
+        order by nombre, id
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from servicios
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="DESCRIPCION != null"> AND descripcion = #{DESCRIPCION}</if>
+            <if test="PRECIO_UNIDAD != null"> AND precio_unidad = #{PRECIO_UNIDAD}</if>
+            <if test="CODIGO != null"> AND codigo = #{CODIGO}</if>
+            <if test="AFECTO_ISC != null"> AND afecto_isc = #{AFECTO_ISC}</if>
+            <if test="TIPO_TASA_ISC != null"> AND tipo_tasa_isc = #{TIPO_TASA_ISC}</if>
+            <if test="TASA_ISC != null"> AND tasa_isc = #{TASA_ISC}</if>
+            <if test="AFECTO_IGV != null"> AND afecto_igv = #{AFECTO_IGV}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND ( nombre like #{BUSCAR} or codigo like #{BUSCAR} or  descripcion like #{BUSCAR} )</if>
+        </where>
+        order by nombre, id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update servicios
+        <set>
+            <if test="NOMBRE != null"> nombre = #{NOMBRE}, </if>
+            <if test="DESCRIPCION != null"> descripcion = #{DESCRIPCION}, </if>
+            <if test="PRECIO_UNIDAD != null"> precio_unidad = #{PRECIO_UNIDAD}, </if>
+            <if test="CODIGO != null"> codigo = #{CODIGO}, </if>
+            <if test="AFECTO_ISC != null"> afecto_isc = #{AFECTO_ISC}, </if>
+            <if test="TIPO_TASA_ISC != null"> tipo_tasa_isc = #{TIPO_TASA_ISC}, </if>
+            <if test="TASA_ISC != null"> tasa_isc = #{TASA_ISC}, </if>
+            <if test="AFECTO_IGV != null"> afecto_igv = #{AFECTO_IGV}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id=#{ID}
+    </update>
+
+
+
+</mapper>
