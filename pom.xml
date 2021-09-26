@@ -12,7 +12,7 @@
 	<artifactId>sisventas-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sisventas-backend</name>
-	<description>Proyecto Sistema de Bentas</description>
+	<description>Proyecto Sistema de Ventas</description>
 
 	<properties>
 		<java.version>11</java.version>

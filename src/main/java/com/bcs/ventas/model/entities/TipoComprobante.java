@@ -1,11 +1,17 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Tipo Comprobante Model")
 @Entity
 @Table(name = "tipo_comprobantes")
 public class TipoComprobante implements Serializable {
@@ -19,36 +25,49 @@ public class TipoComprobante implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="nombre", nullable = true, length = 45)
+    @Schema(description = "Nombre del Tipo de Comprobante")
+    @NotNull( message = "{tipo_comprobante.nombre.notnull}")
+    @Size(min = 1, max = 200, message = "{tipo_comprobante.nombre.size}")
+    @Column(name="nombre", nullable = true, length= 200)
     private String nombre;
 
+    @Schema(description = "Indicador si el Tipo Comprobante es para venta")
+    @NotNull( message = "{tipo_comprobante.para_venta.notnull}")
     @Column(name="para_venta", nullable = true)
     private Integer paraVenta;
 
     @Column(name="sede_id", nullable = true)
     private Long sedeId;
 
+    @Schema(description = "ID User Padre")
+    //@NotNull( message = "{producto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
+    @Schema(description = "ID Empresa Padre")
+    //@NotNull( message = "{producto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
+
+
 
     public TipoComprobante() {
     }
@@ -64,7 +83,7 @@ public class TipoComprobante implements Serializable {
         this.borrado = borrado;
     }
 
-    public TipoComprobante(Long id, String nombre, Integer paraVenta, Long sedeId, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
+    public TipoComprobante(Long id, String nombre, Integer paraVenta, Long sedeId, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
         this.paraVenta = paraVenta;
@@ -141,19 +160,19 @@ public class TipoComprobante implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }
