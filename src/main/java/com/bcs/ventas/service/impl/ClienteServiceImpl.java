@@ -172,6 +172,20 @@ public class ClienteServiceImpl implements ClienteService {
             return null;
     }
 
+
+    public Cliente getByDocument(String document) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("DOCUMENTO",document.trim());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Cliente> clientes = clienteMapper.listByParameterMap(params);
+
+        if(clientes.size() > 0)
+            return clientes.get(0);
+        else
+            return null;
+    }
+
     @Override
     public void eliminar(Long id) throws Exception {
 

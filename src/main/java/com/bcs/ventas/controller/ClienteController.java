@@ -55,10 +55,13 @@ public class ClienteController {
     public ResponseEntity<Cliente> registrar(@Valid @RequestBody Cliente a) throws Exception{
         a.setId(null);
         Cliente obj = clienteService.registrar(a);
+        obj = clienteService.listarPorId(obj.getId());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
-        return  ResponseEntity.created(location).build();
+        //return  ResponseEntity.created(location).build();
+        return ResponseEntity.created(location)
+                .body(obj);
     }
 
     @PutMapping
@@ -110,5 +113,16 @@ public class ClienteController {
         List<TipoDocumento> obj = tipoDocumentoService.listar();
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping("/getbydoc/{document}")
+    public ResponseEntity<Cliente> listarPorDNI(@PathVariable("document") String document) throws Exception{
+        Cliente obj = clienteService.getByDocument(document);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("DOCUMENTO DE IDENTIDAD " + document + " NO ENCONTRADO ");
+        }
+
+        return new ResponseEntity<Cliente>(obj, HttpStatus.OK);
     }
 }

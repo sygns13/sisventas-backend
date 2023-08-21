@@ -1,6 +1,6 @@
 package com.bcs.ventas.utils;
 
-import java.io.IOException;
+/*import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -51,3 +51,4 @@ public class CORS implements Filter {
     }
 
 }
+*/

@@ -79,6 +79,10 @@ public class AlmacenServiceImpl implements AlmacenService {
             List<String> errors =   (List<String>) resultValidacion.get("errors");
             if(errors.size() >0)
                 errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+
+            for(String error: errors ){
+                errorValidacion = error + ". " + errorValidacion;
+            }
         }
 
         throw new ValidationServiceException(errorValidacion);

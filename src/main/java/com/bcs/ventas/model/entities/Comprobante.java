@@ -47,7 +47,7 @@ public class Comprobante implements Serializable {
     @Schema(description = "Tipo de Comprobante")
     @ManyToOne
     @JoinColumn(name = "tipo_comprobante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_tipo_comprobante_comprobante"))
-    private Cliente cliente;
+    private TipoComprobante tipoComprobante;
 
     @Schema(description = "Estado del Comprobante")
     @Column(name="estado", nullable = true, length= 45)
@@ -89,12 +89,12 @@ public class Comprobante implements Serializable {
     public Comprobante() {
     }
 
-    public Comprobante(Long id, String serie, String numero, Integer cantidadDigitos, Cliente cliente, String estado, Long userId, Long almacenId, Long empresaId, Integer activo, Integer borrado) {
+    public Comprobante(Long id, String serie, String numero, Integer cantidadDigitos, TipoComprobante tipoComprobante, String estado, Long userId, Long almacenId, Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
         this.serie = serie;
         this.numero = numero;
         this.cantidadDigitos = cantidadDigitos;
-        this.cliente = cliente;
+        this.tipoComprobante = tipoComprobante;
         this.estado = estado;
         this.userId = userId;
         this.almacenId = almacenId;
@@ -103,12 +103,12 @@ public class Comprobante implements Serializable {
         this.borrado = borrado;
     }
 
-    public Comprobante(Long id, String serie, String numero, Integer cantidadDigitos, Cliente cliente, String estado, Long userId, Long almacenId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Comprobante(Long id, String serie, String numero, Integer cantidadDigitos, TipoComprobante tipoComprobante, String estado, Long userId, Long almacenId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.serie = serie;
         this.numero = numero;
         this.cantidadDigitos = cantidadDigitos;
-        this.cliente = cliente;
+        this.tipoComprobante = tipoComprobante;
         this.estado = estado;
         this.userId = userId;
         this.almacenId = almacenId;
@@ -151,12 +151,12 @@ public class Comprobante implements Serializable {
         this.cantidadDigitos = cantidadDigitos;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public TipoComprobante getTipoComprobante() {
+        return tipoComprobante;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setTipoComprobante(TipoComprobante tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
     }
 
     public String getEstado() {

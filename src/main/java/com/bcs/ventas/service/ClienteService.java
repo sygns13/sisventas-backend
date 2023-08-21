@@ -7,4 +7,6 @@ import org.springframework.data.domain.Pageable;
 public interface ClienteService extends GeneralService<Cliente, Long> {
 
     Page<Cliente> listar(Pageable pageable, String buscar) throws Exception;
+
+    Cliente getByDocument(String document) throws Exception;
 }
