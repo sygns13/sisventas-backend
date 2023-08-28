@@ -21,7 +21,7 @@
         select * from bancos
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from bancos
         <where>
             <if test="ID != null"> AND id = #{ID}</if>

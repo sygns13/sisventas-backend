@@ -8,8 +8,6 @@
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Venta">
         <result property="id" column="id" />
         <result property="fecha" column="fecha" />
-        <result property="clienteId" column="cliente_id" />
-        <result property="comprobanteId" column="comprobante_id" />
         <result property="subtotalInafecto" column="subtotal_inafecto" />
         <result property="subtotalAfecto" column="subtotal_afecto" />
         <result property="igv" column="igv" />
@@ -17,39 +15,407 @@
         <result property="pagado" column="pagado" />
         <result property="hora" column="hora" />
         <result property="empresaId" column="empresa_id" />
-        <result property="userId" column="user_id" />
+        <result property="numeroVenta" column="numero_venta" />
+
         <result property="activo" column="activo" />
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+        <result property="tipo" column="tipo" />
+
+        <result property="cliente.id" column="cli_id" />
+        <result property="cliente.nombre" column="cli_nombre" />
+        <result property="cliente.tipoDocumento.id" column="cli_tipo_documento_id" />
+        <result property="cliente.documento" column="cli_documento" />
+        <result property="cliente.direccion" column="cli_direccion" />
+        <result property="cliente.telefono" column="cli_telefono" />
+        <result property="cliente.correo1" column="cli_correo1" />
+        <result property="cliente.correo2" column="cli_correo2" />
+        <result property="cliente.userId" column="cli_user_id" />
+        <result property="cliente.empresaId" column="cli_empresa_id" />
+        <result property="cliente.activo" column="cli_activo" />
+        <result property="cliente.borrado" column="cli_borrado" />
+
+        <result property="comprobante.id" column="co_id" />
+        <result property="comprobante.serie" column="co_serie" />
+        <result property="comprobante.numero" column="co_numero" />
+        <result property="comprobante.cantidadDigitos" column="co_cantidad_digitos" />
+        <result property="comprobante.tipoComprobante.id" column="co_tipo_comprobante_id" />
+        <result property="comprobante.estado" column="co_estado" />
+        <result property="comprobante.empresaId" column="co_empresa_id" />
+        <result property="comprobante.userId" column="co_user_id" />
+        <result property="comprobante.activo" column="co_activo" />
+        <result property="comprobante.borrado" column="co_borrado" />
+        <result property="comprobante.almacenId" column="co_almacen_id" />
+
+        <result property="user.id" column="user_id" />
+        <result property="user.name" column="user_name" />
+        <result property="user.email" column="user_email" />
+        <result property="user.tipoUser.id" column="user_tipo_user_id" />
+        <result property="user.userId" column="user_user_id" />
+        <result property="user.empresaId" column="user_empresa_id" />
+        <result property="user.activo" column="user_activo" />
+        <result property="user.borrado" column="user_borrado" />
+        <result property="user.almacenId" column="user_almacen_id" />
+
+        <result property="user.datos.id" column="du_id" />
+        <result property="user.datos.nombres" column="du_nombres" />
+        <result property="user.datos.apellidoPaterno" column="du_apellido_paterno" />
+        <result property="user.datos.apellidoMaterno" column="du_apellido_materno" />
+        <result property="user.datos.direccion" column="du_direccion" />
+        <result property="user.datos.telefono" column="du_telefono" />
+        <result property="user.datos.tipoDocumento.id" column="du_tipo_documento_id" />
+        <result property="user.datos.documento" column="du_documento" />
+        <result property="user.datos.email" column="du_email" />
+        <result property="user.datos.userId" column="du_user_id" />
+        <result property="user.datos.userGestionaId" column="du_user_gestiona_id" />
+        <result property="user.datos.empresaId" column="du_empresa_id" />
+        <result property="user.datos.activo" column="du_activo" />
+        <result property="user.datos.borrado" column="du_borrado" />
+
+        <result property="almacen.id" column="al_id" />
+        <result property="almacen.nombre" column="al_nombre" />
+        <result property="almacen.direccion" column="al_direccion" />
+        <result property="almacen.empresaId" column="al_empresa_id" />
+        <result property="almacen.userId" column="al_user_id" />
+        <result property="almacen.activo" column="al_activo" />
+        <result property="almacen.borrado" column="al_borrado" />
+        <result property="almacen.distritoId" column="al_distrito_id" />
+        <result property="almacen.codigo" column="al_codigo" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from ventas
+        select
+            v.id,
+            v.fecha,
+            v.cliente_id,
+            v.comprobante_id,
+            v.subtotal_inafecto,
+            v.subtotal_afecto,
+            v.igv,
+            v.estado,
+            v.user_id,
+            v.pagado,
+            v.hora,
+            v.empresa_id,
+            v.activo,
+            v.borrado,
+            v.created_at,
+            v.updated_at,
+            v.tipo,
+            v.almacen_id,
+            v.numero_venta,
+
+            c.id as cli_id,
+            c.nombre as cli_nombre,
+            c.tipo_documento_id as cli_tipo_documento_id,
+            c.documento as cli_documento,
+            c.direccion as cli_direccion,
+            c.telefono as cli_telefono,
+            c.correo1 as cli_correo1,
+            c.correo2 as cli_correo2,
+            c.user_id as cli_user_id,
+            c.empresa_id as cli_empresa_id,
+            c.activo as cli_activo,
+            c.borrado as cli_borrado,
+
+            co.id as co_id,
+            co.serie as co_serie,
+            co.numero as co_numero,
+            co.cantidad_digitos as co_cantidad_digitos,
+            co.tipo_comprobante_id as co_tipo_comprobante_id,
+            co.estado as co_estado,
+            co.empresa_id as co_empresa_id,
+            co.user_id as co_user_id,
+            co.activo as co_activo,
+            co.borrado as co_borrado,
+            co.almacen_id as co_almacen_id,
+
+            u.id as user_id,
+            u.name as user_name,
+            u.email as user_email,
+            u.tipo_user_id as user_tipo_user_id,
+            u.user_id as user_user_id,
+            u.empresa_id as user_empresa_id,
+            u.activo as user_activo,
+            u.borrado as user_borrado,
+            u.almacen_id as user_almacen_id,
+
+            du.id as du_id,
+            du.nombres as du_nombres,
+            du.apellido_paterno as du_apellido_paterno,
+            du.apellido_materno as du_apellido_materno,
+            du.direccion as du_direccion,
+            du.telefono as du_telefono,
+            du.tipo_documento_id as du_tipo_documento_id,
+            du.documento as du_documento,
+            du.email as du_email,
+            du.user_id as du_user_id,
+            du.user_gestiona_id as du_user_gestiona_id,
+            du.empresa_id as du_empresa_id,
+            du.activo as du_activo,
+            du.borrado as du_borrado,
+
+            a.id as al_id,
+            a.nombre as al_nombre,
+            a.direccion as al_direccion,
+            a.empresa_id as al_empresa_id,
+            a.user_id as al_user_id,
+            a.activo as al_activo,
+            a.borrado as al_borrado,
+            a.distrito_id as al_distrito_id,
+            a.codigo as al_codigo
+
+        from ventas v
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from ventas
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="FECHA != null"> AND fecha = #{FECHA}</if>
-            <if test="CLIENTE_ID != null"> AND cliente_id = #{CLIENTE_ID}</if>
-            <if test="COMPROBANTE_ID != null"> AND comprobante_id = #{COMPROBANTE_ID}</if>
-            <if test="SUBTOTAL_INAFECTO != null"> AND subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
-            <if test="SUBTOTAL_AFECTO != null"> AND subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
-            <if test="IGV != null"> AND igv = #{IGV}</if>
-            <if test="ESTADO != null"> AND estado = #{ESTADO}</if>
-            <if test="PAGADO != null"> AND pagado = #{PAGADO}</if>
-            <if test="HORA != null"> AND hora = #{HORA}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+        select
+            v.id,
+            v.fecha,
+            v.cliente_id,
+            v.comprobante_id,
+            v.subtotal_inafecto,
+            v.subtotal_afecto,
+            v.igv,
+            v.estado,
+            v.user_id,
+            v.pagado,
+            v.hora,
+            v.empresa_id,
+            v.activo,
+            v.borrado,
+            v.created_at,
+            v.updated_at,
+            v.tipo,
+            v.almacen_id,
+            v.numero_venta,
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+            c.id as cli_id,
+            c.nombre as cli_nombre,
+            c.tipo_documento_id as cli_tipo_documento_id,
+            c.documento as cli_documento,
+            c.direccion as cli_direccion,
+            c.telefono as cli_telefono,
+            c.correo1 as cli_correo1,
+            c.correo2 as cli_correo2,
+            c.user_id as cli_user_id,
+            c.empresa_id as cli_empresa_id,
+            c.activo as cli_activo,
+            c.borrado as cli_borrado,
+
+            co.id as co_id,
+            co.serie as co_serie,
+            co.numero as co_numero,
+            co.cantidad_digitos as co_cantidad_digitos,
+            co.tipo_comprobante_id as co_tipo_comprobante_id,
+            co.estado as co_estado,
+            co.empresa_id as co_empresa_id,
+            co.user_id as co_user_id,
+            co.activo as co_activo,
+            co.borrado as co_borrado,
+            co.almacen_id as co_almacen_id,
+
+            u.id as user_id,
+            u.name as user_name,
+            u.email as user_email,
+            u.tipo_user_id as user_tipo_user_id,
+            u.user_id as user_user_id,
+            u.empresa_id as user_empresa_id,
+            u.activo as user_activo,
+            u.borrado as user_borrado,
+            u.almacen_id as user_almacen_id,
+
+            du.id as du_id,
+            du.nombres as du_nombres,
+            du.apellido_paterno as du_apellido_paterno,
+            du.apellido_materno as du_apellido_materno,
+            du.direccion as du_direccion,
+            du.telefono as du_telefono,
+            du.tipo_documento_id as du_tipo_documento_id,
+            du.documento as du_documento,
+            du.email as du_email,
+            du.user_id as du_user_id,
+            du.user_gestiona_id as du_user_gestiona_id,
+            du.empresa_id as du_empresa_id,
+            du.activo as du_activo,
+            du.borrado as du_borrado,
+
+            a.id as al_id,
+            a.nombre as al_nombre,
+            a.direccion as al_direccion,
+            a.empresa_id as al_empresa_id,
+            a.user_id as al_user_id,
+            a.activo as al_activo,
+            a.borrado as al_borrado,
+            a.distrito_id as al_distrito_id,
+            a.codigo as al_codigo
+
+        from ventas v
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+        <where>
+            <if test="ID != null"> AND v.id = #{ID}</if>
+            <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND v.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND v.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
+            <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
+            <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
+            <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
+            <if test="IGV != null"> AND v.igv = #{IGV}</if>
+            <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
+            <if test="PAGADO != null"> AND v.pagado = #{PAGADO}</if>
+            <if test="HORA != null"> AND v.hora = #{HORA}</if>
+            <if test="EMPRESA_ID != null"> AND v.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND v.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND v.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND v.borrado = #{BORRADO}</if>
+            <if test="TIPO != null"> AND v.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
+            <if test="NUMERO_VENTA != null"> AND v.numero_venta = #{NUMERO_VENTA}</if>
+
+            <if test="NO_ID != null"> AND v.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND v.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND v.activo != #{NO_ACTIVO}</if>
+
+            <if test="CLI_CLIENTE_ID != null"> AND c.id = #{CLI_CLIENTE_ID}</if>
+            <if test="CLI_NOMBRE != null"> AND c.nombre like #{CLI_NOMBRE}</if>
+            <if test="CLI_TIPO_DOCUMENTO_ID != null"> AND c.tipo_documento_id = #{CLI_TIPO_DOCUMENTO_ID}</if>
+            <if test="CLI_DOCUMENTO != null"> AND c.documento = #{CLI_DOCUMENTO}</if>
+            <if test="CLI_DIRECCION != null"> AND c.direccion = #{CLI_DIRECCION}</if>
+            <if test="CLI_TELEFONO != null"> AND c.telefono = #{CLI_TELEFONO}</if>
+            <if test="CLI_CORREO1 != null"> AND c.correo1 = #{CLI_CORREO1}</if>
+            <if test="CLI_CORREO2 != null"> AND c.correo2 = #{CLI_CORREO2}</if>
+            <if test="CLI_EMPRESA_ID != null"> AND c.empresa_id = #{CLI_EMPRESA_ID}</if>
+            <if test="CLI_USER_ID != null"> AND c.user_id = #{CLI_USER_ID}</if>
+            <if test="CLI_ACTIVO != null"> AND c.activo = #{CLI_ACTIVO}</if>
+            <if test="CLI_BORRADO != null"> AND c.borrado = #{CLI_BORRADO}</if>
+
+            <if test="CLI_NO_ID != null"> AND c.id != #{CLI_NO_ID}</if>
+            <if test="CLI_NO_BORRADO != null"> AND c.borrado != #{CLI_NO_BORRADO}</if>
+            <if test="CLI_NO_ACTIVO != null"> AND c.activo != #{CLI_NO_ACTIVO}</if>
+
+            <if test="CLI_BUSCAR != null"> AND (c.documento like #{CLI_BUSCAR} or c.nombre like #{CLI_BUSCAR} )</if>
+
+            <if test="CO_ID != null"> AND co.id = #{CO_ID}</if>
+            <if test="CO_SERIE != null"> AND co.serie = #{CO_SERIE}</if>
+            <if test="CO_NUMERO != null"> AND co.numero = #{CO_NUMERO}</if>
+            <if test="CO_TIPO_COMPROBANTE_ID != null"> AND co.tipo_comprobante_id = #{CO_TIPO_COMPROBANTE_ID}</if>
+            <if test="CO_ESTADO != null"> AND co.estado = #{CO_ESTADO}</if>
+
+            <if test="U_ID != null"> AND u.id = #{U_ID}</if>
+            <if test="U_NAME != null"> AND u.name = #{U_NAME}</if>
+            <if test="U_EMAIL != null"> AND u.email = #{U_EMAIL}</if>
+            <if test="U_TIPO_USER_ID != null"> AND u.tipo_user_id = #{U_TIPO_USER_ID}</if>
+
+            <if test="U_BUSCAR != null"> AND (u.name like #{U_BUSCAR} or u.email like #{U_BUSCAR} )</if>
+
+            <if test="DU_ID != null"> AND du.id = #{DU_ID}</if>
+            <if test="DU_NOMBRES != null"> AND du.nombres = #{DU_NOMBRES}</if>
+            <if test="DU_APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{DU_APELLIDO_PATERNO}</if>
+            <if test="DU_APELLIDO_MATERNO != null"> AND du.apellido_materno = #{DU_APELLIDO_MATERNO}</if>
+            <if test="DU_DOCUMENTO != null"> AND du.documento = #{DU_DOCUMENTO}</if>
+
+            <if test="DU_BUSCAR != null"> AND (du.nombres like #{DU_BUSCAR} or du.apellido_paterno like #{DU_BUSCAR} or du.apellido_materno like #{DU_BUSCAR} or du.documento like #{DU_BUSCAR} )</if>
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
         </where>
+        order by v.fecha, v.hora, v.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*)
+        from ventas v
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+        <where>
+            <if test="ID != null"> AND v.id = #{ID}</if>
+            <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+            <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
+            <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
+            <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
+            <if test="IGV != null"> AND v.igv = #{IGV}</if>
+            <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
+            <if test="PAGADO != null"> AND v.pagado = #{PAGADO}</if>
+            <if test="HORA != null"> AND v.hora = #{HORA}</if>
+            <if test="EMPRESA_ID != null"> AND v.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND v.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND v.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND v.borrado = #{BORRADO}</if>
+            <if test="TIPO != null"> AND v.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
+            <if test="NUMERO_VENTA != null"> AND v.numero_venta = #{NUMERO_VENTA}</if>
+
+            <if test="NO_ID != null"> AND v.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND v.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND v.activo != #{NO_ACTIVO}</if>
+
+            <if test="CLI_CLIENTE_ID != null"> AND c.id = #{CLI_CLIENTE_ID}</if>
+            <if test="CLI_NOMBRE != null"> AND c.nombre = #{CLI_NOMBRE}</if>
+            <if test="CLI_TIPO_DOCUMENTO_ID != null"> AND c.tipo_documento_id = #{CLI_TIPO_DOCUMENTO_ID}</if>
+            <if test="CLI_DOCUMENTO != null"> AND c.documento = #{CLI_DOCUMENTO}</if>
+            <if test="CLI_DIRECCION != null"> AND c.direccion = #{CLI_DIRECCION}</if>
+            <if test="CLI_TELEFONO != null"> AND c.telefono = #{CLI_TELEFONO}</if>
+            <if test="CLI_CORREO1 != null"> AND c.correo1 = #{CLI_CORREO1}</if>
+            <if test="CLI_CORREO2 != null"> AND c.correo2 = #{CLI_CORREO2}</if>
+            <if test="CLI_EMPRESA_ID != null"> AND c.empresa_id = #{CLI_EMPRESA_ID}</if>
+            <if test="CLI_USER_ID != null"> AND c.user_id = #{CLI_USER_ID}</if>
+            <if test="CLI_ACTIVO != null"> AND c.activo = #{CLI_ACTIVO}</if>
+            <if test="CLI_BORRADO != null"> AND c.borrado = #{CLI_BORRADO}</if>
+
+            <if test="CLI_NO_ID != null"> AND c.id != #{CLI_NO_ID}</if>
+            <if test="CLI_NO_BORRADO != null"> AND c.borrado != #{CLI_NO_BORRADO}</if>
+            <if test="CLI_NO_ACTIVO != null"> AND c.activo != #{CLI_NO_ACTIVO}</if>
+
+            <if test="CLI_BUSCAR != null"> AND (c.documento like #{CLI_BUSCAR} or c.nombre like #{CLI_BUSCAR} )</if>
+
+            <if test="CO_ID != null"> AND co.id = #{CO_ID}</if>
+            <if test="CO_SERIE != null"> AND co.serie = #{CO_SERIE}</if>
+            <if test="CO_NUMERO != null"> AND co.numero = #{CO_NUMERO}</if>
+            <if test="CO_TIPO_COMPROBANTE_ID != null"> AND co.tipo_comprobante_id = #{CO_TIPO_COMPROBANTE_ID}</if>
+            <if test="CO_ESTADO != null"> AND co.estado = #{CO_ESTADO}</if>
+
+            <if test="U_ID != null"> AND u.id = #{U_ID}</if>
+            <if test="U_NAME != null"> AND u.name = #{U_NAME}</if>
+            <if test="U_EMAIL != null"> AND u.email = #{U_EMAIL}</if>
+            <if test="U_TIPO_USER_ID != null"> AND u.tipo_user_id = #{U_TIPO_USER_ID}</if>
+
+            <if test="U_BUSCAR != null"> AND (u.name like #{U_BUSCAR} or u.email like #{U_BUSCAR} )</if>
+
+            <if test="DU_ID != null"> AND du.id = #{DU_ID}</if>
+            <if test="DU_NOMBRES != null"> AND du.nombres = #{DU_NOMBRES}</if>
+            <if test="DU_APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{DU_APELLIDO_PATERNO}</if>
+            <if test="DU_APELLIDO_MATERNO != null"> AND du.apellido_materno = #{DU_APELLIDO_MATERNO}</if>
+            <if test="DU_DOCUMENTO != null"> AND du.documento = #{DU_DOCUMENTO}</if>
+
+            <if test="DU_BUSCAR != null"> AND (du.nombres like #{DU_BUSCAR} or du.apellido_paterno like #{DU_BUSCAR} or du.apellido_materno like #{DU_BUSCAR} or du.documento like #{DU_BUSCAR} )</if>
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+        </where>
+        order by v.fecha, v.hora, v.id
     </select>
 
     <update id="updateByPrimaryKeySelective">
@@ -68,6 +434,9 @@
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+            <if test="TIPO != null"> tipo = #{TIPO}, </if>
+            <if test="ALMACEN_ID != null"> almacen_id = #{ALMACEN_ID}, </if>
+            <if test="NUMERO_VENTA != null"> numero_venta = #{NUMERO_VENTA}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>

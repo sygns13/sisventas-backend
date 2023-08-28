@@ -9,7 +9,7 @@ import java.util.Map;
 @Mapper
 public interface TipoProductoMapper extends GeneralMapper<TipoProducto> {
 
-    int getTotalElements(Map<String, Object> var1);
+    Long getTotalElements(Map<String, Object> var1);
 
 
 }

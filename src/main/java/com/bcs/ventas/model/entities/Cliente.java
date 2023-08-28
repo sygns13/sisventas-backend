@@ -243,4 +243,6 @@ public class Cliente implements Serializable {
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
+
+
 }

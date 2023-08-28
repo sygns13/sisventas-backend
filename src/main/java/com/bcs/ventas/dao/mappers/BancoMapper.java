@@ -8,6 +8,6 @@ import java.util.Map;
 @Mapper
 public interface BancoMapper extends GeneralMapper<Banco> {
 
-    int getTotalElements(Map<String, Object> var1);
+    Long getTotalElements(Map<String, Object> var1);
 
 }

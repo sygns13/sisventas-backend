@@ -22,17 +22,17 @@ public interface ProductoMapper extends GeneralMapper<Producto> {
 
     List<Presentacion> getPresentacion(Map<String, Object> params);
 
-    int getTotalElements(Map<String, Object> var1);
+    Long getTotalElements(Map<String, Object> var1);
 
-    int getTotalElementsInventario(Map<String, Object> var1);
+    Long getTotalElementsInventario(Map<String, Object> var1);
 
     List<InventarioDTO> listByParameterMapInventario(Map<String, Object> var1);
 
-    int getTotalElementsBajoStock(Map<String, Object> var1);
+    Long getTotalElementsBajoStock(Map<String, Object> var1);
 
     List<ProductoBajoStockDTO> listByParameterMapProductosBajoStock(Map<String, Object> var1);
 
-    int getTotalElementsProductosVencidos(Map<String, Object> var1);
+    Long getTotalElementsProductosVencidos(Map<String, Object> var1);
 
     List<ProductoVencidoDTO> listByParameterMapProductosVencidos(Map<String, Object> var1);
 }

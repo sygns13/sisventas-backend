@@ -20,7 +20,7 @@
         select * from presentacions
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from presentacions
         <where>
             <if test="ID != null"> AND id = #{ID}</if>

@@ -49,13 +49,18 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Page<Cliente> listar(Pageable page, String buscar) throws Exception {
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
         params.put("BUSCAR","%"+buscar+"%");
 
-        int total = clienteMapper.getTotalElements(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = clienteMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);
@@ -153,16 +158,29 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public List<Cliente> listar() throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO", Constantes.REGISTRO_NO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
+
         return clienteMapper.listByParameterMap(params);
     }
 
     @Override
     public Cliente listarPorId(Long id) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
 
         List<Cliente> clientes = clienteMapper.listByParameterMap(params);
 
@@ -174,9 +192,15 @@ public class ClienteServiceImpl implements ClienteService {
 
 
     public Cliente getByDocument(String document) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("DOCUMENTO",document.trim());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
 
         List<Cliente> clientes = clienteMapper.listByParameterMap(params);
 

@@ -340,7 +340,7 @@
           inner join presentacions pe on p.presentacion_id=pe.id
       </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from productos p
         inner join tipo_productos tp on p.tipo_producto_id = tp.id
         inner join marcas m on p.marca_id=m.id
@@ -459,7 +459,7 @@
           <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
       </select>
 
-    <select id="getTotalElementsInventario" resultType="int">
+    <select id="getTotalElementsInventario" resultType="java.lang.Long">
         select COUNT(*)
         from productos p
         inner join tipo_productos tp on p.tipo_producto_id = tp.id
@@ -615,7 +615,7 @@
 
 
     <!-- Productos Bajos de Stock -->
-    <select id="getTotalElementsBajoStock" resultType="int">
+    <select id="getTotalElementsBajoStock" resultType="java.lang.Long">
         select COUNT(*)
         from productos p
         inner join tipo_productos tp on p.tipo_producto_id = tp.id
@@ -757,7 +757,7 @@
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
-    <select id="getTotalElementsProductosVencidos" resultType="int">
+    <select id="getTotalElementsProductosVencidos" resultType="java.lang.Long">
         select COUNT(*)
 
         from productos p

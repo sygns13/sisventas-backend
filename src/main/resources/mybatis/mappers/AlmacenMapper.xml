@@ -42,7 +42,7 @@
         inner join pais pa on de.pais_id = pa.id
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) as total from almacens a
         inner join distritos d on a.distrito_id = d.id
         inner join provincias p on d.provincia_id = p.id

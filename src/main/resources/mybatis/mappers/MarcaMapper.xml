@@ -20,7 +20,7 @@
         select * from marcas
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from marcas
         <where>
             <if test="ID != null"> AND id = #{ID}</if>

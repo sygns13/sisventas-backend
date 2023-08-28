@@ -1,6 +1,7 @@
 package com.bcs.ventas.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -26,15 +27,19 @@ public class DetalleVenta implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "ID de la Venta")
-    @Column(name="venta_id", nullable = true)
-    private Long ventaId;
+    @Schema(description = "Venta")
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "venta_id", nullable = false, foreignKey = @ForeignKey(name = "FK_venta_detalle"))
+    private Venta venta;
+
+    private Long ventaIdReference;
 
     //@Column(name="producto_id", nullable = true)
     //private Long productoId;
     @Schema(description = "Producto de la Venta")
     @ManyToOne
-    @JoinColumn(name = "producto_id", nullable = false, foreignKey = @ForeignKey(name = "FK_producto_detalle?venta"))
+    @JoinColumn(name = "producto_id", nullable = false, foreignKey = @ForeignKey(name = "FK_producto_detalle_venta"))
     private Producto producto;
 
     @Schema(description = "Precio de Venta del Producto")
@@ -89,9 +94,10 @@ public class DetalleVenta implements Serializable {
     @Column(name="unidad", nullable = true, length= 500)
     private String unidad;
 
-    @Schema(description = "Lote de Producto vendido")
-    @Column(name="lote_id", nullable = true)
-    private Long loteId;
+    @Schema(description = "Lote del Producto de la Venta")
+    @ManyToOne
+    @JoinColumn(name = "lote_id", nullable = true, foreignKey = @ForeignKey(name = "FK_lote_detalle_venta"))
+    private Lote lote;
 
     @Schema(description = "ID User Padre")
     //@NotNull( message = "{producto.user_id.notnull}")
@@ -124,9 +130,10 @@ public class DetalleVenta implements Serializable {
     public DetalleVenta() {
     }
 
-    public DetalleVenta(Long id, Long ventaId, Producto producto, Long precioVenta, Long precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Double descuento, Integer tipDescuento, Double cantidadReal, String unidad, Long loteId, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public DetalleVenta(Long id, Venta venta, Long ventaIdReference, Producto producto, Long precioVenta, Long precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Double descuento, Integer tipDescuento, Double cantidadReal, String unidad, Lote lote, Long userId, Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
-        this.ventaId = ventaId;
+        this.venta = venta;
+        this.ventaIdReference = ventaIdReference;
         this.producto = producto;
         this.precioVenta = precioVenta;
         this.precioCompra = precioCompra;
@@ -137,16 +144,17 @@ public class DetalleVenta implements Serializable {
         this.tipDescuento = tipDescuento;
         this.cantidadReal = cantidadReal;
         this.unidad = unidad;
-        this.loteId = loteId;
+        this.lote = lote;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
         this.borrado = borrado;
     }
 
-    public DetalleVenta(Long id, Long ventaId, Producto producto, Long precioVenta, Long precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Double descuento, Integer tipDescuento, Double cantidadReal, String unidad, Long loteId, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public DetalleVenta(Long id, Venta venta, Long ventaIdReference, Producto producto, Long precioVenta, Long precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Double descuento, Integer tipDescuento, Double cantidadReal, String unidad, Lote lote, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
-        this.ventaId = ventaId;
+        this.venta = venta;
+        this.ventaIdReference = ventaIdReference;
         this.producto = producto;
         this.precioVenta = precioVenta;
         this.precioCompra = precioCompra;
@@ -157,7 +165,7 @@ public class DetalleVenta implements Serializable {
         this.tipDescuento = tipDescuento;
         this.cantidadReal = cantidadReal;
         this.unidad = unidad;
-        this.loteId = loteId;
+        this.lote = lote;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
@@ -174,12 +182,12 @@ public class DetalleVenta implements Serializable {
         this.id = id;
     }
 
-    public Long getVentaId() {
-        return ventaId;
+    public Venta getVenta() {
+        return venta;
     }
 
-    public void setVentaId(Long ventaId) {
-        this.ventaId = ventaId;
+    public void setVenta(Venta venta) {
+        this.venta = venta;
     }
 
     public Producto getProducto() {
@@ -262,14 +270,6 @@ public class DetalleVenta implements Serializable {
         this.unidad = unidad;
     }
 
-    public Long getLoteId() {
-        return loteId;
-    }
-
-    public void setLoteId(Long loteId) {
-        this.loteId = loteId;
-    }
-
     public Long getUserId() {
         return userId;
     }
@@ -317,4 +317,22 @@ public class DetalleVenta implements Serializable {
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
+
+    public Long getVentaIdReference() {
+        return ventaIdReference;
+    }
+
+    public void setVentaIdReference(Long ventaIdReference) {
+        this.ventaIdReference = ventaIdReference;
+    }
+
+    public Lote getLote() {
+        return lote;
+    }
+
+    public void setLote(Lote lote) {
+        this.lote = lote;
+    }
 }
+
+

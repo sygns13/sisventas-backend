@@ -22,7 +22,7 @@
         select * from unidads
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from unidads
         <where>
             <if test="ID != null"> AND id = #{ID}</if>

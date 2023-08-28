@@ -100,21 +100,33 @@ public class MarcaServiceImpl implements MarcaService {
     public List<Marca> listar() throws Exception {
         //return marcaMapper.getAllEntities();
         //return marcaDAO.listar();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
+
         return marcaMapper.listByParameterMap(params);
     }
 
     public Page<Marca> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
         params.put("BUSCAR","%"+buscar+"%");
 
-        int total = marcaMapper.getTotalElements(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = marcaMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);

@@ -79,12 +79,14 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        Integer empresa_id = 1;
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID", empresa_id);
+        params.put("EMPRESA_ID", EmpresaId);
         params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
 
 
@@ -103,7 +105,7 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
         }
 
         if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
-            params.put("BUSCAR",filtros.getPalabraClave());
+            params.put("BUSCAR","%"+filtros.getPalabraClave()+"%");
         }
 
         if(filtros.getTipo() != null){
@@ -122,9 +124,9 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
-        int total = retiroEntradaProductoMapper.getTotalElementsMovimientosProductos(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = retiroEntradaProductoMapper.getTotalElementsMovimientosProductos(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);

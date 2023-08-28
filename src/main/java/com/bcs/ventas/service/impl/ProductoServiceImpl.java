@@ -243,21 +243,31 @@ public class ProductoServiceImpl implements ProductoService {
     public List<Producto> listar() throws Exception {
         //return productoMapper.getAllEntities();
         //return productoDAO.listar();
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
         return productoMapper.listByParameterMap(params);
     }
 
     public Page<Producto> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
 
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
         params.put("BUSCAR","%"+buscar+"%");
 
-        int total = productoMapper.getTotalElements(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = productoMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);
@@ -272,12 +282,14 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        Integer empresa_id = 1;
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID", empresa_id);
+        params.put("EMPRESA_ID", EmpresaId);
         params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
 
         List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
@@ -329,9 +341,9 @@ public class ProductoServiceImpl implements ProductoService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
-        int total = productoMapper.getTotalElementsInventario(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = productoMapper.getTotalElementsInventario(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);
@@ -347,12 +359,14 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        Integer empresa_id = 1;
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID", empresa_id);
+        params.put("EMPRESA_ID", EmpresaId);
         params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
 
         List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
@@ -367,16 +381,16 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
         if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
-            params.put("BUSCAR",filtros.getPalabraClave());
+            params.put("BUSCAR","%"+filtros.getPalabraClave()+"%");
         }
 
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
-        int total = productoMapper.getTotalElementsInventario(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = productoMapper.getTotalElementsInventario(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);
@@ -392,12 +406,14 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        Integer empresa_id = 1;
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID", empresa_id);
+        params.put("EMPRESA_ID", EmpresaId);
         params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
 
         List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
@@ -412,16 +428,16 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
         if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
-            params.put("BUSCAR",filtros.getPalabraClave());
+            params.put("BUSCAR","%"+filtros.getPalabraClave()+"%");
         }
 
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
-        int total = productoMapper.getTotalElementsBajoStock(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = productoMapper.getTotalElementsBajoStock(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);
@@ -437,13 +453,15 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        Integer empresa_id = 1;
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("EMPRESA_ID", empresa_id);
+        params.put("EMPRESA_ID", EmpresaId);
         params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
 
 
@@ -462,7 +480,7 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
         if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
-            params.put("BUSCAR",filtros.getPalabraClave());
+            params.put("BUSCAR","%"+filtros.getPalabraClave()+"%");
         }
 
         if(filtros.getTipo() != null){
@@ -481,9 +499,9 @@ public class ProductoServiceImpl implements ProductoService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
-        int total = productoMapper.getTotalElementsProductosVencidos(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = productoMapper.getTotalElementsProductosVencidos(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);
@@ -584,10 +602,10 @@ public class ProductoServiceImpl implements ProductoService {
         BigDecimal stockMinimo = new BigDecimal(p.getStockMinimo());
         stockMinimo.setScale(2, RoundingMode.HALF_UP);
 
-        BigDecimal precioUnidad = new BigDecimal(p.getPrecioUnidad());
+        BigDecimal precioUnidad = p.getPrecioUnidad();
         precioUnidad.setScale(2, RoundingMode.HALF_UP);
 
-        BigDecimal precioCompra = new BigDecimal(p.getPrecioCompra());
+        BigDecimal precioCompra = p.getPrecioCompra();
         precioCompra.setScale(2, RoundingMode.HALF_UP);
 
         Map<String, Object> params = new HashMap<String, Object>();

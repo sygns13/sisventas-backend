@@ -8,5 +8,5 @@ import java.util.Map;
 @Mapper
 public interface ServicioMapper extends GeneralMapper<Servicio>{
 
-    int getTotalElements(Map<String, Object> var1);
+    Long getTotalElements(Map<String, Object> var1);
 }

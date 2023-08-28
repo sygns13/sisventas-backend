@@ -126,9 +126,15 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
 
     @Override
     public DetalleUnidadProducto listarPorId(Long id) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
 
         List<DetalleUnidadProducto> detalleUnidadProducto = detalleUnidadProductoMapper.listByParameterMap(params);
 

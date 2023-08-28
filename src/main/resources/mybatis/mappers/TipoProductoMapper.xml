@@ -21,7 +21,7 @@
         select * from tipo_productos
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from tipo_productos
         <where>
             <if test="ID != null"> AND id = #{ID}</if>

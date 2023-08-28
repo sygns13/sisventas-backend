@@ -100,22 +100,32 @@ public class TipoProductoServiceImpl implements TipoProductoService {
     public List<TipoProducto> listar() throws Exception {
         //return tipoProductoMapper.getAllEntities();
         //return tipoProductoDAO.listar();
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
+
         return tipoProductoMapper.listByParameterMap(params);
     }
 
 
     public Page<TipoProducto> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
         params.put("BUSCAR","%"+buscar+"%");
 
-        int total = tipoProductoMapper.getTotalElements(params);
-        int totalPages = (int) Math.ceil( ((double)total) / page.getPageSize());
-        int offset = page.getPageSize()*(page.getPageNumber());
+        Long total = tipoProductoMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
 
         params.put("LIMIT", page.getPageSize());
         params.put("OFFSET", offset);

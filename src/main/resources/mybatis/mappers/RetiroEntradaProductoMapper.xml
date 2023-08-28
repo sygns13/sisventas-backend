@@ -160,7 +160,7 @@
 
 
 
-    <select id="getTotalElementsMovimientosProductos" resultType="int">
+    <select id="getTotalElementsMovimientosProductos" resultType="java.lang.Long">
         select COUNT(*)
         from retiro_entrada_productos r
         inner join users u on r.user_id = u.id

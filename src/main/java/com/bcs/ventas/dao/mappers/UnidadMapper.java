@@ -9,6 +9,6 @@ import java.util.Map;
 @Mapper
 public interface UnidadMapper extends GeneralMapper<Unidad> {
 
-    int getTotalElements(Map<String, Object> var1);
+    Long getTotalElements(Map<String, Object> var1);
 
 }

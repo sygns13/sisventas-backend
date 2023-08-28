@@ -10,6 +10,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -56,14 +57,14 @@ public class DetalleUnidadProducto implements Serializable {
     @DecimalMin(value = "0.01", message = "{detalleunidadproducto.precio.min}")
     @DecimalMax(value = "999999999", message = "{detalleunidadproducto.precio.max}")
     @Column(name="precio", nullable = true)
-    private Double precio;
+    private BigDecimal precio;
 
     @Schema(description = "Precio de Compra de Unidad de Producto")
     @NotNull( message = "{detalleunidadproducto.costo_compra.notnull}")
     @DecimalMin(value = "0.01", message = "{detalleunidadproducto.costo_compra.min}")
     @DecimalMax(value = "999999999", message = "{detalleunidadproducto.costo_compra.max}")
     @Column(name="costo_compra", nullable = true)
-    private Double costoCompra;
+    private BigDecimal costoCompra;
 
     @Schema(description = "ID User Padre")
     //@NotNull( message = "{detalleunidadproducto.user_id.notnull}")
@@ -101,7 +102,7 @@ public class DetalleUnidadProducto implements Serializable {
     public DetalleUnidadProducto() {
     }
 
-    public DetalleUnidadProducto(Long id, Long productoId, Unidad unidad, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, Long almacenId) {
+    public DetalleUnidadProducto(Long id, Long productoId, Unidad unidad, String codigoUnidad, BigDecimal precio, BigDecimal costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, Long almacenId) {
         this.id = id;
         this.productoId = productoId;
         this.unidad = unidad;
@@ -115,7 +116,7 @@ public class DetalleUnidadProducto implements Serializable {
         this.almacenId = almacenId;
     }
 
-    public DetalleUnidadProducto(Long id, Long productoId, Unidad unidad, String codigoUnidad, Double precio, Double costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, Long almacenId) {
+    public DetalleUnidadProducto(Long id, Long productoId, Unidad unidad, String codigoUnidad, BigDecimal precio, BigDecimal costoCompra, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, Long almacenId) {
         this.id = id;
         this.productoId = productoId;
         this.unidad = unidad;
@@ -163,19 +164,19 @@ public class DetalleUnidadProducto implements Serializable {
         this.codigoUnidad = codigoUnidad;
     }
 
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 
-    public Double getCostoCompra() {
+    public BigDecimal getCostoCompra() {
         return costoCompra;
     }
 
-    public void setCostoCompra(Double costoCompra) {
+    public void setCostoCompra(BigDecimal costoCompra) {
         this.costoCompra = costoCompra;
     }
 

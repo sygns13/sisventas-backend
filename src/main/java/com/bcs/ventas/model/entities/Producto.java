@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -52,14 +53,14 @@ public class Producto implements Serializable {
     @DecimalMin(value = "0.01", message = "{producto.precio_unidad.min}")
     @DecimalMax(value = "999999999", message = "{producto.precio_unidad.max}")
     @Column(name="precio_unidad", nullable = true)
-    private Double precioUnidad;
+    private BigDecimal precioUnidad;
 
     @Schema(description = "Precio de Compra de Producto")
     @NotNull( message = "{producto.precio_compra.notnull}")
     @DecimalMin(value = "0.01", message = "{producto.precio_compra.min}")
     @DecimalMax(value = "999999999", message = "{producto.precio_compra.max}")
     @Column(name="precio_compra", nullable = true)
-    private Double precioCompra;
+    private BigDecimal precioCompra;
 
     @Schema(description = "Fecha de registro del Producto")
     //@NotNull( message = "{producto.fecha.notnull}")
@@ -152,7 +153,7 @@ public class Producto implements Serializable {
     public Producto() {
     }
 
-    public Producto(Long id, String nombre, TipoProducto tipoProducto, Marca marca,Double stockMinimo, Double precioUnidad,  Double precioCompra, LocalDate fecha,   String codigoUnidad, String codigoProducto, Presentacion presentacion, String composicion, String prioridad,  String ubicacion, Integer activoLotes, Integer afectoIsc, Integer tipoTasaIsc, Double tasaIsc,  Integer afectoIgv, Long userId,  Long empresaId, Integer activo, Integer borrado) {
+    public Producto(Long id, String nombre, TipoProducto tipoProducto, Marca marca,Double stockMinimo, BigDecimal precioUnidad,  BigDecimal precioCompra, LocalDate fecha,   String codigoUnidad, String codigoProducto, Presentacion presentacion, String composicion, String prioridad,  String ubicacion, Integer activoLotes, Integer afectoIsc, Integer tipoTasaIsc, Double tasaIsc,  Integer afectoIgv, Long userId,  Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
         this.nombre = nombre;
         this.tipoProducto = tipoProducto;
@@ -178,7 +179,7 @@ public class Producto implements Serializable {
         this.borrado = borrado;
     }
 
-    public Producto(Long id, String nombre, TipoProducto tipoProducto, Marca marca,Double stockMinimo, Double precioUnidad,  Double precioCompra, LocalDate fecha,   String codigoUnidad, String codigoProducto, Presentacion presentacion, String composicion, String prioridad,  String ubicacion, Integer activoLotes, Integer afectoIsc, Integer tipoTasaIsc, Double tasaIsc,  Integer afectoIgv, Long userId,  Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public Producto(Long id, String nombre, TipoProducto tipoProducto, Marca marca,Double stockMinimo, BigDecimal precioUnidad,  BigDecimal precioCompra, LocalDate fecha,   String codigoUnidad, String codigoProducto, Presentacion presentacion, String composicion, String prioridad,  String ubicacion, Integer activoLotes, Integer afectoIsc, Integer tipoTasaIsc, Double tasaIsc,  Integer afectoIgv, Long userId,  Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
         this.tipoProducto = tipoProducto;
@@ -246,19 +247,19 @@ public class Producto implements Serializable {
         this.stockMinimo = stockMinimo;
     }
 
-    public Double getPrecioUnidad() {
+    public BigDecimal getPrecioUnidad() {
         return precioUnidad;
     }
 
-    public void setPrecioUnidad(Double precioUnidad) {
+    public void setPrecioUnidad(BigDecimal precioUnidad) {
         this.precioUnidad = precioUnidad;
     }
 
-    public Double getPrecioCompra() {
+    public BigDecimal getPrecioCompra() {
         return precioCompra;
     }
 
-    public void setPrecioCompra(Double precioCompra) {
+    public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
 

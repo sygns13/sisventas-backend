@@ -27,7 +27,7 @@
         select * from servicios
     </select>
 
-    <select id="getTotalElements" resultType="int">
+    <select id="getTotalElements" resultType="java.lang.Long">
         select COUNT(*) from servicios
         <where>
             <if test="ID != null"> AND id = #{ID}</if>

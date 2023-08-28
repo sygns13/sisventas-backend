@@ -9,7 +9,7 @@ import java.util.Map;
 @Mapper
 public interface AlmacenMapper extends GeneralMapper<Almacen> {
 
-    int getTotalElements(Map<String, Object> var1);
+    Long getTotalElements(Map<String, Object> var1);
 
     List<Almacen> listByParameterMapOrderId(Map<String, Object> var1);
 

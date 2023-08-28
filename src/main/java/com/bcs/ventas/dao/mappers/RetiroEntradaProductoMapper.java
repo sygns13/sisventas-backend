@@ -13,7 +13,7 @@ public interface RetiroEntradaProductoMapper extends GeneralMapper<RetiroEntrada
 
     List<RetiroEntradaProductoDTO> getAllEntitiesGeneral(Map<String, Object> params);
 
-    int getTotalElementsMovimientosProductos(Map<String, Object> var1);
+    Long getTotalElementsMovimientosProductos(Map<String, Object> var1);
 
     List<RetiroEntradaProductoDTO> listByParameterMapMovientosProductos(Map<String, Object> params);
 
