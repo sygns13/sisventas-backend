@@ -5,6 +5,7 @@ import com.bcs.ventas.dao.mappers.LoteMapper;
 import com.bcs.ventas.dao.mappers.StockMapper;
 import com.bcs.ventas.dao.mappers.UnidadMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.dto.LotesChangeOrdenDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.LoteService;
 import com.bcs.ventas.utils.Constantes;
@@ -72,8 +73,19 @@ public class LoteServiceImpl implements LoteService {
 
         boolean validacion = this.validacionRegistro(lote, resultValidacion);
 
-        if(validacion)
+        if(validacion){
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+            params.put("EMPRESA_ID",lote.getEmpresaId());
+            params.put("ALMACEN_ID", lote.getAlmacenId());
+            params.put("PRODUCTO_ID", lote.getProductoId());
+
+            Long cantLotes = loteMapper.getTotalElements(params);
+            cantLotes ++;
+            lote.setOrden(cantLotes);
+
             return this.grabarRegistro(lote);
+        }
 
         String errorValidacion = "Error de validación Método Registrar Lote";
 
@@ -107,8 +119,19 @@ public class LoteServiceImpl implements LoteService {
 
         boolean validacion = this.validacionRegistroNuevoLote(lote, resultValidacion);
 
-        if(validacion)
+        if(validacion){
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+            params.put("EMPRESA_ID",lote.getEmpresaId());
+            params.put("ALMACEN_ID", lote.getAlmacenId());
+            params.put("PRODUCTO_ID", lote.getProductoId());
+
+            Long cantLotes = loteMapper.getTotalElements(params);
+            cantLotes ++;
+            lote.setOrden(cantLotes);
+
             return this.grabarRegistroNuevoLote(lote);
+        }
 
         String errorValidacion = "Error de validación Método Registrar Lote";
 
@@ -120,6 +143,32 @@ public class LoteServiceImpl implements LoteService {
 
         throw new ValidationServiceException(errorValidacion);
     }
+
+    @Override
+    public void modificarOrden(LotesChangeOrdenDTO lotes) throws Exception {
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionModificarOrden(lotes, resultValidacion);
+
+        if(validacion){
+            this.grabarModificarOrden(lotes);
+            return;
+        }
+
+        String errorValidacion = "Error de validación Método Modificar Orden de Lote";
+
+        if (resultValidacion.get("errors") != null) {
+            List<String> errors = (List<String>) resultValidacion.get("errors");
+            if (errors.size() > 0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+
+
+    }
+
 
     @Override
     public int modificar(Lote lote) throws Exception {
@@ -526,6 +575,27 @@ public class LoteServiceImpl implements LoteService {
         loteDAO.modificar(lote);
     }
 
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    public void grabarModificarOrden(LotesChangeOrdenDTO lotes) throws Exception {
+
+        LocalDateTime fechaActualUpdated = LocalDateTime.now();
+
+        Lote lote1 = loteDAO.listarPorId(lotes.getLote1().getId());
+        Lote lote2 = loteDAO.listarPorId(lotes.getLote2().getId());
+
+        lotes.getLote1().setOrden(lote1.getOrden());
+        lotes.getLote2().setOrden(lote2.getOrden());
+
+        lote1.setUpdatedAd(fechaActualUpdated);
+        lote2.setUpdatedAd(fechaActualUpdated);
+
+        lote1.setOrden(lotes.getLote2().getOrden());
+        lote2.setOrden(lotes.getLote1().getOrden());
+
+        loteDAO.modificar(lote1);
+        loteDAO.modificar(lote2);
+    }
+
     @Override
     public boolean validacionRegistro(Lote lote, Map<String, Object> resultValidacion) {
         boolean resultado = true;
@@ -613,6 +683,64 @@ public class LoteServiceImpl implements LoteService {
         String warning;
 
         //Lógica de Validaciones para Eliminación Producto
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    public boolean validacionModificarOrden(LotesChangeOrdenDTO lotes, Map<String, Object> resultValidacion) throws Exception {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(lotes.getLote1() == null || lotes.getLote1().getId() == null){
+            resultado = false;
+            String nameLote = lotes.getLote1() != null && lotes.getLote1().getNombre() != null ? lotes.getLote1().getNombre() : "";
+            error = "Debe de enviar el ID del Lote " + nameLote;
+            errors.add(error);
+        }
+
+        /*if(lotes.getLote1() != null && (lotes.getLote1().getOrden() == null || lotes.getLote1().getOrden().intValue() == Constantes.CANTIDAD_ZERO_LONG.intValue())){
+            resultado = false;
+            String nameLote = lotes.getLote1() != null && lotes.getLote1().getNombre() != null ? lotes.getLote1().getNombre() : "";
+            error = "Debe de enviar el Orden del Lote " + nameLote;
+            errors.add(error);
+        }*/
+
+        if(lotes.getLote2() == null || lotes.getLote2().getId() == null){
+            resultado = false;
+            String nameLote = lotes.getLote2() != null && lotes.getLote2().getNombre() != null ? lotes.getLote2().getNombre() : "";
+            error = "Debe de enviar el ID del Lote " + nameLote;
+            errors.add(error);
+        }
+
+        /*if(lotes.getLote2() != null && (lotes.getLote2().getOrden() == null || lotes.getLote2().getOrden().intValue() == Constantes.CANTIDAD_ZERO_LONG.intValue())){
+            resultado = false;
+            String nameLote = lotes.getLote2() != null && lotes.getLote2().getNombre() != null ? lotes.getLote2().getNombre() : "";
+            error = "Debe de enviar el Orden del Lote " + nameLote;
+            errors.add(error);
+        }*/
+
+        Lote lote1 = this.listarPorId(lotes.getLote1().getId());
+        Lote lote2 = this.listarPorId(lotes.getLote2().getId());
+
+        if(lote1 == null){
+            resultado = false;
+            String nameLote = lotes.getLote1() != null && lotes.getLote1().getNombre() != null ? lotes.getLote1().getNombre() : "";
+            error = "EL ID del Lote " + nameLote + " no corresponde a un ID válido";
+            errors.add(error);
+        }
+
+        if(lote2 == null){
+            resultado = false;
+            String nameLote = lotes.getLote2() != null && lotes.getLote2().getNombre() != null ? lotes.getLote2().getNombre() : "";
+            error = "EL ID del Lote " + nameLote + " no corresponde a un ID válido";
+            errors.add(error);
+        }
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);

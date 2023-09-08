@@ -1,6 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.LotesChangeOrdenDTO;
 import com.bcs.ventas.model.entities.Lote;
 import com.bcs.ventas.service.LoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +62,16 @@ public class LoteController {
     @PostMapping("/ingresolote")
     public ResponseEntity<Lote> registrarEntradaNuevoLote(@Valid @RequestBody Lote a) throws Exception{
         a.setId(null);
-        a.setId(null);
         Lote obj = loteService.registrarNuevoLote(a);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
         return  ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("/modificarorden")
+    public ResponseEntity<Void> modificarOrden(@RequestBody LotesChangeOrdenDTO lotes) throws Exception{
+        loteService.modificarOrden(lotes);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

@@ -1,6 +1,7 @@
 package com.bcs.ventas.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 @Schema(description = "Almacen Model")
 @Entity
@@ -108,6 +110,11 @@ public class Almacen implements Serializable {
     @Schema(description = "Distrito del Almacén")
     @Transient
     private Distrito distrito;
+
+    @Schema(description = "Productos en Stock en Almacen")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Transient
+    private Map<String, Object> productosStocks;
 
     public Almacen() {
     }
@@ -264,5 +271,13 @@ public class Almacen implements Serializable {
 
     public void setDistrito(Distrito distrito) {
         this.distrito = distrito;
+    }
+
+    public Map<String, Object> getProductosStocks() {
+        return productosStocks;
+    }
+
+    public void setProductosStocks(Map<String, Object> productosStocks) {
+        this.productosStocks = productosStocks;
     }
 }

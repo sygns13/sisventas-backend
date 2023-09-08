@@ -29,6 +29,11 @@ public class Lote implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(description = "Indicador de Orden del Lote de Producto")
+    //@NotNull( message = "{lote.activoVencimiento.notnull}")
+    @Column(name="orden", nullable = true)
+    private Long orden;
+
     @Schema(description = "Nombre del Lote")
     @NotNull( message = "{lote.nombre.notnull}")
     @Size(min = 1, max = 150, message = "{lote.nombre.size}")
@@ -282,5 +287,13 @@ public class Lote implements Serializable {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public Long getOrden() {
+        return orden;
+    }
+
+    public void setOrden(Long orden) {
+        this.orden = orden;
     }
 }

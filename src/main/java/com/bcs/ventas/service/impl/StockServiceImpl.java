@@ -14,6 +14,7 @@ import com.bcs.ventas.model.entities.Stock;
 import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.service.StockService;
 import com.bcs.ventas.utils.Constantes;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -45,6 +47,8 @@ public class StockServiceImpl implements StockService {
 
     @Autowired
     private RetiroEntradaProductoDAO retiroEntradaProductoDAO;
+
+    private Logger log = org.slf4j.LoggerFactory.getLogger(StockServiceImpl.class);
 
 
     @Override
@@ -312,5 +316,84 @@ public class StockServiceImpl implements StockService {
 
 
         return resultado;
+    }
+
+    @Override
+    public List<Almacen> getAlmacensProducts(Long idEmpresa, Long idProducto) throws Exception {
+        Map<String, Object> paramsZ = new HashMap<String, Object>();
+        paramsZ.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
+        paramsZ.put("EMPRESA_ID", idEmpresa);
+        List<Almacen> Almacens =  almacenMapper.listByParameterMapOrderId(paramsZ);
+
+        Almacens.forEach((almacen)-> {
+
+            Map<String, Object> resultado = new HashMap<>();
+            Producto producto = null;
+            try {
+                producto = productoDAO.listarPorId(idProducto);
+            } catch (Exception e) {
+                log.info(e.toString());
+                //throw new RuntimeException(e);
+            }
+
+            if(producto != null && producto.getActivoLotes() != null){
+
+                if(producto.getActivoLotes().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
+
+                    //Hardoced idAlmacen, render en la vista
+                    Long idAlmacenHarcoded = Constantes.ALMACEN_GENERAL;
+
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("PRODUCTO_ID", idProducto);
+                    params.put("EMPRESA_ID", idEmpresa);
+                    params.put("CANTIDAD_ZERO", Constantes.CANTIDAD_ZERO);
+                    params.put("ACTIVO_LOTE", Constantes.REGISTRO_ACTIVO);
+                    params.put("ACTIVO_ALMACEN", Constantes.REGISTRO_ACTIVO);
+                    params.put("NO_BORRADO_LOTE", Constantes.REGISTRO_BORRADO);
+                    params.put("NO_BORRADO_ALMACEN", Constantes.REGISTRO_BORRADO);
+                    params.put("ALMACEN_ID", almacen.getId());
+
+                    List<LoteAlmacenUnidadDTO> respuesta = stockMapper.listDTOByParameterMapLoteAlmacenUnidad(params);
+                     AtomicReference<Double> cantidadTotal = new AtomicReference<>(0.0);
+                    respuesta.forEach((loteAlmacen)-> {
+                        cantidadTotal.updateAndGet(v -> v + loteAlmacen.getCantidadTotal());
+                    });
+
+                    resultado.put("respuesta",respuesta);
+                    resultado.put("cantidadTotal",cantidadTotal);
+
+                }
+                else if(producto.getActivoLotes().intValue() == Constantes.REGISTRO_INACTIVO.intValue()){
+
+                    //Hardoced idAlmacen, render en la vista
+                    Long idAlmacenHarcoded = Constantes.ALMACEN_GENERAL;
+
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("PRODUCTO_ID", idProducto);
+                    params.put("EMPRESA_ID", idEmpresa);
+                    params.put("ACTIVO_STOCK", Constantes.REGISTRO_ACTIVO);
+                    params.put("ACTIVO_ALMACEN", Constantes.REGISTRO_ACTIVO);
+                    params.put("NO_BORRADO_STOCK", Constantes.REGISTRO_BORRADO);
+                    params.put("NO_BORRADO_ALMACEN", Constantes.REGISTRO_BORRADO);
+                    params.put("ALMACEN_ID", almacen.getId());
+
+                    List<AlmacenStockDTO> respuesta = stockMapper.listDTOByParameterMapLoteAlmacenStock(params);
+                    AtomicReference<Double> cantidadTotal = new AtomicReference<>(0.0);
+                    respuesta.forEach((stock)-> {
+                        cantidadTotal.updateAndGet(v -> v + stock.getStock().getCantidad());
+                    });
+
+                    resultado.put("respuesta",respuesta);
+                    resultado.put("cantidadTotal",cantidadTotal);
+                }
+            }
+
+            almacen.setProductosStocks(resultado);
+
+        });
+
+
+
+        return Almacens;
     }
 }

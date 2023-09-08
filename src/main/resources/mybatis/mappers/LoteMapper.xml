@@ -52,6 +52,30 @@
         </where>
     </select>
 
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from lotes
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="FECHA_INGRESO != null"> AND fecha_ingreso = #{FECHA_INGRESO}</if>
+            <if test="FECHA_VENCIMIENTO != null"> AND fecha_vencimiento = #{FECHA_VENCIMIENTO}</if>
+            <if test="ACTIVO_VENCIMIENTO != null"> AND activo_vencimiento = #{ACTIVO_VENCIMIENTO}</if>
+            <if test="PRODUCTO_ID != null"> AND producto_id = #{PRODUCTO_ID}</if>
+            <if test="CANTIDAD != null"> AND cantidad = #{CANTIDAD}</if>
+            <if test="OBSERVACION != null"> AND observacion = #{OBSERVACION}</if>
+            <if test="ALMACEN_ID != null"> AND almacen_id = #{ALMACEN_ID}</if>
+            <if test="UNIDAD_ID != null"> AND unidad_id = #{UNIDAD_ID}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+    </select>
+
     <update id="updateByPrimaryKeySelective">
         update lotes
         <set>
