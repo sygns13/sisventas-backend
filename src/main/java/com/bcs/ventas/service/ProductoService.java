@@ -4,12 +4,14 @@ package com.bcs.ventas.service;
 import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.dto.ProductoBajoStockDTO;
 import com.bcs.ventas.model.dto.ProductoVencidoDTO;
+import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.TipoProducto;
 import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroInventario;
+import com.bcs.ventas.utils.beans.FiltroProductosVenta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -33,5 +35,7 @@ public interface ProductoService extends GeneralService<Producto, Long> {
     Page<ProductoBajoStockDTO> getProductosBajoStock(Pageable pageable, FiltroGeneral filtros) throws Exception;
 
     Page<ProductoVencidoDTO> getProductosVencidos(Pageable pageable, FiltroGeneral filtros) throws Exception;
+
+    Page<ProductosVentaDTO> getProductosVentas(Pageable pageable, FiltroProductosVenta filtros) throws Exception;
 
 }

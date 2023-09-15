@@ -13,4 +13,6 @@ public interface StockService extends GeneralService<Stock, Long>  {
     Map<String, Object> listar(Long idAlmacen, Long idProducto, Long idEmpresa) throws Exception;
 
     List<Almacen> getAlmacensProducts(Long idEmpresa, Long idProducto) throws Exception;
+
+    Map<String, Object> getAlmacenProducts(Long idEmpresa, Long idAlmacen, Long idProducto) throws Exception;
 }

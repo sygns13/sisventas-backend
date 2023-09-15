@@ -6,11 +6,13 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.dto.ProductoBajoStockDTO;
 import com.bcs.ventas.model.dto.ProductoVencidoDTO;
+import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroInventario;
+import com.bcs.ventas.utils.beans.FiltroProductosVenta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -69,6 +71,9 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Autowired
     private StockMapper stockMapper;
+
+    @Autowired
+    private UnidadDAO unidadDAO;
 
 
 
@@ -249,6 +254,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
         return productoMapper.listByParameterMap(params);
     }
@@ -509,6 +515,68 @@ public class ProductoServiceImpl implements ProductoService {
         List<ProductoVencidoDTO> productosVencidos = productoMapper.listByParameterMapProductosVencidos(params);
 
         return new PageImpl<>(productosVencidos, page, total);
+    }
+
+    @Override
+    public Page<ProductosVentaDTO> getProductosVentas(Pageable page, FiltroProductosVenta filtros) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        // params.put("BUSCAR","%"+buscar+"%");
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", EmpresaId);
+        //params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+        params.put("UNIDAD_ID", filtros.getUnidadId());
+        params.put("ALMACEN_ID",filtros.getAlmacenId());
+
+        if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
+            params.put("BUSCAR","%"+filtros.getPalabraClave()+"%");
+        }
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+
+        Long total = productoMapper.getTotalElementsProductosVenta(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<ProductosVentaDTO> productosVenta = productoMapper.listByParameterMapProductosVenta(params);
+
+        productosVenta.forEach((p)-> {
+
+            Map<String, Object> params1 = new HashMap<String, Object>();
+
+            params1.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+            params1.put("EMPRESA_ID", EmpresaId);
+            params1.put("PRODUCTO_ID",p.getProducto().getId());
+            params1.put("PRODUCTO_PU",p.getProducto().getPrecioUnidad());
+            params1.put("PRODUCTO_PC",p.getProducto().getPrecioCompra());
+            params1.put("UNIDAD_ID", filtros.getUnidadId());
+            params1.put("ALMACEN_ID", filtros.getAlmacenId());
+
+            List<DetalleUnidadProducto> detalleUnidadBD = detalleUnidadProductoMapper.listByParameterMapBaseUnidad(params1);
+
+            if(detalleUnidadBD != null && !detalleUnidadBD.isEmpty() && detalleUnidadBD.get(0).getId() != null && detalleUnidadBD.get(0).getId() > 0){
+                try {
+                    Unidad unidad = unidadDAO.listarPorId(detalleUnidadBD.get(0).getUnidad().getId());
+                    detalleUnidadBD.get(0).setUnidad(unidad);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                p.setDetalleUnidadProducto(detalleUnidadBD.get(0));
+            }
+        });
+
+
+        return new PageImpl<>(productosVenta, page, total);
     }
 
     @Override

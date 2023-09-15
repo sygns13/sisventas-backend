@@ -110,6 +110,7 @@ public class UnidadServiceImpl implements UnidadService {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
 
         return unidadMapper.listByParameterMap(params);

@@ -41,6 +41,7 @@ public class TipoDocumentoServiceimpl implements TipoDocumentoService {
     public List<TipoDocumento> listar() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
         return tipoDocumentoMapper.listByParameterMap(params);
     }

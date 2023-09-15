@@ -135,6 +135,7 @@ public class AlmacenServiceImpl implements AlmacenService {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
         return almacenMapper.listByParameterMap(params);
     }

@@ -1,6 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.TipoProducto;
 import com.bcs.ventas.service.TipoProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,13 @@ public class TipoProductoController {
                                                      @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
         Pageable pageable = PageRequest.of(page,size);
         Page<TipoProducto> resultado = tipoProductoService.listar(pageable, buscar);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
+    @GetMapping("/listar-all")
+    public ResponseEntity<List<TipoProducto>> listarAll() throws Exception{
+        List<TipoProducto> resultado = tipoProductoService.listar();
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }

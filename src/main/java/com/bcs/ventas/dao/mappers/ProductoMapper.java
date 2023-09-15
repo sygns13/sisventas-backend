@@ -3,6 +3,7 @@ package com.bcs.ventas.dao.mappers;
 import com.bcs.ventas.model.dto.InventarioDTO;
 import com.bcs.ventas.model.dto.ProductoBajoStockDTO;
 import com.bcs.ventas.model.dto.ProductoVencidoDTO;
+import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.model.entities.Producto;
@@ -35,4 +36,8 @@ public interface ProductoMapper extends GeneralMapper<Producto> {
     Long getTotalElementsProductosVencidos(Map<String, Object> var1);
 
     List<ProductoVencidoDTO> listByParameterMapProductosVencidos(Map<String, Object> var1);
+
+    List<ProductosVentaDTO> listByParameterMapProductosVenta(Map<String, Object> var1);
+
+    Long getTotalElementsProductosVenta(Map<String, Object> var1);
 }

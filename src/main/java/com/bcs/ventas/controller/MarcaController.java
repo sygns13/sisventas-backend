@@ -33,6 +33,13 @@ public class MarcaController {
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
+    @GetMapping("/listar-all")
+    public ResponseEntity<List<Marca>> listarAll() throws Exception{
+        List<Marca> resultado = marcaService.listar();
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Marca> listarPorId(@PathVariable("id") Long id) throws Exception{
         Marca obj = marcaService.listarPorId(id);

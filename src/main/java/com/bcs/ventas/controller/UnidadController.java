@@ -33,6 +33,14 @@ public class UnidadController {
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
+    @GetMapping("/listar-all")
+    public ResponseEntity<List<Unidad>> listarAll() throws Exception{
+
+        List<Unidad> resultado = unidadService.listar();
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Unidad> listarPorId(@PathVariable("id") Long id) throws Exception{
         Unidad obj = unidadService.listarPorId(id);

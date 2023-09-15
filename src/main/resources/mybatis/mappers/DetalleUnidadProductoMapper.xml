@@ -64,8 +64,8 @@
                 d.producto_id,
                 d.unidad_id,
                 ifnull (d.codigo_unidad, '') as codigo_unidad,
-                ifnull (d.precio, (#{PRODUCTO.precioUnidad}*u.cantidad)) as precio,
-                ifnull (d.costo_compra, (#{PRODUCTO.precioCompra}*u.cantidad)) as costo_compra,
+                ifnull (d.precio, (#{PRODUCTO_PU}*u.cantidad)) as precio,
+                ifnull (d.costo_compra, (#{PRODUCTO_PC}*u.cantidad)) as costo_compra,
                 d.user_id,
                 d.empresa_id,
                 d.activo,
@@ -87,6 +87,7 @@
             <if test="BORRADO != null"> AND u.borrado = #{BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND u.activo != #{NO_ACTIVO}</if>
             <if test="NO_BORRADO != null"> AND u.borrado != #{NO_BORRADO}</if>
+            <if test="UNIDAD_ID != null">  AND u.id = #{UNIDAD_ID}</if>
         </where>
         order by cantidad, nombre, abreviatura, id
     </select>
