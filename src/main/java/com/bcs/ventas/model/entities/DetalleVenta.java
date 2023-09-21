@@ -10,6 +10,7 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -33,6 +34,7 @@ public class DetalleVenta implements Serializable {
     @JoinColumn(name = "venta_id", nullable = false, foreignKey = @ForeignKey(name = "FK_venta_detalle"))
     private Venta venta;
 
+    @Transient
     private Long ventaIdReference;
 
     //@Column(name="producto_id", nullable = true)
@@ -47,14 +49,14 @@ public class DetalleVenta implements Serializable {
     @DecimalMin(value = "0.01", message = "{detalle_venta.precio_venta.min}")
     @DecimalMax(value = "999999999", message = "{detalle_venta.precio_venta.max}")
     @Column(name="precio_venta", nullable = true)
-    private Long precioVenta;
+    private BigDecimal precioVenta;
 
     @Schema(description = "Precio de Compra del Producto")
     @NotNull( message = "{detalle_venta.precio_compra.notnull}")
     @DecimalMin(value = "0.01", message = "{detalle_venta.precio_compra.min}")
     @DecimalMax(value = "999999999", message = "{detalle_venta.precio_compra.max}")
     @Column(name="precio_compra", nullable = true)
-    private Long precioCompra;
+    private BigDecimal precioCompra;
 
     @Schema(description = "Cantidad de Producto vendido")
     @NotNull( message = "{detalle_venta.cantidad.notnull}")
@@ -72,12 +74,16 @@ public class DetalleVenta implements Serializable {
     @Column(name="es_grabado", nullable = true)
     private Integer esGrabado;
 
+    @Schema(description = "Producto es Grabado por ISC")
+    @Column(name="es_isc", nullable = true)
+    private Integer esIsc;
+
     @Schema(description = "Descuento de Producto vendido")
     @NotNull( message = "{detalle_venta.descuento.notnull}")
     @DecimalMin(value = "0.00", message = "{detalle_venta.descuento.min}")
     @DecimalMax(value = "999999999", message = "{detalle_venta.descuento.max}")
     @Column(name="descuento", nullable = true)
-    private Double descuento;
+    private BigDecimal descuento;
 
     @Schema(description = "Tipo de Descuento de Producto vendido")
     @Column(name="tipo_descuento", nullable = true)
@@ -93,6 +99,13 @@ public class DetalleVenta implements Serializable {
     @Schema(description = "Descripción de Unidad de Producto vendido")
     @Column(name="unidad", nullable = true, length= 500)
     private String unidad;
+
+    @Schema(description = "Precio de Venta del Producto")
+    @NotNull( message = "{detalle_venta.precio_total.notnull}")
+    @DecimalMin(value = "0.01", message = "{detalle_venta.precio_total.min}")
+    @DecimalMax(value = "999999999", message = "{detalle_venta.precio_total.max}")
+    @Column(name="precio_total", nullable = true)
+    private BigDecimal precioTotal;
 
     @Schema(description = "Lote del Producto de la Venta")
     @ManyToOne
@@ -130,7 +143,7 @@ public class DetalleVenta implements Serializable {
     public DetalleVenta() {
     }
 
-    public DetalleVenta(Long id, Venta venta, Long ventaIdReference, Producto producto, Long precioVenta, Long precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Double descuento, Integer tipDescuento, Double cantidadReal, String unidad, Lote lote, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public DetalleVenta(Long id, Venta venta, Long ventaIdReference, Producto producto, BigDecimal precioVenta, BigDecimal precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Integer esIsc, BigDecimal descuento, Integer tipDescuento, Double cantidadReal, String unidad, BigDecimal precioTotal, Lote lote, Long userId, Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
         this.venta = venta;
         this.ventaIdReference = ventaIdReference;
@@ -140,10 +153,12 @@ public class DetalleVenta implements Serializable {
         this.cantidad = cantidad;
         this.almacenId = almacenId;
         this.esGrabado = esGrabado;
+        this.esIsc = esIsc;
         this.descuento = descuento;
         this.tipDescuento = tipDescuento;
         this.cantidadReal = cantidadReal;
         this.unidad = unidad;
+        this.precioTotal = precioTotal;
         this.lote = lote;
         this.userId = userId;
         this.empresaId = empresaId;
@@ -151,7 +166,7 @@ public class DetalleVenta implements Serializable {
         this.borrado = borrado;
     }
 
-    public DetalleVenta(Long id, Venta venta, Long ventaIdReference, Producto producto, Long precioVenta, Long precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Double descuento, Integer tipDescuento, Double cantidadReal, String unidad, Lote lote, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public DetalleVenta(Long id, Venta venta, Long ventaIdReference, Producto producto, BigDecimal precioVenta, BigDecimal precioCompra, Double cantidad, Long almacenId, Integer esGrabado, Integer esIsc, BigDecimal descuento, Integer tipDescuento, Double cantidadReal, String unidad, BigDecimal precioTotal, Lote lote, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.venta = venta;
         this.ventaIdReference = ventaIdReference;
@@ -161,10 +176,12 @@ public class DetalleVenta implements Serializable {
         this.cantidad = cantidad;
         this.almacenId = almacenId;
         this.esGrabado = esGrabado;
+        this.esIsc = esIsc;
         this.descuento = descuento;
         this.tipDescuento = tipDescuento;
         this.cantidadReal = cantidadReal;
         this.unidad = unidad;
+        this.precioTotal = precioTotal;
         this.lote = lote;
         this.userId = userId;
         this.empresaId = empresaId;
@@ -173,6 +190,8 @@ public class DetalleVenta implements Serializable {
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
     }
+
+
 
     public Long getId() {
         return id;
@@ -190,6 +209,14 @@ public class DetalleVenta implements Serializable {
         this.venta = venta;
     }
 
+    public Long getVentaIdReference() {
+        return ventaIdReference;
+    }
+
+    public void setVentaIdReference(Long ventaIdReference) {
+        this.ventaIdReference = ventaIdReference;
+    }
+
     public Producto getProducto() {
         return producto;
     }
@@ -198,19 +225,19 @@ public class DetalleVenta implements Serializable {
         this.producto = producto;
     }
 
-    public Long getPrecioVenta() {
+    public BigDecimal getPrecioVenta() {
         return precioVenta;
     }
 
-    public void setPrecioVenta(Long precioVenta) {
+    public void setPrecioVenta(BigDecimal precioVenta) {
         this.precioVenta = precioVenta;
     }
 
-    public Long getPrecioCompra() {
+    public BigDecimal getPrecioCompra() {
         return precioCompra;
     }
 
-    public void setPrecioCompra(Long precioCompra) {
+    public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
 
@@ -238,11 +265,19 @@ public class DetalleVenta implements Serializable {
         this.esGrabado = esGrabado;
     }
 
-    public Double getDescuento() {
+    public Integer getEsIsc() {
+        return esIsc;
+    }
+
+    public void setEsIsc(Integer esIsc) {
+        this.esIsc = esIsc;
+    }
+
+    public BigDecimal getDescuento() {
         return descuento;
     }
 
-    public void setDescuento(Double descuento) {
+    public void setDescuento(BigDecimal descuento) {
         this.descuento = descuento;
     }
 
@@ -268,6 +303,22 @@ public class DetalleVenta implements Serializable {
 
     public void setUnidad(String unidad) {
         this.unidad = unidad;
+    }
+
+    public BigDecimal getPrecioTotal() {
+        return precioTotal;
+    }
+
+    public void setPrecioTotal(BigDecimal precioTotal) {
+        this.precioTotal = precioTotal;
+    }
+
+    public Lote getLote() {
+        return lote;
+    }
+
+    public void setLote(Lote lote) {
+        this.lote = lote;
     }
 
     public Long getUserId() {
@@ -316,22 +367,6 @@ public class DetalleVenta implements Serializable {
 
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
-    }
-
-    public Long getVentaIdReference() {
-        return ventaIdReference;
-    }
-
-    public void setVentaIdReference(Long ventaIdReference) {
-        this.ventaIdReference = ventaIdReference;
-    }
-
-    public Lote getLote() {
-        return lote;
-    }
-
-    public void setLote(Lote lote) {
-        this.lote = lote;
     }
 }
 

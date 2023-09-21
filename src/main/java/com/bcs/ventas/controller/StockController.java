@@ -88,6 +88,24 @@ public class StockController {
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
+    @GetMapping("/almacen-productos-lote/{idAlmacen}/{idProducto}/{idLote}")
+    public ResponseEntity<Map<String, Object>> getAlmacenProductsAndLote(@PathVariable("idAlmacen") Long idAlmacen,
+                                                                  @PathVariable("idProducto") Long idProducto,
+                                                                  @PathVariable("idLote") Long idLote) throws Exception{
+
+        Map<String, Object> resultado = new HashMap<>();
+
+        Long idEmpresa=1L;
+        resultado = stockService.getAlmacenProductsLote(idEmpresa, idAlmacen, idProducto, idLote);
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String fechaIngreso = fechaActual.format(formatter);
+
+        resultado.put("fechaIngreso", fechaIngreso);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Stock> registrar(@Valid @RequestBody Stock a) throws Exception{
 

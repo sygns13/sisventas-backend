@@ -39,5 +39,7 @@ public interface ProductoMapper extends GeneralMapper<Producto> {
 
     List<ProductosVentaDTO> listByParameterMapProductosVenta(Map<String, Object> var1);
 
+    List<ProductosVentaDTO> listByParameterMapProductoVenta(Map<String, Object> var1);
+
     Long getTotalElementsProductosVenta(Map<String, Object> var1);
 }

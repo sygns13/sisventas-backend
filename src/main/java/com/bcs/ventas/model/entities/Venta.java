@@ -41,7 +41,7 @@ public class Venta implements Serializable {
     //private Long clienteId;
     @Schema(description = "Cliente de la Venta")
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false, foreignKey = @ForeignKey(name = "FK_cliente_venta"))
+    @JoinColumn(name = "cliente_id", nullable = true, foreignKey = @ForeignKey(name = "FK_cliente_venta"))
     private Cliente cliente;
 
     //@Column(name="comprobante_id", nullable = true)
@@ -60,9 +60,25 @@ public class Venta implements Serializable {
     @Column(name="subtotal_afecto", nullable = true)
     private BigDecimal subtotalAfecto;
 
+    @Schema(description = "Monto Exonerado de la Venta")
+    @Column(name="subtotal_exonerado", nullable = true)
+    private BigDecimal subtotalExonerado;
+
+    @Schema(description = "Monto Total de la Venta")
+    @Column(name="total_monto", nullable = true)
+    private BigDecimal totalMonto;
+
+    @Schema(description = "Monto Afecto de la Venta al ISC")
+    @Column(name="total_afecto_isc", nullable = true)
+    private BigDecimal totalAfectoIsc;
+
     @Schema(description = "Monto IGV de la Venta")
     @Column(name="igv", nullable = true)
     private BigDecimal igv;
+
+    @Schema(description = "Monto ISC de la Venta")
+    @Column(name="isc", nullable = true)
+    private BigDecimal isc;
 
     @Schema(description = "Estado de la Venta")
     @Column(name="estado", nullable = true)
@@ -120,41 +136,33 @@ public class Venta implements Serializable {
     @Column(name="numero_venta", nullable = true)
     private String numeroVenta;
 
+    @Schema(description = "Cantidad de Bolsas ICBPER")
+    @Column(name="cantidad_icbper", nullable = true)
+    private Integer cantidadIcbper;
+
+    @Schema(description = "Monto activo del ICBPER")
+    @Column(name="monto_icbper", nullable = true)
+    private BigDecimal montoIcbper;
+
     @Schema(description = "Detalles de Venta")
     @OneToMany(mappedBy = "venta", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    private List<DetalleVenta> detalleVenta;
+    private List<DetalleVenta> detalleVentas;
 
     public Venta() {
     }
 
-    public Venta(Long id, LocalDate fecha, Cliente cliente, Comprobante comprobante, BigDecimal subtotalInafecto, BigDecimal subtotalAfecto, BigDecimal igv, Integer estado, Integer pagado, LocalTime hora, Integer tipo, Almacen almacen, User user, Long empresaId, Integer activo, Integer borrado, String numeroVenta) {
+    public Venta(Long id, LocalDate fecha, Cliente cliente, Comprobante comprobante, BigDecimal subtotalInafecto, BigDecimal subtotalAfecto, BigDecimal subtotalExonerado, BigDecimal totalMonto, BigDecimal totalAfectoIsc, BigDecimal igv, BigDecimal isc, Integer estado, Integer pagado, LocalTime hora, Integer tipo, Almacen almacen, User user, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, String numeroVenta, Integer cantidadIcbper, BigDecimal montoIcbper) {
         this.id = id;
         this.fecha = fecha;
         this.cliente = cliente;
         this.comprobante = comprobante;
         this.subtotalInafecto = subtotalInafecto;
         this.subtotalAfecto = subtotalAfecto;
+        this.subtotalExonerado = subtotalExonerado;
+        this.totalMonto = totalMonto;
+        this.totalAfectoIsc = totalAfectoIsc;
         this.igv = igv;
-        this.estado = estado;
-        this.pagado = pagado;
-        this.hora = hora;
-        this.tipo = tipo;
-        this.almacen = almacen;
-        this.user = user;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.numeroVenta = numeroVenta;
-    }
-
-    public Venta(Long id, LocalDate fecha, Cliente cliente, Comprobante comprobante, BigDecimal subtotalInafecto, BigDecimal subtotalAfecto, BigDecimal igv, Integer estado, Integer pagado, LocalTime hora, Integer tipo, Almacen almacen, User user, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, String numeroVenta) {
-        this.id = id;
-        this.fecha = fecha;
-        this.cliente = cliente;
-        this.comprobante = comprobante;
-        this.subtotalInafecto = subtotalInafecto;
-        this.subtotalAfecto = subtotalAfecto;
-        this.igv = igv;
+        this.isc = isc;
         this.estado = estado;
         this.pagado = pagado;
         this.hora = hora;
@@ -167,16 +175,22 @@ public class Venta implements Serializable {
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
         this.numeroVenta = numeroVenta;
+        this.cantidadIcbper = cantidadIcbper;
+        this.montoIcbper = montoIcbper;
     }
 
-    public Venta(Long id, LocalDate fecha, Cliente cliente, Comprobante comprobante, BigDecimal subtotalInafecto, BigDecimal subtotalAfecto, BigDecimal igv, Integer estado, Integer pagado, LocalTime hora, Integer tipo, Almacen almacen, User user, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, String numeroVenta, List<DetalleVenta> detalleVenta) {
+    public Venta(Long id, LocalDate fecha, Cliente cliente, Comprobante comprobante, BigDecimal subtotalInafecto, BigDecimal subtotalAfecto, BigDecimal subtotalExonerado, BigDecimal totalMonto, BigDecimal totalAfectoIsc, BigDecimal igv, BigDecimal isc, Integer estado, Integer pagado, LocalTime hora, Integer tipo, Almacen almacen, User user, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd, String numeroVenta, Integer cantidadIcbper, BigDecimal montoIcbper, List<DetalleVenta> detalleVentas) {
         this.id = id;
         this.fecha = fecha;
         this.cliente = cliente;
         this.comprobante = comprobante;
         this.subtotalInafecto = subtotalInafecto;
         this.subtotalAfecto = subtotalAfecto;
+        this.subtotalExonerado = subtotalExonerado;
+        this.totalMonto = totalMonto;
+        this.totalAfectoIsc = totalAfectoIsc;
         this.igv = igv;
+        this.isc = isc;
         this.estado = estado;
         this.pagado = pagado;
         this.hora = hora;
@@ -189,7 +203,9 @@ public class Venta implements Serializable {
         this.createdAt = createdAt;
         this.updatedAd = updatedAd;
         this.numeroVenta = numeroVenta;
-        this.detalleVenta = detalleVenta;
+        this.cantidadIcbper = cantidadIcbper;
+        this.montoIcbper = montoIcbper;
+        this.detalleVentas = detalleVentas;
     }
 
     public Long getId() {
@@ -240,12 +256,44 @@ public class Venta implements Serializable {
         this.subtotalAfecto = subtotalAfecto;
     }
 
+    public BigDecimal getSubtotalExonerado() {
+        return subtotalExonerado;
+    }
+
+    public void setSubtotalExonerado(BigDecimal subtotalExonerado) {
+        this.subtotalExonerado = subtotalExonerado;
+    }
+
+    public BigDecimal getTotalMonto() {
+        return totalMonto;
+    }
+
+    public void setTotalMonto(BigDecimal totalMonto) {
+        this.totalMonto = totalMonto;
+    }
+
+    public BigDecimal getTotalAfectoIsc() {
+        return totalAfectoIsc;
+    }
+
+    public void setTotalAfectoIsc(BigDecimal totalAfectoIsc) {
+        this.totalAfectoIsc = totalAfectoIsc;
+    }
+
     public BigDecimal getIgv() {
         return igv;
     }
 
     public void setIgv(BigDecimal igv) {
         this.igv = igv;
+    }
+
+    public BigDecimal getIsc() {
+        return isc;
+    }
+
+    public void setIsc(BigDecimal isc) {
+        this.isc = isc;
     }
 
     public Integer getEstado() {
@@ -336,14 +384,6 @@ public class Venta implements Serializable {
         this.updatedAd = updatedAd;
     }
 
-    public List<DetalleVenta> getDetalleVenta() {
-        return detalleVenta;
-    }
-
-    public void setDetalleVenta(List<DetalleVenta> detalleVenta) {
-        this.detalleVenta = detalleVenta;
-    }
-
     public String getNumeroVenta() {
         return numeroVenta;
     }
@@ -352,5 +392,27 @@ public class Venta implements Serializable {
         this.numeroVenta = numeroVenta;
     }
 
+    public Integer getCantidadIcbper() {
+        return cantidadIcbper;
+    }
 
+    public void setCantidadIcbper(Integer cantidadIcbper) {
+        this.cantidadIcbper = cantidadIcbper;
+    }
+
+    public BigDecimal getMontoIcbper() {
+        return montoIcbper;
+    }
+
+    public void setMontoIcbper(BigDecimal montoIcbper) {
+        this.montoIcbper = montoIcbper;
+    }
+
+    public List<DetalleVenta> getDetalleVentas() {
+        return detalleVentas;
+    }
+
+    public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
+        this.detalleVentas = detalleVentas;
+    }
 }

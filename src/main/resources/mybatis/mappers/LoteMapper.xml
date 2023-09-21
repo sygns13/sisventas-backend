@@ -8,6 +8,7 @@
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Lote">
         <result property="id" column="id" />
         <result property="nombre" column="nombre" />
+        <result property="orden" column="orden" />
         <result property="fechaIngreso" column="fecha_ingreso" />
         <result property="fechaVencimiento" column="fecha_vencimiento" />
         <result property="activoVencimiento" column="activo_vencimiento" />
@@ -49,7 +50,10 @@
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="CANTIDAD_MIN != null"> AND cantidad <![CDATA[ >= ]]> #{CANTIDAD_MIN}</if>
         </where>
+        order by orden, id
     </select>
 
     <select id="getTotalElements" resultType="java.lang.Long">

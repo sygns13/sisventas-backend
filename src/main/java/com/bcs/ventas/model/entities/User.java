@@ -1,6 +1,7 @@
 package com.bcs.ventas.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -92,6 +93,7 @@ public class User implements Serializable {
     private LocalDateTime updatedAd;
 
     @Schema(description = "Datos del Usuario")
+    @Transient
     private DatosUser datos;
 
     public User() {

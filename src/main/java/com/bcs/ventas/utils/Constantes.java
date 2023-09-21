@@ -61,4 +61,24 @@ public class Constantes {
     public static final Integer VENTA_TIPO_BIENES = 1;
     public static final Integer VENTA_TIPO_SERVICIOS = 2;
 
+
+    //Afectos IGV
+    public static final Integer GRABADO_IGV = 1;
+    public static final Integer INAFECTO_IGV = 0;
+    public static final Integer EXONERADO_IGV = 2;
+
+
+    public static final Double PERCENTIL_IGV = 1.18;
+
+    //Afectos ISC
+    public static final Integer TIPO_ISC_PERCENTIL = 1;
+    public static final Integer TIPO_ISC_FIJO = 1;
+
+    //Tipos de Descuento
+    public static final Integer TIPO_DESCUENTO_PORCENTIL = 1;
+    public static final Integer TIPO_DESCUENTO_FIJO = 2;
+
+    //ICBPER PERU 2023
+    public static final BigDecimal CANTIDAD_ICBPER_2023 = new BigDecimal("0.5");
+
 }

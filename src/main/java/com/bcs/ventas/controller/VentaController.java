@@ -1,10 +1,12 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.entities.DetalleVenta;
 import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Venta;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.service.VentaService;
+import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroVenta;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,5 +103,35 @@ public class VentaController {
         ventaService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/add-detalle-venta")
+    public ResponseEntity<Venta> registrarDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
+        d.setId(null);
+        Venta obj = ventaService.registrarDetalle(d);
+        //obj = ventaService.listarPorId(obj.getId());
+
+        //URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+
+        //return  ResponseEntity.created(location).build();
+        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/add-producto-venta")
+    public ResponseEntity<Venta> agregarProductoVenta(@RequestBody AgregarProductoBean addProductoVenta) throws Exception{
+        Venta obj = ventaService.agregarProducto(addProductoVenta);
+        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/delete-detalle-venta")
+    public ResponseEntity<Venta> deleteDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
+        Venta obj = ventaService.eliminarDetalle(d);
+        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/modificar-detalle-venta")
+    public ResponseEntity<Venta> modificarDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
+        Venta obj = ventaService.modificarDetalle(d);
+        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
     }
 }

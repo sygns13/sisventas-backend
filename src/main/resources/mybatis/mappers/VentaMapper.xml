@@ -9,13 +9,19 @@
         <result property="id" column="id" />
         <result property="fecha" column="fecha" />
         <result property="subtotalInafecto" column="subtotal_inafecto" />
+        <result property="subtotalExonerado" column="subtotal_exonerado" />
         <result property="subtotalAfecto" column="subtotal_afecto" />
+        <result property="totalMonto" column="total_monto" />
+        <result property="totalAfectoIsc" column="total_afecto_isc" />
         <result property="igv" column="igv" />
+        <result property="isc" column="isc" />
         <result property="estado" column="estado" />
         <result property="pagado" column="pagado" />
         <result property="hora" column="hora" />
         <result property="empresaId" column="empresa_id" />
         <result property="numeroVenta" column="numero_venta" />
+        <result property="cantidadIcbper" column="cantidad_icbper" />
+        <result property="montoIcbper" column="monto_icbper" />
 
         <result property="activo" column="activo" />
         <result property="borrado" column="borrado" />
@@ -91,8 +97,12 @@
             v.cliente_id,
             v.comprobante_id,
             v.subtotal_inafecto,
+            v.subtotal_exonerado,
             v.subtotal_afecto,
+            v.total_monto,
+            v.total_afecto_isc,
             v.igv,
+            v.isc,
             v.estado,
             v.user_id,
             v.pagado,
@@ -105,6 +115,8 @@
             v.tipo,
             v.almacen_id,
             v.numero_venta,
+            v.cantidad_icbper,
+            v.monto_icbper,
 
             c.id as cli_id,
             c.nombre as cli_nombre,
@@ -181,8 +193,12 @@
             v.cliente_id,
             v.comprobante_id,
             v.subtotal_inafecto,
+            v.subtotal_exonerado,
             v.subtotal_afecto,
+            v.total_monto,
+            v.total_afecto_isc,
             v.igv,
+            v.isc,
             v.estado,
             v.user_id,
             v.pagado,
@@ -195,6 +211,8 @@
             v.tipo,
             v.almacen_id,
             v.numero_venta,
+            v.cantidad_icbper,
+            v.monto_icbper,
 
             c.id as cli_id,
             c.nombre as cli_nombre,
@@ -272,6 +290,7 @@
             <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
             <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
             <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_EXONERADO != null"> AND v.subtotal_exonerado = #{SUBTOTAL_EXONERADO}</if>
             <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
             <if test="IGV != null"> AND v.igv = #{IGV}</if>
             <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
@@ -353,6 +372,7 @@
             <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
             <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
             <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_EXONERADO != null"> AND v.subtotal_exonerado = #{SUBTOTAL_EXONERADO}</if>
             <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
             <if test="IGV != null"> AND v.igv = #{IGV}</if>
             <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
@@ -425,8 +445,12 @@
             <if test="CLIENTE_ID != null"> cliente_id = #{CLIENTE_ID}, </if>
             <if test="COMPROBANTE_ID != null"> comprobante_id = #{COMPROBANTE_ID}, </if>
             <if test="SUBTOTAL_INAFECTO != null"> subtotal_inafecto = #{SUBTOTAL_INAFECTO}, </if>
+            <if test="SUBTOTAL_EXONERADO != null"> subtotal_exonerado = #{SUBTOTAL_EXONERADO}, </if>
             <if test="SUBTOTAL_AFECTO != null"> subtotal_afecto = #{SUBTOTAL_AFECTO}, </if>
+            <if test="TOTAL_MONTO != null"> total_monto = #{TOTAL_MONTO}, </if>
+            <if test="TOTAL_AFECTO_ISC != null"> total_afecto_isc = #{TOTAL_AFECTO_ISC}, </if>
             <if test="IGV != null"> igv = #{IGV}, </if>
+            <if test="ISC != null"> isc = #{ISC}, </if>
             <if test="ESTADO != null"> estado = #{ESTADO}, </if>
             <if test="PAGADO != null"> pagado = #{PAGADO}, </if>
             <if test="HORA != null"> hora = #{HORA}, </if>
@@ -437,6 +461,8 @@
             <if test="TIPO != null"> tipo = #{TIPO}, </if>
             <if test="ALMACEN_ID != null"> almacen_id = #{ALMACEN_ID}, </if>
             <if test="NUMERO_VENTA != null"> numero_venta = #{NUMERO_VENTA}, </if>
+            <if test="CANTIDAD_ICBPER != null"> cantidad_icbper = #{CANTIDAD_ICBPER}, </if>
+            <if test="MONTO_ICBPER != null"> monto_icbper = #{MONTO_ICBPER}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>

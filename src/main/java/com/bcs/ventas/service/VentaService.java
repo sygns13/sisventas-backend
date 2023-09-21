@@ -1,8 +1,10 @@
 package com.bcs.ventas.service;
 
 
+import com.bcs.ventas.model.entities.DetalleVenta;
 import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Venta;
+import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.FiltroVenta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,5 +17,10 @@ public interface VentaService extends GeneralService<Venta, Long> {
 
     Venta modificarVentaCliente(Venta venta) throws Exception;
 
-    Venta grabarRectificarM(Venta venta) throws Exception;
+
+    Venta registrarDetalle(DetalleVenta detalleVentaventa) throws Exception;
+
+    Venta agregarProducto(AgregarProductoBean addProductoVenta) throws Exception;
+    Venta eliminarDetalle(DetalleVenta detalleVentaventa) throws Exception;
+    Venta modificarDetalle(DetalleVenta detalleVentaventa) throws Exception;
 }

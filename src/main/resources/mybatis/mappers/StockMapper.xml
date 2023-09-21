@@ -116,7 +116,12 @@
             from almacens a
             inner join lotes l on  l.almacen_id = a.id
                                 <if test="PRODUCTO_ID != null"> AND l.producto_id = #{PRODUCTO_ID}</if>
-                                <if test="CANTIDAD_ZERO != null"> AND l.cantidad > #{CANTIDAD_ZERO}</if>
+                                <if test="CANTIDAD_ZERO != null"> AND (l.cantidad > #{CANTIDAD_ZERO}
+                                    <if test="LOTE_ID_ADD != null">
+                                     OR l.id = #{LOTE_ID_ADD}
+                                    </if>
+                                    )
+                                </if>
                                 <if test="ACTIVO_LOTE != null"> AND l.activo = #{ACTIVO_LOTE}</if>
                                 <if test="NO_BORRADO_LOTE != null"> AND l.borrado != #{NO_BORRADO_LOTE}</if>
             inner join unidads u on u.id = l.unidad_id
