@@ -443,6 +443,7 @@
         <set>
             <if test="FECHA != null"> fecha = #{FECHA}, </if>
             <if test="CLIENTE_ID != null"> cliente_id = #{CLIENTE_ID}, </if>
+            <if test="CLIENTE_ID_NULLABLE != null"> cliente_id = NULL, </if>
             <if test="COMPROBANTE_ID != null"> comprobante_id = #{COMPROBANTE_ID}, </if>
             <if test="SUBTOTAL_INAFECTO != null"> subtotal_inafecto = #{SUBTOTAL_INAFECTO}, </if>
             <if test="SUBTOTAL_EXONERADO != null"> subtotal_exonerado = #{SUBTOTAL_EXONERADO}, </if>

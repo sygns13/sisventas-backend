@@ -134,4 +134,19 @@ public class VentaController {
         Venta obj = ventaService.modificarDetalle(d);
         return new ResponseEntity<Venta>(obj, HttpStatus.OK);
     }
+
+    @PutMapping("/resetventa")
+    public ResponseEntity<Venta> resetVenta(@RequestBody Venta v) throws Exception{
+        if(v.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+        Venta objBD = ventaService.listarPorId(v.getId());
+        if(objBD == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ v.getId());
+        }
+
+        Venta obj = ventaService.resetVenta(v);
+
+        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+    }
 }

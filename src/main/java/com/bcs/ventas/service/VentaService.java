@@ -23,4 +23,6 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Venta agregarProducto(AgregarProductoBean addProductoVenta) throws Exception;
     Venta eliminarDetalle(DetalleVenta detalleVentaventa) throws Exception;
     Venta modificarDetalle(DetalleVenta detalleVentaventa) throws Exception;
+
+    Venta resetVenta(Venta venta) throws Exception;
 }

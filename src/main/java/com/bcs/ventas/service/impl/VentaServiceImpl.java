@@ -588,6 +588,25 @@ public class VentaServiceImpl implements VentaService {
         throw new ValidationServiceException(errorValidacion);
     }
 
+    @Override
+    public Venta resetVenta(Venta ventaRemitida) throws Exception {
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        LocalDate fechaActual = LocalDate.now();
+        LocalTime horaActual = LocalTime.now();
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = false;
+        Venta venta = this.listarPorId(ventaRemitida.getId());
+
+        venta.setUpdatedAd(fechaActualTime);
+
+        this.graberResetVenta(venta);
+        Venta ventaRes = this.recalcularVentaReset(venta);
+        return ventaRes;
+
+    }
+
     private boolean validacionVentaDetalle(DetalleVenta detalleVenta, Map<String, Object> resultValidacion) throws Exception {
 
         boolean resultado = true;
@@ -847,6 +866,38 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
+    public Venta graberResetVenta(Venta venta) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("VENTA_ID",venta.getId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleVenta> detallesVentas = detalleVentaMapper.listByParameterMap(params);
+        for (DetalleVenta dv: detallesVentas) {
+            params.clear();
+            params.put("PRODUCTO_ID", dv.getProducto().getId());
+            params.put("ALMACEN_ID", dv.getAlmacenId());
+            params.put("EMPRESA_ID", EmpresaId);
+
+            List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+            Lote loteBD = null;
+
+            if(dv.getLote() != null && dv.getLote().getId() != null)
+                loteBD = loteDAO.listarPorId(dv.getLote().getId());
+
+
+            this.modificarStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD, dv.getCantidad() * dv.getCantidadReal());
+            detalleVentaDAO.eliminar(dv.getId());
+        }
+
+        return venta;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarDeleteDetalle(Venta venta, DetalleVenta detalleVenta) throws Exception {
 
         //TODO: Temporal hasta incluir Oauth inicio
@@ -993,6 +1044,73 @@ public class VentaServiceImpl implements VentaService {
         params.put("ISC", venta.getIsc());
         params.put("USER_ID", venta.getUser().getId());
         params.put("UPDATED_AT", venta.getUpdatedAd());
+
+        int resultado = ventaMapper.updateByPrimaryKeySelective(params);
+
+        return venta;
+
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private Venta recalcularVentaReset(Venta venta) throws Exception {
+
+        BigDecimal subTotalInafecto = new BigDecimal(0);
+        BigDecimal subTotalAfecto = new BigDecimal(0);
+        BigDecimal subtotalExonerado = new BigDecimal(0);
+        BigDecimal totalVenta = new BigDecimal(0);
+
+        BigDecimal subTotalISC = new BigDecimal(0);
+
+        BigDecimal igv = new BigDecimal(0);
+        BigDecimal isc = new BigDecimal(0);
+
+
+        totalVenta = totalVenta.add(subTotalInafecto);
+        totalVenta = totalVenta.add(subTotalAfecto);
+        totalVenta = totalVenta.add(subtotalExonerado);
+
+        BigDecimal totalICBPER = new BigDecimal(0);
+        totalICBPER = venta.getMontoIcbper().multiply(new BigDecimal(venta.getCantidadIcbper()));
+        totalVenta = totalVenta.add(totalICBPER);
+
+
+        venta.setSubtotalInafecto(subTotalInafecto);
+        venta.setSubtotalAfecto(subTotalAfecto);
+        venta.setSubtotalExonerado(subtotalExonerado);
+        venta.setTotalMonto(totalVenta);
+        venta.setTotalAfectoIsc(subTotalISC);
+
+        //Calc IGV
+        BigDecimal base = subTotalAfecto.divide( new BigDecimal(Constantes.PERCENTIL_IGV), 2, RoundingMode.HALF_UP);
+        igv = subTotalAfecto.subtract(base);
+        venta.setIgv(igv);
+
+        //Calc ISC
+        venta.setIsc(isc);
+
+        venta.setDetalleVentas(new ArrayList<>());
+
+
+        venta.setCliente(null);
+        venta.setCantidadIcbper(Constantes.CANTIDAD_ZERO);
+        venta.setMontoIcbper(Constantes.CANTIDAD_ICBPER_2023);
+
+        //Update Venta
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", venta.getId());
+        params.put("SUBTOTAL_INAFECTO", venta.getSubtotalInafecto());
+        params.put("SUBTOTAL_AFECTO", venta.getSubtotalAfecto());
+        params.put("SUBTOTAL_EXONERADO", venta.getSubtotalExonerado());
+        params.put("TOTAL_MONTO", venta.getTotalMonto());
+        params.put("TOTAL_AFECTO_ISC", venta.getSubtotalAfecto());
+        params.put("IGV", venta.getIgv());
+        params.put("ISC", venta.getIsc());
+        params.put("USER_ID", venta.getUser().getId());
+        params.put("UPDATED_AT", venta.getUpdatedAd());
+        params.put("CLIENTE_ID_NULLABLE", Constantes.CANTIDAD_UNIDAD);
+        params.put("CANTIDAD_ICBPER", venta.getCantidadIcbper());
+        params.put("MONTO_ICBPER", venta.getMontoIcbper());
 
         int resultado = ventaMapper.updateByPrimaryKeySelective(params);
 
