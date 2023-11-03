@@ -1,10 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
-import com.bcs.ventas.model.entities.Almacen;
-import com.bcs.ventas.model.entities.Departamento;
-import com.bcs.ventas.model.entities.Distrito;
-import com.bcs.ventas.model.entities.Provincia;
+import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.AlmacenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -124,6 +121,13 @@ public class AlmacenController {
         List<Distrito> obj = almacenService.getDistritos(idProv);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping("/listar-all")
+    public ResponseEntity<List<Almacen>> listarAll() throws Exception{
+        List<Almacen> resultado = almacenService.listar();
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
 }

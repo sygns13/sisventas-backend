@@ -36,6 +36,7 @@
         <mapper resource="mybatis/mappers/FacturaProveedorMapper.xml"/>
         <mapper resource="mybatis/mappers/GuiaRemisionMapper.xml"/>
         <mapper resource="mybatis/mappers/IngresoSalidaCajaMapper.xml"/>
+        <mapper resource="mybatis/mappers/InitComprobanteMapper.xml"/>
         <mapper resource="mybatis/mappers/LeyendaMapper.xml"/>
         <mapper resource="mybatis/mappers/LoteMapper.xml"/>
         <mapper resource="mybatis/mappers/MarcaMapper.xml"/>

@@ -36,8 +36,11 @@ public class TipoComprobante implements Serializable {
     @Column(name="para_venta", nullable = true)
     private Integer paraVenta;
 
-    @Column(name="sede_id", nullable = true)
-    private Long sedeId;
+    @Schema(description = "Prefijo del Tipo de Comprobante")
+    @NotNull( message = "{tipo_comprobante.prefix.notnull}")
+    @Size(min = 1, max = 2, message = "{tipo_comprobante.prefix.size}")
+    @Column(name="prefix", nullable = true, length= 200)
+    private String prefix;
 
     @Schema(description = "ID User Padre")
     //@NotNull( message = "{producto.user_id.notnull}")
@@ -72,22 +75,22 @@ public class TipoComprobante implements Serializable {
     public TipoComprobante() {
     }
 
-    public TipoComprobante(Long id, String nombre, Integer paraVenta, Long sedeId, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public TipoComprobante(Long id, String nombre, String prefix, Integer paraVenta, Long userId, Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
         this.nombre = nombre;
+        this.prefix = prefix;
         this.paraVenta = paraVenta;
-        this.sedeId = sedeId;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
         this.borrado = borrado;
     }
 
-    public TipoComprobante(Long id, String nombre, Integer paraVenta, Long sedeId, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public TipoComprobante(Long id, String nombre, String prefix, Integer paraVenta, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
+        this.prefix = prefix;
         this.paraVenta = paraVenta;
-        this.sedeId = sedeId;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
@@ -118,14 +121,6 @@ public class TipoComprobante implements Serializable {
 
     public void setParaVenta(Integer paraVenta) {
         this.paraVenta = paraVenta;
-    }
-
-    public Long getSedeId() {
-        return sedeId;
-    }
-
-    public void setSedeId(Long sedeId) {
-        this.sedeId = sedeId;
     }
 
     public Long getUserId() {
@@ -174,5 +169,13 @@ public class TipoComprobante implements Serializable {
 
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 }

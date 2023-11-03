@@ -46,7 +46,7 @@
         <result property="comprobante.serie" column="co_serie" />
         <result property="comprobante.numero" column="co_numero" />
         <result property="comprobante.cantidadDigitos" column="co_cantidad_digitos" />
-        <result property="comprobante.tipoComprobante.id" column="co_tipo_comprobante_id" />
+        <result property="comprobante.initComprobante.id" column="co_init_comprobante_id" />
         <result property="comprobante.estado" column="co_estado" />
         <result property="comprobante.empresaId" column="co_empresa_id" />
         <result property="comprobante.userId" column="co_user_id" />
@@ -135,7 +135,7 @@
             co.serie as co_serie,
             co.numero as co_numero,
             co.cantidad_digitos as co_cantidad_digitos,
-            co.tipo_comprobante_id as co_tipo_comprobante_id,
+            co.init_comprobante_id as co_init_comprobante_id,
             co.estado as co_estado,
             co.empresa_id as co_empresa_id,
             co.user_id as co_user_id,
@@ -231,7 +231,7 @@
             co.serie as co_serie,
             co.numero as co_numero,
             co.cantidad_digitos as co_cantidad_digitos,
-            co.tipo_comprobante_id as co_tipo_comprobante_id,
+            co.init_comprobante_id as co_init_comprobante_id,
             co.estado as co_estado,
             co.empresa_id as co_empresa_id,
             co.user_id as co_user_id,
