@@ -2,19 +2,16 @@ package com.bcs.ventas.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Schema(description = "Tipo de Tarjetas Model")
+@Schema(description = "Metodo de Pago Model")
 @Entity
-@Table(name = "tipo_tarjetas")
-public class TipoTarjeta implements Serializable {
+@Table(name = "metodos_pagos")
+public class MetodoPago {
 
     public static long getSerialversionuid() {
         return serialVersionUID;
@@ -25,17 +22,23 @@ public class TipoTarjeta implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "Nombre del Tipo de Tarjeta")
-    @NotNull( message = "{tipo_tarjetas.nombre.notnull}")
-    @Size(min = 1, max = 100, message = "{tipo_tarjetas.nombre.size}")
-    @Column(name="nombre", nullable = true, length = 100)
+    @Schema(description = "Nombre del Metodo de Pago")
+    @NotNull( message = "{metodos_pagos.nombre.notnull}")
+    @Size(min = 1, max = 250, message = "{metodos_pagos.nombre.size}")
+    @Column(name="nombre", nullable = true, length = 250)
     private String nombre;
 
-    @Schema(description = "Sigla del Tipo de Tarjeta")
-    @NotNull( message = "{tipo_tarjetas.sigla.notnull}")
-    @Size(min = 1, max = 10, message = "{tipo_tarjetas.sigla.size}")
-    @Column(name="sigla", nullable = true, length = 10)
-    private String sigla;
+    @Schema(description = "ID de Tipo del Metodo de Pago")
+    @NotNull( message = "{metodos_pagos.tipo_id.notnull}")
+    @Size(min = 1, max = 20, message = "{metodos_pagos.tipo_id.size}")
+    @Column(name="tipo_id", nullable = true, length = 20)
+    private String tipoId;
+
+    @Schema(description = "Tipo del Metodo de Pago")
+    @NotNull( message = "{metodos_pagos.tipo.notnull}")
+    @Size(min = 1, max = 50, message = "{metodos_pagos.tipo.size}")
+    @Column(name="tipo", nullable = true, length = 50)
+    private String tipo;
 
     @Schema(description = "ID User Padre")
     //@NotNull( message = "{unidad.user_id.notnull}")
@@ -65,23 +68,25 @@ public class TipoTarjeta implements Serializable {
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
 
-    public TipoTarjeta() {
+    public MetodoPago() {
     }
 
-    public TipoTarjeta(Long id, String nombre, String sigla, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public MetodoPago(Long id, String nombre, String tipoId, String tipo, Long userId, Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
         this.nombre = nombre;
-        this.sigla = sigla;
+        this.tipoId = tipoId;
+        this.tipo = tipo;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
         this.borrado = borrado;
     }
 
-    public TipoTarjeta(Long id, String nombre, String sigla, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
+    public MetodoPago(Long id, String nombre, String tipoId, String tipo, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
         this.nombre = nombre;
-        this.sigla = sigla;
+        this.tipoId = tipoId;
+        this.tipo = tipo;
         this.userId = userId;
         this.empresaId = empresaId;
         this.activo = activo;
@@ -106,12 +111,20 @@ public class TipoTarjeta implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getSigla() {
-        return sigla;
+    public String getTipoId() {
+        return tipoId;
     }
 
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
+    public void setTipoId(String tipoId) {
+        this.tipoId = tipoId;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public Long getUserId() {

@@ -95,7 +95,7 @@ public class InitComprobante implements Serializable {
     @Column(name="almacen_id", nullable = true)
     private Long almacenId;
 
-    @Schema(description = "País del Almacén")
+    @Schema(description = "Almacén")
     @Transient
     private Almacen almacen;
 

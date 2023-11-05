@@ -1,9 +1,8 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
-import com.bcs.ventas.model.entities.InitComprobante;
-import com.bcs.ventas.model.entities.TipoTarjeta;
-import com.bcs.ventas.service.InitComprobanteService;
+import com.bcs.ventas.model.entities.MetodoPago;
+import com.bcs.ventas.service.MetodoPagoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,47 +17,44 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/init-comprobante")
-public class InitComprobanteController {
+@RequestMapping("/metodopagos")
+public class MetodoPagoController {
 
     @Autowired
-    private InitComprobanteService initComprobanteService;
+    private MetodoPagoService metodoPagoService;
 
     @GetMapping
-    public ResponseEntity<Page<InitComprobante>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                        @RequestParam(name = "size", defaultValue = "5") int size,
-                                                        @RequestParam(name = "tipo_comprobante_id", defaultValue = "0") Long tipoComprobante,
-                                                        @RequestParam(name = "almacen_id", defaultValue = "-1") Long almacenId,
-                                                        @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
-
+    public ResponseEntity<Page<MetodoPago>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                    @RequestParam(name = "size", defaultValue = "5") int size,
+                                                    @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
         Pageable pageable = PageRequest.of(page,size);
-        Page<InitComprobante> resultado = initComprobanteService.listar(pageable, buscar, tipoComprobante, almacenId);
+        Page<MetodoPago> resultado = metodoPagoService.listar(pageable, buscar);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/listar-all")
-    public ResponseEntity<List<InitComprobante>> listarAll() throws Exception{
-        List<InitComprobante> resultado = initComprobanteService.listar();
+    public ResponseEntity<List<MetodoPago>> listarAll() throws Exception{
+        List<MetodoPago> resultado = metodoPagoService.listar();
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InitComprobante> listarPorId(@PathVariable("id") Long id) throws Exception{
-        InitComprobante obj = initComprobanteService.listarPorId(id);
+    public ResponseEntity<MetodoPago> listarPorId(@PathVariable("id") Long id) throws Exception{
+        MetodoPago obj = metodoPagoService.listarPorId(id);
 
         if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
 
-        return new ResponseEntity<InitComprobante>(obj, HttpStatus.OK);
+        return new ResponseEntity<MetodoPago>(obj, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<InitComprobante> registrar(@Valid @RequestBody InitComprobante a) throws Exception{
+    public ResponseEntity<MetodoPago> registrar(@Valid @RequestBody MetodoPago a) throws Exception{
         a.setId(null);
-        InitComprobante obj = initComprobanteService.registrar(a);
+        MetodoPago obj = metodoPagoService.registrar(a);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
@@ -66,45 +62,44 @@ public class InitComprobanteController {
     }
 
     @PutMapping
-    public ResponseEntity<Integer> modificar(@Valid @RequestBody InitComprobante a) throws Exception{
+    public ResponseEntity<Integer> modificar(@Valid @RequestBody MetodoPago a) throws Exception{
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
 
-        InitComprobante objBD = initComprobanteService.listarPorId(a.getId());
+        MetodoPago objBD = metodoPagoService.listarPorId(a.getId());
 
         if(objBD == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ a.getId());
         }
 
-        int obj = initComprobanteService.modificar(a);
+        int obj = metodoPagoService.modificar(a);
 
         return new ResponseEntity<Integer>(obj, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
-        InitComprobante obj = initComprobanteService.listarPorId(id);
+        MetodoPago obj = metodoPagoService.listarPorId(id);
 
         if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
-        initComprobanteService.eliminar(id);
+        metodoPagoService.eliminar(id);
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/altabaja/{id}/{valor}")
     public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
-        InitComprobante obj = initComprobanteService.listarPorId(id);
-
-        Long userId = 2L;
+        MetodoPago obj = metodoPagoService.listarPorId(id);
 
         if(obj == null) {
             throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
         }
-        initComprobanteService.altabaja(id, valor, userId);
+        metodoPagoService.altabaja(id, valor);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
+
 }

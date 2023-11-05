@@ -40,7 +40,8 @@
         <mapper resource="mybatis/mappers/LeyendaMapper.xml"/>
         <mapper resource="mybatis/mappers/LoteMapper.xml"/>
         <mapper resource="mybatis/mappers/MarcaMapper.xml"/>
-        <mapper resource="mybatis/mappers/MisCuentasMapper.xml"/>
+        <mapper resource="mybatis/mappers/MetodoPagoMapper.xml"/>
+        <mapper resource="mybatis/mappers/DetalleMetodoPagoMapper.xml"/>
         <mapper resource="mybatis/mappers/MotivoHasGuiaRemisionMapper.xml"/>
         <mapper resource="mybatis/mappers/MotivoMapper.xml"/>
         <mapper resource="mybatis/mappers/NotasCreditoMapper.xml"/>
