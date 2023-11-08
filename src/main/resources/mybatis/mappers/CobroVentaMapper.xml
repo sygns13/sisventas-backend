@@ -8,13 +8,13 @@
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.CobroVenta">
         <result property="id" column="id" />
         <result property="fecha" column="fecha" />
-        <result property="ventaId" column="venta_id" />
-        <result property="tipoPago" column="tipo_pago" />
         <result property="importe" column="importe" />
-        <result property="tipoTarjetaId" column="tipo_tarjeta_id" />
-        <result property="bancoId" column="banco_id" />
-        <result property="cuentaId" column="cuenta_id" />
+        <result property="tipoTarjeta" column="tipo_tarjeta" />
+        <result property="siglaTarjeta" column="sigla_tarjeta" />
         <result property="numeroTarjeta" column="numero_tarjeta" />
+        <result property="banco" column="banco" />
+        <result property="numeroCuenta" column="numero_cuenta" />
+        <result property="numeroCelular" column="numero_celular" />
         <result property="numeroCheque" column="numero_cheque" />
         <result property="userId" column="user_id" />
         <result property="empresaId" column="empresa_id" />
@@ -22,34 +22,406 @@
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+
+        <result property="metodoPago.id" column="metodos_pago_id" />
+        <result property="metodoPago.nombre" column="metodos_pago_nombre" />
+        <result property="metodoPago.tipoId" column="metodos_pago_tipo_id" />
+        <result property="metodoPago.tipo" column="metodos_pago_tipo" />
+
+        <result property="venta.id" column="venta_id" />
+        <result property="venta.fecha" column="venta_fecha" />
+        <result property="venta.subtotalInafecto" column="venta_subtotal_inafecto" />
+        <result property="venta.subtotalExonerado" column="venta_subtotal_exonerado" />
+        <result property="venta.subtotalAfecto" column="venta_subtotal_afecto" />
+        <result property="venta.totalMonto" column="venta_total_monto" />
+        <result property="venta.totalAfectoIsc" column="venta_total_afecto_isc" />
+        <result property="venta.igv" column="venta_igv" />
+        <result property="venta.isc" column="venta_isc" />
+        <result property="venta.estado" column="venta_estado" />
+        <result property="venta.pagado" column="venta_pagado" />
+        <result property="venta.hora" column="venta_hora" />
+        <result property="venta.empresaId" column="venta_empresa_id" />
+        <result property="venta.numeroVenta" column="venta_numero_venta" />
+        <result property="venta.cantidadIcbper" column="venta_cantidad_icbper" />
+        <result property="venta.montoIcbper" column="venta_monto_icbper" />
+
+        <result property="venta.activo" column="venta_activo" />
+        <result property="venta.borrado" column="venta_borrado" />
+        <result property="venta.createdAt" column="venta_created_at" />
+        <result property="venta.updatedAd" column="venta_updated_at" />
+        <result property="venta.tipo" column="venta_tipo" />
+
+        <result property="venta.cliente.id" column="venta_cli_id" />
+        <result property="venta.cliente.nombre" column="venta_cli_nombre" />
+        <result property="venta.cliente.tipoDocumento.id" column="venta_cli_tipo_documento_id" />
+        <result property="venta.cliente.documento" column="venta_cli_documento" />
+        <result property="venta.cliente.direccion" column="venta_cli_direccion" />
+        <result property="venta.cliente.telefono" column="venta_cli_telefono" />
+        <result property="venta.cliente.correo1" column="venta_cli_correo1" />
+        <result property="venta.cliente.correo2" column="venta_cli_correo2" />
+        <result property="venta.cliente.userId" column="venta_cli_user_id" />
+        <result property="venta.cliente.empresaId" column="venta_cli_empresa_id" />
+        <result property="venta.cliente.activo" column="venta_cli_activo" />
+        <result property="venta.cliente.borrado" column="venta_cli_borrado" />
+
+        <result property="venta.comprobante.id" column="venta_co_id" />
+        <result property="venta.comprobante.serie" column="venta_co_serie" />
+        <result property="venta.comprobante.numero" column="venta_co_numero" />
+        <result property="venta.comprobante.cantidadDigitos" column="venta_co_cantidad_digitos" />
+        <result property="venta.comprobante.initComprobante.id" column="venta_co_init_comprobante_id" />
+        <result property="venta.comprobante.estado" column="venta_co_estado" />
+        <result property="venta.comprobante.empresaId" column="venta_co_empresa_id" />
+        <result property="venta.comprobante.userId" column="venta_co_user_id" />
+        <result property="venta.comprobante.activo" column="venta_co_activo" />
+        <result property="venta.comprobante.borrado" column="venta_co_borrado" />
+        <result property="venta.comprobante.almacenId" column="venta_co_almacen_id" />
+
+        <result property="venta.user.id" column="venta_user_id" />
+        <result property="venta.user.name" column="venta_user_name" />
+        <result property="venta.user.email" column="venta_user_email" />
+        <result property="venta.user.tipoUser.id" column="venta_user_tipo_user_id" />
+        <result property="venta.user.userId" column="venta_user_user_id" />
+        <result property="venta.user.empresaId" column="venta_user_empresa_id" />
+        <result property="venta.user.activo" column="venta_user_activo" />
+        <result property="venta.user.borrado" column="venta_user_borrado" />
+        <result property="venta.user.almacenId" column="venta_user_almacen_id" />
+
+        <result property="venta.user.datos.id" column="venta_du_id" />
+        <result property="venta.user.datos.nombres" column="venta_du_nombres" />
+        <result property="venta.user.datos.apellidoPaterno" column="venta_du_apellido_paterno" />
+        <result property="venta.user.datos.apellidoMaterno" column="venta_du_apellido_materno" />
+        <result property="venta.user.datos.direccion" column="venta_du_direccion" />
+        <result property="venta.user.datos.telefono" column="venta_du_telefono" />
+        <result property="venta.user.datos.tipoDocumento.id" column="venta_du_tipo_documento_id" />
+        <result property="venta.user.datos.documento" column="venta_du_documento" />
+        <result property="venta.user.datos.email" column="venta_du_email" />
+        <result property="venta.user.datos.userId" column="venta_du_user_id" />
+        <result property="venta.user.datos.userGestionaId" column="venta_du_user_gestiona_id" />
+        <result property="venta.user.datos.empresaId" column="venta_du_empresa_id" />
+        <result property="venta.user.datos.activo" column="venta_du_activo" />
+        <result property="venta.user.datos.borrado" column="venta_du_borrado" />
+
+        <result property="venta.almacen.id" column="venta_al_id" />
+        <result property="venta.almacen.nombre" column="venta_al_nombre" />
+        <result property="venta.almacen.direccion" column="venta_al_direccion" />
+        <result property="venta.almacen.empresaId" column="venta_al_empresa_id" />
+        <result property="venta.almacen.userId" column="venta_al_user_id" />
+        <result property="venta.almacen.activo" column="venta_al_activo" />
+        <result property="venta.almacen.borrado" column="venta_al_borrado" />
+        <result property="venta.almacen.distritoId" column="venta_al_distrito_id" />
+        <result property="venta.almacen.codigo" column="venta_al_codigo" />
+
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from cobro_ventas
+        select
+        cov.id,
+        cov.venta_id,
+        cov.fecha,
+        cov.metodos_pago_id,
+        cov.importe,
+        cov.tipo_tarjeta,
+        cov.sigla_tarjeta,
+        cov.numero_tarjeta,
+        cov.banco,
+        cov.numero_cuenta,
+        cov.numero_celular,
+        cov.numero_cheque,
+        cov.user_id,
+        cov.empresa_id,
+        cov.activo,
+        cov.borrado,
+        cov.created_at,
+        cov.updated_at,
+
+        m.id as metodos_pago_id,
+        m.nombre as metodos_pago_nombre,
+        m.tipo_id as metodos_pago_tipo_id,
+        m.tipo as metodos_pago_tipo,
+
+        v.id as venta_id,
+        v.fecha as venta_fecha,
+        v.cliente_id as venta_cliente_id,
+        v.comprobante_id as venta_comprobante_id,
+        v.subtotal_inafecto as venta_subtotal_inafecto,
+        v.subtotal_exonerado as venta_subtotal_exonerado,
+        v.subtotal_afecto as venta_subtotal_afecto,
+        v.total_monto as venta_total_monto,
+        v.total_afecto_isc as venta_total_afecto_isc,
+        v.igv as venta_igv,
+        v.isc as venta_isc,
+        v.estado as venta_estado,
+        v.user_id as venta_user_id,
+        v.pagado as venta_pagado,
+        v.hora as venta_hora,
+        v.empresa_id as venta_empresa_id,
+        v.activo as venta_activo,
+        v.borrado as venta_borrado,
+        v.created_at as venta_created_at,
+        v.updated_at as venta_updated_at,
+        v.tipo as venta_tipo,
+        v.almacen_id as venta_almacen_id,
+        v.numero_venta as venta_numero_venta,
+        v.cantidad_icbper as venta_cantidad_icbper,
+        v.monto_icbper as venta_monto_icbper,
+
+
+        c.id as venta_cli_id,
+        c.nombre as venta_cli_nombre,
+        c.tipo_documento_id as venta_cli_tipo_documento_id,
+        c.documento as venta_cli_documento,
+        c.direccion as venta_cli_direccion,
+        c.telefono as venta_cli_telefono,
+        c.correo1 as venta_cli_correo1,
+        c.correo2 as venta_cli_correo2,
+        c.user_id as venta_cli_user_id,
+        c.empresa_id as venta_cli_empresa_id,
+        c.activo as venta_cli_activo,
+        c.borrado as venta_cli_borrado,
+
+        co.id as venta_co_id,
+        co.serie as venta_co_serie,
+        co.numero as venta_co_numero,
+        co.cantidad_digitos as venta_co_cantidad_digitos,
+        co.init_comprobante_id as venta_co_init_comprobante_id,
+        co.estado as venta_co_estado,
+        co.empresa_id as venta_co_empresa_id,
+        co.user_id as venta_co_user_id,
+        co.activo as venta_co_activo,
+        co.borrado as venta_co_borrado,
+        co.almacen_id as venta_co_almacen_id,
+
+        u.id as venta_user_id,
+        u.name as venta_user_name,
+        u.email as venta_user_email,
+        u.tipo_user_id as venta_user_tipo_user_id,
+        u.user_id as venta_user_user_id,
+        u.empresa_id as venta_user_empresa_id,
+        u.activo as venta_user_activo,
+        u.borrado as venta_user_borrado,
+        u.almacen_id as venta_user_almacen_id,
+
+        du.id as venta_du_id,
+        du.nombres as venta_du_nombres,
+        du.apellido_paterno as venta_du_apellido_paterno,
+        du.apellido_materno as venta_du_apellido_materno,
+        du.direccion as venta_du_direccion,
+        du.telefono as venta_du_telefono,
+        du.tipo_documento_id as venta_du_tipo_documento_id,
+        du.documento as venta_du_documento,
+        du.email as venta_du_email,
+        du.user_id as venta_du_user_id,
+        du.user_gestiona_id as venta_du_user_gestiona_id,
+        du.empresa_id as venta_du_empresa_id,
+        du.activo as venta_du_activo,
+        du.borrado as venta_du_borrado,
+
+        a.id as venta_al_id,
+        a.nombre as venta_al_nombre,
+        a.direccion as venta_al_direccion,
+        a.empresa_id as venta_al_empresa_id,
+        a.user_id as venta_al_user_id,
+        a.activo as venta_al_activo,
+        a.borrado as venta_al_borrado,
+        a.distrito_id as venta_al_distrito_id,
+        a.codigo as venta_al_codigo
+
+
+        from cobro_ventas cov
+        inner join metodos_pagos m on m.id = cov.metodos_pago_id
+        inner join ventas v on v.id = cov.venta_id
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from cobro_ventas cov
+            inner join metodos_pagos m on m.id = cov.metodos_pago_id
+            inner join ventas v on v.id = cov.venta_id
+            inner join almacens a on a.id = v.almacen_id
+            inner join users u on u.id = v.user_id
+            left join datos_users du on du.user_id = u.id
+            left join clientes c on c.id = v.cliente_id
+            left join comprobantes co on co.id = v.comprobante_id
+        <where>
+            <if test="ID != null"> AND cov.id = #{ID}</if>
+            <if test="VENTA_ID != null"> AND cov.venta_id = #{VENTA_ID}</if>
+            <if test="FECHA != null"> AND cov.fecha = #{FECHA}</if>
+            <if test="METODOS_PAGO_ID != null"> AND cov.metodos_pago_id = #{METODOS_PAGO_ID}</if>
+            <if test="IMPORTE != null"> AND cov.importe = #{IMPORTE}</if>
+            <if test="TIPO_TARJETA != null"> AND cov.tipo_tarjeta = #{TIPO_TARJETA}</if>
+            <if test="SIGLA_TARJETA != null"> AND cov.sigla_tarjeta = #{SIGLA_TARJETA}</if>
+            <if test="NUMERO_TARJETA != null"> AND cov.numero_tarjeta = #{NUMERO_TARJETA}</if>
+            <if test="BANCO != null"> AND cov.banco = #{BANCO}</if>
+            <if test="NUMERO_CUENTA != null"> AND cov.numero_cuenta = #{NUMERO_CUENTA}</if>
+            <if test="NUMERO_CELULAR != null"> AND cov.numero_celular = #{NUMERO_CELULAR}</if>
+            <if test="NUMERO_CHEQUE != null"> AND cov.numero_cheque = #{NUMERO_CHEQUE}</if>
+            <if test="USER_ID != null"> AND cov.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND cov.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND cov.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND cov.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND cov.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND cov.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND cov.activo != #{NO_ACTIVO}</if>
+
+            <!--<if test="BUSCAR != null"> AND cov.nombre like #{BUSCAR}</if>-->
+        </where>
+        order by cov.fecha, cov.id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from cobro_ventas
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="VENTA_ID != null"> AND venta_id = #{VENTA_ID}</if>
-            <if test="FECHA != null"> AND fecha = #{FECHA}</if>
-            <if test="TIPO_PAGO != null"> AND tipo_pago = #{TIPO_PAGO}</if>
-            <if test="IMPORTE != null"> AND importe = #{IMPORTE}</if>
-            <if test="TIPO_TARJETA_ID != null"> AND tipo_tarjeta_id = #{TIPO_TARJETA_ID}</if>
-            <if test="BANCO_ID != null"> AND banco_id = #{BANCO_ID}</if>
-            <if test="CUENTA_ID != null"> AND cuenta_id = #{CUENTA_ID}</if>
-            <if test="NUMERO_TARJETA != null"> AND numero_tarjeta = #{NUMERO_TARJETA}</if>
-            <if test="NUMERO_CHEQUE != null"> AND numero_cheque = #{NUMERO_CHEQUE}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+        select
+        cov.id,
+        cov.venta_id,
+        cov.fecha,
+        cov.metodos_pago_id,
+        cov.importe,
+        cov.tipo_tarjeta,
+        cov.sigla_tarjeta,
+        cov.numero_tarjeta,
+        cov.banco,
+        cov.numero_cuenta,
+        cov.numero_celular,
+        cov.numero_cheque,
+        cov.user_id,
+        cov.empresa_id,
+        cov.activo,
+        cov.borrado,
+        cov.created_at,
+        cov.updated_at,
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        m.id as metodos_pago_id,
+        m.nombre as metodos_pago_nombre,
+        m.tipo_id as metodos_pago_tipo_id,
+        m.tipo as metodos_pago_tipo,
+
+        v.id as venta_id,
+        v.fecha as venta_fecha,
+        v.cliente_id as venta_cliente_id,
+        v.comprobante_id as venta_comprobante_id,
+        v.subtotal_inafecto as venta_subtotal_inafecto,
+        v.subtotal_exonerado as venta_subtotal_exonerado,
+        v.subtotal_afecto as venta_subtotal_afecto,
+        v.total_monto as venta_total_monto,
+        v.total_afecto_isc as venta_total_afecto_isc,
+        v.igv as venta_igv,
+        v.isc as venta_isc,
+        v.estado as venta_estado,
+        v.user_id as venta_user_id,
+        v.pagado as venta_pagado,
+        v.hora as venta_hora,
+        v.empresa_id as venta_empresa_id,
+        v.activo as venta_activo,
+        v.borrado as venta_borrado,
+        v.created_at as venta_created_at,
+        v.updated_at as venta_updated_at,
+        v.tipo as venta_tipo,
+        v.almacen_id as venta_almacen_id,
+        v.numero_venta as venta_numero_venta,
+        v.cantidad_icbper as venta_cantidad_icbper,
+        v.monto_icbper as venta_monto_icbper,
+
+
+        c.id as venta_cli_id,
+        c.nombre as venta_cli_nombre,
+        c.tipo_documento_id as venta_cli_tipo_documento_id,
+        c.documento as venta_cli_documento,
+        c.direccion as venta_cli_direccion,
+        c.telefono as venta_cli_telefono,
+        c.correo1 as venta_cli_correo1,
+        c.correo2 as venta_cli_correo2,
+        c.user_id as venta_cli_user_id,
+        c.empresa_id as venta_cli_empresa_id,
+        c.activo as venta_cli_activo,
+        c.borrado as venta_cli_borrado,
+
+        co.id as venta_co_id,
+        co.serie as venta_co_serie,
+        co.numero as venta_co_numero,
+        co.cantidad_digitos as venta_co_cantidad_digitos,
+        co.init_comprobante_id as venta_co_init_comprobante_id,
+        co.estado as venta_co_estado,
+        co.empresa_id as venta_co_empresa_id,
+        co.user_id as venta_co_user_id,
+        co.activo as venta_co_activo,
+        co.borrado as venta_co_borrado,
+        co.almacen_id as venta_co_almacen_id,
+
+        u.id as venta_user_id,
+        u.name as venta_user_name,
+        u.email as venta_user_email,
+        u.tipo_user_id as venta_user_tipo_user_id,
+        u.user_id as venta_user_user_id,
+        u.empresa_id as venta_user_empresa_id,
+        u.activo as venta_user_activo,
+        u.borrado as venta_user_borrado,
+        u.almacen_id as venta_user_almacen_id,
+
+        du.id as venta_du_id,
+        du.nombres as venta_du_nombres,
+        du.apellido_paterno as venta_du_apellido_paterno,
+        du.apellido_materno as venta_du_apellido_materno,
+        du.direccion as venta_du_direccion,
+        du.telefono as venta_du_telefono,
+        du.tipo_documento_id as venta_du_tipo_documento_id,
+        du.documento as venta_du_documento,
+        du.email as venta_du_email,
+        du.user_id as venta_du_user_id,
+        du.user_gestiona_id as venta_du_user_gestiona_id,
+        du.empresa_id as venta_du_empresa_id,
+        du.activo as venta_du_activo,
+        du.borrado as venta_du_borrado,
+
+        a.id as venta_al_id,
+        a.nombre as venta_al_nombre,
+        a.direccion as venta_al_direccion,
+        a.empresa_id as venta_al_empresa_id,
+        a.user_id as venta_al_user_id,
+        a.activo as venta_al_activo,
+        a.borrado as venta_al_borrado,
+        a.distrito_id as venta_al_distrito_id,
+        a.codigo as venta_al_codigo
+
+
+        from cobro_ventas cov
+        inner join metodos_pagos m on m.id = cov.metodos_pago_id
+        inner join ventas v on v.id = cov.venta_id
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+        <where>
+            <if test="ID != null"> AND cov.id = #{ID}</if>
+            <if test="VENTA_ID != null"> AND cov.venta_id = #{VENTA_ID}</if>
+            <if test="FECHA != null"> AND cov.fecha = #{FECHA}</if>
+            <if test="METODOS_PAGO_ID != null"> AND cov.metodos_pago_id = #{METODOS_PAGO_ID}</if>
+            <if test="IMPORTE != null"> AND cov.importe = #{IMPORTE}</if>
+            <if test="TIPO_TARJETA != null"> AND cov.tipo_tarjeta = #{TIPO_TARJETA}</if>
+            <if test="SIGLA_TARJETA != null"> AND cov.sigla_tarjeta = #{SIGLA_TARJETA}</if>
+            <if test="NUMERO_TARJETA != null"> AND cov.numero_tarjeta = #{NUMERO_TARJETA}</if>
+            <if test="BANCO != null"> AND cov.banco = #{BANCO}</if>
+            <if test="NUMERO_CUENTA != null"> AND cov.numero_cuenta = #{NUMERO_CUENTA}</if>
+            <if test="NUMERO_CELULAR != null"> AND cov.numero_celular = #{NUMERO_CELULAR}</if>
+            <if test="NUMERO_CHEQUE != null"> AND cov.numero_cheque = #{NUMERO_CHEQUE}</if>
+            <if test="USER_ID != null"> AND cov.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND cov.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND cov.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND cov.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND cov.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND cov.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND cov.activo != #{NO_ACTIVO}</if>
+
+            <!--<if test="BUSCAR != null"> AND cov.nombre like #{BUSCAR}</if>-->
         </where>
+        order by cov.fecha, cov.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">
@@ -57,12 +429,14 @@
         <set>
             <if test="VENTA_ID != null">  venta_id = #{VENTA_ID}, </if>
             <if test="FECHA != null">  fecha = #{FECHA}, </if>
-            <if test="TIPO_PAGO != null">  tipo_pago = #{TIPO_PAGO}, </if>
+            <if test="METODOS_PAGO_ID != null">  metodos_pago_id = #{METODOS_PAGO_ID}, </if>
             <if test="IMPORTE != null">  importe = #{IMPORTE}, </if>
-            <if test="TIPO_TARJETA_ID != null">  tipo_tarjeta_id = #{TIPO_TARJETA_ID}, </if>
-            <if test="BANCO_ID != null">  banco_id = #{BANCO_ID}, </if>
-            <if test="CUENTA_ID != null">  cuenta_id = #{CUENTA_ID}, </if>
+            <if test="TIPO_TARJETA != null">  tipo_tarjeta = #{TIPO_TARJETA}, </if>
+            <if test="SIGLA_TARJETA != null">  sigla_tarjeta = #{SIGLA_TARJETA}, </if>
             <if test="NUMERO_TARJETA != null">  numero_tarjeta = #{NUMERO_TARJETA}, </if>
+            <if test="BANCO != null">  banco = #{BANCO_ID}, </if>
+            <if test="NUMERO_CUENTA != null">  numero_cuenta = #{NUMERO_CUENTA}, </if>
+            <if test="NUMERO_CELULAR != null">  numero_celular = #{NUMERO_CELULAR}, </if>
             <if test="NUMERO_CHEQUE != null">  numero_cheque = #{NUMERO_CHEQUE}, </if>
 
 

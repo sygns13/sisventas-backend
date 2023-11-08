@@ -2,6 +2,7 @@ package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.Banco;
+import com.bcs.ventas.model.entities.TipoTarjeta;
 import com.bcs.ventas.service.BancoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -94,6 +95,13 @@ public class BancoController {
         bancoService.altabaja(id, valor);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @GetMapping("/listar-all")
+    public ResponseEntity<List<Banco>> listarAll() throws Exception{
+        List<Banco> resultado = bancoService.listar();
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
 }

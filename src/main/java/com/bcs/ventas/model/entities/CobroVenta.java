@@ -1,11 +1,17 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Cobro de Ventas Model")
 @Entity
 @Table(name = "cobro_ventas")
 public class CobroVenta implements Serializable {
@@ -19,70 +25,97 @@ public class CobroVenta implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="venta_id", nullable = true)
-    private Long ventaId;
+    @Schema(description = "Venta")
+    @OneToOne
+    @JoinColumn(name = "venta_id", nullable = true, foreignKey = @ForeignKey(name = "FK_cobro_venta_venta"))
+    private Venta venta;
 
+    @Schema(description = "Fecha de registro de la Venta")
+    //@NotNull( message = "{producto.fecha.notnull}")
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="fecha", nullable = true)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date fecha;
+    private LocalDate fecha;
 
-    @Column(name="tipo_pago", nullable = true)
-    private Integer tipoPago;
+    @Schema(description = "Metodo de Pago")
+    @OneToOne
+    @JoinColumn(name = "metodos_pago_id", nullable = true, foreignKey = @ForeignKey(name = "FK_cobro_venta_metodos_pagos"))
+    private MetodoPago metodoPago;
 
+    @Schema(description = "Importe del Pago")
     @Column(name="importe", nullable = true)
-    private Double importe;
+    private BigDecimal importe;
 
-    @Column(name="tipo_tarjeta_id", nullable = true)
-    private Long tipoTarjetaId;
+    @Schema(description = "Tipo de Tarjeta")
+    @Column(name="tipo_tarjeta", nullable = true, length= 100)
+    private String tipoTarjeta;
 
-    @Column(name="banco_id", nullable = true)
-    private Long bancoId;
+    @Schema(description = "Sigla de Tipo de Tarjeta")
+    @Column(name="sigla_tarjeta", nullable = true, length= 10)
+    private String siglaTarjeta;
 
-    @Column(name="cuenta_id", nullable = true)
-    private Long cuentaId;
-
+    @Schema(description = "Numero de Tarjeta")
     @Column(name="numero_tarjeta", nullable = true, length= 500)
     private String numeroTarjeta;
 
+    @Schema(description = "Banco")
+    @Column(name="banco", nullable = true, length= 250)
+    private String banco;
+
+    @Schema(description = "Numero de Cuenta")
+    @Column(name="numero_cuenta", nullable = true, length= 200)
+    private String numeroCuenta;
+
+    @Schema(description = "Numero de Celular")
+    @Column(name="numero_celular", nullable = true, length= 20)
+    private String numeroCelular;
+
+    @Schema(description = "Numero de Cheque")
     @Column(name="numero_cheque", nullable = true, length= 500)
     private String numeroCheque;
 
+    @Schema(description = "ID User Padre")
+    //@NotNull( message = "{unidad.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
+    @Schema(description = "ID Empresa Padre")
+    //@NotNull( message = "{unidad.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de la Unidad")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de la Unidad")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
 
     public CobroVenta() {
     }
 
-    public CobroVenta(Long id, Long ventaId, Date fecha, Integer tipoPago, Double importe, Long tipoTarjetaId, Long bancoId, Long cuentaId, String numeroTarjeta, String numeroCheque, Long userId, Long empresaId, Integer activo, Integer borrado) {
+    public CobroVenta(Long id, Venta venta, LocalDate fecha, MetodoPago metodoPago, BigDecimal importe, String tipoTarjeta, String siglaTarjeta, String numeroTarjeta, String banco, String numeroCuenta, String numeroCelular, String numeroCheque, Long userId, Long empresaId, Integer activo, Integer borrado) {
         this.id = id;
-        this.ventaId = ventaId;
+        this.venta = venta;
         this.fecha = fecha;
-        this.tipoPago = tipoPago;
+        this.metodoPago = metodoPago;
         this.importe = importe;
-        this.tipoTarjetaId = tipoTarjetaId;
-        this.bancoId = bancoId;
-        this.cuentaId = cuentaId;
+        this.tipoTarjeta = tipoTarjeta;
+        this.siglaTarjeta = siglaTarjeta;
         this.numeroTarjeta = numeroTarjeta;
+        this.banco = banco;
+        this.numeroCuenta = numeroCuenta;
+        this.numeroCelular = numeroCelular;
         this.numeroCheque = numeroCheque;
         this.userId = userId;
         this.empresaId = empresaId;
@@ -90,16 +123,18 @@ public class CobroVenta implements Serializable {
         this.borrado = borrado;
     }
 
-    public CobroVenta(Long id, Long ventaId, Date fecha, Integer tipoPago, Double importe, Long tipoTarjetaId, Long bancoId, Long cuentaId, String numeroTarjeta, String numeroCheque, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
+    public CobroVenta(Long id, Venta venta, LocalDate fecha, MetodoPago metodoPago, BigDecimal importe, String tipoTarjeta, String siglaTarjeta, String numeroTarjeta, String banco, String numeroCuenta, String numeroCelular, String numeroCheque, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
         this.id = id;
-        this.ventaId = ventaId;
+        this.venta = venta;
         this.fecha = fecha;
-        this.tipoPago = tipoPago;
+        this.metodoPago = metodoPago;
         this.importe = importe;
-        this.tipoTarjetaId = tipoTarjetaId;
-        this.bancoId = bancoId;
-        this.cuentaId = cuentaId;
+        this.tipoTarjeta = tipoTarjeta;
+        this.siglaTarjeta = siglaTarjeta;
         this.numeroTarjeta = numeroTarjeta;
+        this.banco = banco;
+        this.numeroCuenta = numeroCuenta;
+        this.numeroCelular = numeroCelular;
         this.numeroCheque = numeroCheque;
         this.userId = userId;
         this.empresaId = empresaId;
@@ -117,60 +152,52 @@ public class CobroVenta implements Serializable {
         this.id = id;
     }
 
-    public Long getVentaId() {
-        return ventaId;
+    public Venta getVenta() {
+        return venta;
     }
 
-    public void setVentaId(Long ventaId) {
-        this.ventaId = ventaId;
+    public void setVenta(Venta venta) {
+        this.venta = venta;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
-    public Integer getTipoPago() {
-        return tipoPago;
+    public MetodoPago getMetodoPago() {
+        return metodoPago;
     }
 
-    public void setTipoPago(Integer tipoPago) {
-        this.tipoPago = tipoPago;
+    public void setMetodoPago(MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
     }
 
-    public Double getImporte() {
+    public BigDecimal getImporte() {
         return importe;
     }
 
-    public void setImporte(Double importe) {
+    public void setImporte(BigDecimal importe) {
         this.importe = importe;
     }
 
-    public Long getTipoTarjetaId() {
-        return tipoTarjetaId;
+    public String getTipoTarjeta() {
+        return tipoTarjeta;
     }
 
-    public void setTipoTarjetaId(Long tipoTarjetaId) {
-        this.tipoTarjetaId = tipoTarjetaId;
+    public void setTipoTarjeta(String tipoTarjeta) {
+        this.tipoTarjeta = tipoTarjeta;
     }
 
-    public Long getBancoId() {
-        return bancoId;
+    public String getSiglaTarjeta() {
+        return siglaTarjeta;
     }
 
-    public void setBancoId(Long bancoId) {
-        this.bancoId = bancoId;
-    }
-
-    public Long getCuentaId() {
-        return cuentaId;
-    }
-
-    public void setCuentaId(Long cuentaId) {
-        this.cuentaId = cuentaId;
+    public void setSiglaTarjeta(String siglaTarjeta) {
+        this.siglaTarjeta = siglaTarjeta;
     }
 
     public String getNumeroTarjeta() {
@@ -179,6 +206,30 @@ public class CobroVenta implements Serializable {
 
     public void setNumeroTarjeta(String numeroTarjeta) {
         this.numeroTarjeta = numeroTarjeta;
+    }
+
+    public String getBanco() {
+        return banco;
+    }
+
+    public void setBanco(String banco) {
+        this.banco = banco;
+    }
+
+    public String getNumeroCuenta() {
+        return numeroCuenta;
+    }
+
+    public void setNumeroCuenta(String numeroCuenta) {
+        this.numeroCuenta = numeroCuenta;
+    }
+
+    public String getNumeroCelular() {
+        return numeroCelular;
+    }
+
+    public void setNumeroCelular(String numeroCelular) {
+        this.numeroCelular = numeroCelular;
     }
 
     public String getNumeroCheque() {
@@ -221,19 +272,19 @@ public class CobroVenta implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }

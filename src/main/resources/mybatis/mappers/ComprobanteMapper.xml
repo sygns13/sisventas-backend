@@ -10,38 +10,118 @@
         <result property="serie" column="serie" />
         <result property="numero" column="numero" />
         <result property="cantidadDigitos" column="cantidad_digitos" />
-        <result property="tipoComprobanteId" column="tipo_comprobante_id" />
         <result property="estado" column="estado" />
         <result property="userId" column="user_id" />
+        <result property="almacenId" column="almacen_id" />
         <result property="empresaId" column="empresa_id" />
         <result property="activo" column="activo" />
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+
+        <result property="initComprobante.id" column="init_comprobante_id" />
+
+        <result property="initComprobante.tipoComprobante.id" column="tipo_comprobante_id" />
+        <result property="initComprobante.tipoComprobante.nombre" column="tipo_comprobante_nombre" />
+        <result property="initComprobante.tipoComprobante.paraVenta" column="tipo_comprobante_para_venta" />
+        <result property="initComprobante.tipoComprobante.prefix" column="tipo_comprobante_prefix" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from comprobantes
+        select
+        c.id,
+        c.serie,
+        c.numero,
+        c.cantidad_digitos,
+        c.init_comprobante_id,
+        c.estado,
+        c.empresa_id,
+        c.user_id,
+        c.created_at,
+        c.updated_at,
+        c.activo,
+        c.borrado,
+        c.almacen_id,
+
+        i.id as init_comprobante_id,
+
+        t.id as tipo_comprobante_id,
+        t.nombre as tipo_comprobante_nombre,
+        t.para_venta as tipo_comprobante_para_venta,
+        t.prefix as tipo_comprobante_prefix
+
+        from comprobantes c
+        inner join init_comprobantes i on c.init_comprobante_id = i.id
+        inner join tipo_comprobantes t on i.tipo_comprobante_id = t.id
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from comprobantes c
+        inner join init_comprobantes i on c.init_comprobante_id = i.id
+        inner join tipo_comprobantes t on i.tipo_comprobante_id = t.id
+        <where>
+            <if test="ID != null"> AND c.id = #{ID}</if>
+            <if test="SERIE != null"> AND c.serie = #{SERIE}</if>
+            <if test="NUMERO != null"> AND c.numero = #{NUMERO}</if>
+            <if test="CANTIDAD_DIGITOS != null"> AND c.cantidad_digitos = #{CANTIDAD_DIGITOS}</if>
+            <if test="TIPO_COMPROBANTE_ID != null"> AND c.tipo_comprobante_id = #{TIPO_COMPROBANTE_ID}</if>
+            <if test="ESTADO != null"> AND c.estado = #{ESTADO}</if>
+            <if test="USER_ID != null"> AND c.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND c.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND c.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND c.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND c.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND c.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND c.activo != #{NO_ACTIVO}</if>
+        </where>
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from comprobantes
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="SERIE != null"> AND serie = #{SERIE}</if>
-            <if test="NUMERO != null"> AND numero = #{NUMERO}</if>
-            <if test="CANTIDAD_DIGITOS != null"> AND cantidad_digitos = #{CANTIDAD_DIGITOS}</if>
-            <if test="TIPO_COMPROBANTE_ID != null"> AND tipo_comprobante_id = #{TIPO_COMPROBANTE_ID}</if>
-            <if test="ESTADO != null"> AND estado = #{ESTADO}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+        select
+        c.id,
+        c.serie,
+        c.numero,
+        c.cantidad_digitos,
+        c.init_comprobante_id,
+        c.estado,
+        c.empresa_id,
+        c.user_id,
+        c.created_at,
+        c.updated_at,
+        c.activo,
+        c.borrado,
+        c.almacen_id,
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        i.id as init_comprobante_id,
+
+        t.id as tipo_comprobante_id,
+        t.nombre as tipo_comprobante_nombre,
+        t.para_venta as tipo_comprobante_para_venta,
+        t.prefix as tipo_comprobante_prefix
+
+        from comprobantes c
+        inner join init_comprobantes i on c.init_comprobante_id = i.id
+        inner join tipo_comprobantes t on i.tipo_comprobante_id = t.id
+        <where>
+            <if test="ID != null"> AND c.id = #{ID}</if>
+            <if test="SERIE != null"> AND c.serie = #{SERIE}</if>
+            <if test="NUMERO != null"> AND c.numero = #{NUMERO}</if>
+            <if test="CANTIDAD_DIGITOS != null"> AND c.cantidad_digitos = #{CANTIDAD_DIGITOS}</if>
+            <if test="TIPO_COMPROBANTE_ID != null"> AND c.tipo_comprobante_id = #{TIPO_COMPROBANTE_ID}</if>
+            <if test="ESTADO != null"> AND c.estado = #{ESTADO}</if>
+            <if test="USER_ID != null"> AND c.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND c.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND c.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND c.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND c.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND c.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND c.activo != #{NO_ACTIVO}</if>
         </where>
+        order by c.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">
