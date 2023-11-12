@@ -95,7 +95,10 @@
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
 
-            <if test="ALMACEN_ID != null"> AND almacen_id = #{ALMACEN_ID}</if>
+            <if test="ALMACEN_ID_GENERAL != null"> AND ( i.almacen_id = #{ALMACEN_ID_GENERAL}
+                <if test="ALMACEN_ID != null"> OR i.almacen_id = #{ALMACEN_ID}</if>
+                )
+            </if>
 
         </where>
         order by tipo_comprobante_id, letra_serie, num_serie, id
@@ -155,7 +158,10 @@
             <if test="NO_BORRADO != null"> AND i.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND i.activo != #{NO_ACTIVO}</if>
 
-            <if test="ALMACEN_ID != null"> AND i.almacen_id = #{ALMACEN_ID}</if>
+            <if test="ALMACEN_ID_GENERAL != null"> AND ( i.almacen_id = #{ALMACEN_ID_GENERAL}
+                <if test="ALMACEN_ID != null"> OR i.almacen_id = #{ALMACEN_ID}</if>
+                )
+            </if>
         </where>
         order by i.tipo_comprobante_id, i.letra_serie, i.num_serie, i.id
         <if test="LIMIT != null"> LIMIT #{LIMIT}</if>

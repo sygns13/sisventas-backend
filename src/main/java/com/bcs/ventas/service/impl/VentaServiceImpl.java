@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.AlmacenService;
+import com.bcs.ventas.service.InitComprobanteService;
 import com.bcs.ventas.service.VentaService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
@@ -67,6 +68,23 @@ public class VentaServiceImpl implements VentaService {
 
     @Autowired
     private LoteMapper loteMapper;
+
+    @Autowired
+    private  CobroVentaDAO cobroVentaDAO;
+
+    @Autowired
+    private  CobroVentaMapper cobroVentaMapper;
+
+    @Autowired
+    private  ComprobanteDAO comprobanteDAO;
+
+    @Autowired
+    private  ComprobanteMapper comprobanteMapper;
+
+    @Autowired
+    private InitComprobanteService initComprobanteService;
+
+
 
     @Override
     public Venta registrar(Venta v) throws Exception {
@@ -265,6 +283,54 @@ public class VentaServiceImpl implements VentaService {
     public Venta grabarRegistro(Venta v) throws Exception {
         Venta venta = ventaDAO.registrar(v);
         return venta;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private CobroVenta grabarRegistroCobro(CobroVenta c, InitComprobante initComprobante) throws Exception {
+        CobroVenta cobroVenta = cobroVentaDAO.registrar(c);
+
+        if(c.getImporte().compareTo(new BigDecimal(0)) <= 0)
+            c.getVenta().setEstado(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA);
+
+        if(c.getImporte().compareTo(new BigDecimal(0)) > 0 && c.getImporte().compareTo(c.getVenta().getTotalMonto()) < 0)
+            c.getVenta().setEstado(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL);
+
+        if(c.getImporte().compareTo(new BigDecimal(0)) > 0 && c.getImporte().compareTo(c.getVenta().getTotalMonto()) >= 0){
+            c.getVenta().setEstado(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL);
+            c.setImporte(c.getVenta().getTotalMonto());
+        }
+
+
+        initComprobante.setNumeroActual(initComprobante.getNumeroActual() + Constantes.CANTIDAD_UNIDAD_INTEGER);
+        initComprobanteService.modificar(initComprobante);
+
+        Comprobante comprobante = new Comprobante();
+        comprobante.setSerie(initComprobante.getLetraSerieStr()+initComprobante.getNumSerieStr());
+        comprobante.setNumero(StringUtils.leftPad(initComprobante.getNumeroActual().toString(), initComprobante.getCantidadDigitos(), "0"));
+        comprobante.setCantidadDigitos(initComprobante.getCantidadDigitos());
+        comprobante.setInitComprobante(initComprobante);
+        comprobante.setEstado(Constantes.COMPROBANTE_ESTADO_CREADO);
+        comprobante.setUserId(cobroVenta.getUserId());
+        comprobante.setAlmacenId(cobroVenta.getVenta().getAlmacen().getId());
+        comprobante.setEmpresaId(cobroVenta.getEmpresaId());
+        comprobante.setActivo(Constantes.REGISTRO_ACTIVO);
+        comprobante.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+        comprobante.setCreatedAt(cobroVenta.getCreatedAt());
+        comprobante.setUpdatedAd(cobroVenta.getUpdatedAd());
+
+        comprobante = comprobanteDAO.registrar(comprobante);
+
+        cobroVenta.getVenta().setComprobante(comprobante);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", c.getVenta().getId());
+        params.put("ESTADO", c.getVenta().getEstado());
+        params.put("COMPROBANTE_ID", comprobante.getId());
+        params.put("UPDATED_AT", c.getVenta().getUpdatedAd());
+        ventaMapper.updateByPrimaryKeySelective(params);
+
+
+        return cobroVenta;
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
@@ -604,6 +670,109 @@ public class VentaServiceImpl implements VentaService {
         this.graberResetVenta(venta);
         Venta ventaRes = this.recalcularVentaReset(venta);
         return ventaRes;
+
+    }
+
+    @Override
+    public CobroVenta cobrarVenta(CobroVenta cobroVenta) throws Exception {
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        LocalDate fechaActual = LocalDate.now();
+        Venta v = this.listarPorId(cobroVenta.getVenta().getId());
+
+        v.setUpdatedAd(fechaActualTime);
+        User user = new User();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        user.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+        v.setUser(user);
+
+        cobroVenta.setVenta(v);
+        cobroVenta.setCreatedAt(fechaActualTime);
+        cobroVenta.setUpdatedAd(fechaActualTime);
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        cobroVenta.setEmpresaId(1L);
+        cobroVenta.setUserId(2L);
+        //user.setEmpresaId(1L);
+        //user = userDAO.listarPorId(user.getId());
+        //Todo: Temporal hasta incluir Oauth final
+
+        cobroVenta.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+        cobroVenta.setActivo(Constantes.REGISTRO_ACTIVO);
+
+        cobroVenta.setFecha(fechaActual);
+
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionRegistroCobro(cobroVenta, resultValidacion);
+
+        if(validacion){
+            InitComprobante initComprobante = new InitComprobante();
+            initComprobante = initComprobanteService.listarPorId(cobroVenta.getInitComprobanteId());
+
+            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CASH)){
+                cobroVenta.setTipoTarjeta(Constantes.VOID);
+                cobroVenta.setSiglaTarjeta(Constantes.VOID);
+                cobroVenta.setNumeroTarjeta(Constantes.VOID);
+
+                cobroVenta.setBanco(Constantes.VOID);
+                cobroVenta.setNumeroCuenta(Constantes.VOID);
+                cobroVenta.setCodigoOperacion(Constantes.VOID);
+
+                cobroVenta.setNumeroCelular(Constantes.VOID);
+                cobroVenta.setNumeroCheque(Constantes.VOID);
+            }
+            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CREDIT_CARD)){
+                cobroVenta.setBanco(Constantes.VOID);
+                cobroVenta.setNumeroCuenta(Constantes.VOID);
+                cobroVenta.setCodigoOperacion(Constantes.VOID);
+
+                cobroVenta.setNumeroCelular(Constantes.VOID);
+                cobroVenta.setNumeroCheque(Constantes.VOID);
+            }
+            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_WIRE_TRANSFER)){
+                cobroVenta.setTipoTarjeta(Constantes.VOID);
+                cobroVenta.setSiglaTarjeta(Constantes.VOID);
+                cobroVenta.setNumeroTarjeta(Constantes.VOID);
+
+                cobroVenta.setNumeroCelular(Constantes.VOID);
+                cobroVenta.setNumeroCheque(Constantes.VOID);
+            }
+            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_E_WALLET)){
+                cobroVenta.setTipoTarjeta(Constantes.VOID);
+                cobroVenta.setSiglaTarjeta(Constantes.VOID);
+                cobroVenta.setNumeroTarjeta(Constantes.VOID);
+
+                cobroVenta.setBanco(Constantes.VOID);
+                cobroVenta.setNumeroCuenta(Constantes.VOID);
+
+                cobroVenta.setNumeroCheque(Constantes.VOID);
+            }
+            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_WIRE_TRANSFER)){
+                cobroVenta.setTipoTarjeta(Constantes.VOID);
+                cobroVenta.setSiglaTarjeta(Constantes.VOID);
+                cobroVenta.setNumeroTarjeta(Constantes.VOID);
+
+                cobroVenta.setNumeroCelular(Constantes.VOID);
+                cobroVenta.setCodigoOperacion(Constantes.VOID);
+            }
+
+
+            return this.grabarRegistroCobro(cobroVenta, initComprobante);
+        }
+
+
+        String errorValidacion = "Error de validación Método Cobrar Venta";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
 
     }
 
@@ -1404,6 +1573,188 @@ public class VentaServiceImpl implements VentaService {
         List<Venta> ventas = ventaMapper.listByParameterMap(params);
 
         return new PageImpl<>(ventas, page, total);
+    }
+
+
+    private boolean validacionRegistroCobro(CobroVenta cobroVenta, Map<String, Object> resultValidacion) throws Exception {
+
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(cobroVenta.getVenta() == null){
+            resultado = false;
+            error = "La Venta remitida no es válida";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(cobroVenta.getVenta().getCliente() == null){
+            resultado = false;
+            error = "Debe de seleccionar un Cliente";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("VENTA_ID",cobroVenta.getVenta().getId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleVenta> detallesVentas = detalleVentaMapper.listByParameterMap(params);
+
+        if(detallesVentas == null || detallesVentas.isEmpty()){
+            resultado = false;
+            error = "Debe de agregar Productos a la Venta";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(cobroVenta.getVenta().getEstado().intValue() == Constantes.VENTA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Venta remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(cobroVenta.getVenta().getEstado().intValue() == Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL){
+            resultado = false;
+            error = "La Venta remitida se encuentra cobrada en su totalidad";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(cobroVenta.getMetodoPago() == null){
+            resultado = false;
+            error = "El Método de Pago remitido no es válido";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(cobroVenta.getMetodoPago().getTipoId() == null){
+            resultado = false;
+            error = "El Tipo de Método de Pago remitido no es válido";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_WIRE_TRANSFER)){
+
+            if(cobroVenta.getBanco().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Seleccionar un Banco Válido";
+                errors.add(error);
+            }
+
+            if(cobroVenta.getNumeroCuenta().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Seleccionar una Cuenta Bancaria Válida";
+                errors.add(error);
+            }
+
+            if(cobroVenta.getCodigoOperacion().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Ingresar un Código de Operación";
+                errors.add(error);
+            }
+        }
+
+        if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CREDIT_CARD)){
+
+            if(cobroVenta.getTipoTarjeta().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Seleccionar un Tipo de Tarjeta Válido";
+                errors.add(error);
+            }
+
+            if(cobroVenta.getNumeroTarjeta().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Ingresar los 4 últimos dígitos de la tarjeta";
+                errors.add(error);
+            }
+        }
+
+        if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_E_WALLET)){
+
+            if(cobroVenta.getNumeroCelular().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Seleccionar un Número de Celular Válido";
+                errors.add(error);
+            }
+
+            if(cobroVenta.getCodigoOperacion().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Ingresar un Código de Operación";
+                errors.add(error);
+            }
+        }
+
+        if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CHEQUE)){
+
+            if(cobroVenta.getBanco().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Seleccionar un Banco Válido";
+                errors.add(error);
+            }
+
+            if(cobroVenta.getNumeroCuenta().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Seleccionar una Cuenta Bancaria Válida";
+                errors.add(error);
+            }
+
+            if(cobroVenta.getNumeroCheque().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de Ingresar un Número de Cheque";
+                errors.add(error);
+            }
+        }
+
+        if(cobroVenta.getImporte() == null || cobroVenta.getImporte().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
+            resultado = false;
+            error = "Debe de remitir un Monto Abonado Válido";
+            errors.add(error);
+        }
+
+        if(cobroVenta.getInitComprobanteId() == null || cobroVenta.getInitComprobanteId().compareTo(Constantes.CANTIDAD_ZERO_LONG) < 0){
+            resultado = false;
+            error = "Debe de seleccionar una Serie de Método de Pago Válida";
+            errors.add(error);
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
     }
 
 

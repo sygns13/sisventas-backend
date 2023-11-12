@@ -73,6 +73,10 @@ public class CobroVenta implements Serializable {
     @Column(name="numero_cheque", nullable = true, length= 500)
     private String numeroCheque;
 
+    @Schema(description = "Codigo de Operacion")
+    @Column(name="codigo_operacion", nullable = true, length= 200)
+    private String codigoOperacion;
+
     @Schema(description = "ID User Padre")
     //@NotNull( message = "{unidad.user_id.notnull}")
     @Column(name="user_id", nullable = true)
@@ -101,49 +105,12 @@ public class CobroVenta implements Serializable {
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
 
+    @Schema(description = "InitComprobanteId")
+    @Transient
+    private Long initComprobanteId;
+
     public CobroVenta() {
     }
-
-    public CobroVenta(Long id, Venta venta, LocalDate fecha, MetodoPago metodoPago, BigDecimal importe, String tipoTarjeta, String siglaTarjeta, String numeroTarjeta, String banco, String numeroCuenta, String numeroCelular, String numeroCheque, Long userId, Long empresaId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.venta = venta;
-        this.fecha = fecha;
-        this.metodoPago = metodoPago;
-        this.importe = importe;
-        this.tipoTarjeta = tipoTarjeta;
-        this.siglaTarjeta = siglaTarjeta;
-        this.numeroTarjeta = numeroTarjeta;
-        this.banco = banco;
-        this.numeroCuenta = numeroCuenta;
-        this.numeroCelular = numeroCelular;
-        this.numeroCheque = numeroCheque;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-    }
-
-    public CobroVenta(Long id, Venta venta, LocalDate fecha, MetodoPago metodoPago, BigDecimal importe, String tipoTarjeta, String siglaTarjeta, String numeroTarjeta, String banco, String numeroCuenta, String numeroCelular, String numeroCheque, Long userId, Long empresaId, Integer activo, Integer borrado, LocalDateTime createdAt, LocalDateTime updatedAd) {
-        this.id = id;
-        this.venta = venta;
-        this.fecha = fecha;
-        this.metodoPago = metodoPago;
-        this.importe = importe;
-        this.tipoTarjeta = tipoTarjeta;
-        this.siglaTarjeta = siglaTarjeta;
-        this.numeroTarjeta = numeroTarjeta;
-        this.banco = banco;
-        this.numeroCuenta = numeroCuenta;
-        this.numeroCelular = numeroCelular;
-        this.numeroCheque = numeroCheque;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
-    }
-
     public Long getId() {
         return id;
     }
@@ -286,5 +253,21 @@ public class CobroVenta implements Serializable {
 
     public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public String getCodigoOperacion() {
+        return codigoOperacion;
+    }
+
+    public void setCodigoOperacion(String codigoOperacion) {
+        this.codigoOperacion = codigoOperacion;
+    }
+
+    public Long getInitComprobanteId() {
+        return initComprobanteId;
+    }
+
+    public void setInitComprobanteId(Long initComprobanteId) {
+        this.initComprobanteId = initComprobanteId;
     }
 }

@@ -153,6 +153,54 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         return detalleMetodoPagos;
     }
 
+    @Override
+    public List<DetalleMetodoPago> listar(Long metodoPagoId , Long bancoId) throws Exception {
+        //return bancoDAO.listar();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+        params.put("EMPRESA_ID",EmpresaId);
+
+        if(metodoPagoId.compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("METODOS_PAGO_ID",metodoPagoId);
+        }
+
+        if(bancoId.compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("BANCO_ID",bancoId);
+        }
+
+        List<DetalleMetodoPago> detalleMetodoPagos = detalleMetodoPagoMapper.listByParameterMap(params);
+
+        detalleMetodoPagos.forEach((detalleMetodoPago) -> {
+            if(detalleMetodoPago.getTipoTarjetaId() != null && detalleMetodoPago.getTipoTarjetaId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+                TipoTarjeta obj = null;
+                try {
+                    obj = tipoTarjetaService.listarPorId(detalleMetodoPago.getTipoTarjetaId());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                detalleMetodoPago.setTipoTarjeta(obj);
+            }
+
+            if(detalleMetodoPago.getBancoId() != null && detalleMetodoPago.getBancoId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+                Banco obj = null;
+                try {
+                    obj = bancoService.listarPorId(detalleMetodoPago.getBancoId());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                detalleMetodoPago.setBanco(obj);
+            }
+        });
+
+        return detalleMetodoPagos;
+    }
+
     public Page<DetalleMetodoPago> listar(Pageable page, String buscar, Long metodoPagoId , Long bancoId) throws Exception {
         //return bancoDAO.listar();
 
@@ -328,7 +376,7 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         }
 
         if(a.getMetodoPago() != null){
-            if(( a.getMetodoPago().getTipoId().equals("WT") || a.getMetodoPago().getTipoId().equals("CH") ) &&
+            if(( a.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_WIRE_TRANSFER) || a.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CHEQUE) ) &&
                     ( a.getBancoId() == null || a.getBancoId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0 || a.getNumeroCuenta().isEmpty())){
                 resultado = false;
                 error = "Seleccione el Banco e Ingrese la cuenta bancaria";
@@ -337,7 +385,7 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         }
 
         if(a.getMetodoPago() != null){
-            if(a.getMetodoPago().getTipoId().equals("EW") && a.getNumeroCelular().isEmpty()){
+            if(a.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_E_WALLET) && a.getNumeroCelular().isEmpty()){
             resultado = false;
             error = "Ingrese el número de Celular";
             errors.add(error);
@@ -365,7 +413,7 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         }
 
         if(a.getMetodoPago() != null){
-            if(( a.getMetodoPago().getTipoId().equals("WT") || a.getMetodoPago().getTipoId().equals("CH") ) &&
+            if(( a.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_WIRE_TRANSFER) || a.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CHEQUE) ) &&
                     ( a.getBancoId() == null || a.getBancoId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0 || a.getNumeroCuenta().isEmpty())){
                 resultado = false;
                 error = "Seleccione el Banco e Ingrese la cuenta bancaria";
@@ -374,7 +422,7 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         }
 
         if(a.getMetodoPago() != null){
-            if(a.getMetodoPago().getTipoId().equals("EW") && a.getNumeroCelular().isEmpty()){
+            if(a.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_E_WALLET) && a.getNumeroCelular().isEmpty()){
                 resultado = false;
                 error = "Ingrese el número de Celular";
                 errors.add(error);

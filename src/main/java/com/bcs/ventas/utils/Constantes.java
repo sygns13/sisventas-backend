@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Constantes {
+    public static final String VOID = "";
+
 
     public static final Integer REGISTRO_ACTIVO = 1;
     public static final Integer REGISTRO_INACTIVO = 0;
@@ -80,5 +82,17 @@ public class Constantes {
 
     //ICBPER PERU 2023
     public static final BigDecimal CANTIDAD_ICBPER_2023 = new BigDecimal("0.5");
+
+    //Metodos de pago
+    public static final String ID_TIPO_METODO_PAGO_CASH = "CA";
+    public static final String ID_TIPO_METODO_PAGO_CREDIT_CARD = "CC";
+    public static final String ID_TIPO_METODO_PAGO_WIRE_TRANSFER = "WT";
+    public static final String ID_TIPO_METODO_PAGO_E_WALLET = "EW";
+    public static final String ID_TIPO_METODO_PAGO_CHEQUE = "CH";
+
+    //Estados de Comprobantes
+    public static final String COMPROBANTE_ESTADO_ANULADO = "0";
+    public static final String COMPROBANTE_ESTADO_CREADO = "1";
+    public static final String COMPROBANTE_ESTADO_FACTURADO = "2";
 
 }

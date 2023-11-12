@@ -118,6 +118,40 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         return initComprobantes;
     }
 
+    @Override
+    public List<InitComprobante> listar(Long tipoComprobante , Long almacenId) throws Exception {
+        //return bancoDAO.listar();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+        params.put("EMPRESA_ID",EmpresaId);
+        params.put("ALMACEN_ID_GENERAL",Constantes.CANTIDAD_ZERO_LONG);
+
+        if(tipoComprobante.compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
+            params.put("TIPO_COMPROBANTE_ID",tipoComprobante);
+        }
+
+        if(almacenId.compareTo(Constantes.CANTIDAD_ZERO_LONG) >= 0){
+            params.put("ALMACEN_ID",almacenId);
+        }
+
+        List<InitComprobante> initComprobantes = initComprobanteMapper.listByParameterMap(params);
+
+        initComprobantes.forEach((initComprobante) -> {
+            initComprobante.setLetraSerieStr(initComprobante.getTipoComprobante().getPrefix() + initComprobante.getLetraSerie());
+            initComprobante.setNumSerieStr(StringUtils.leftPad(initComprobante.getNumSerie().toString(), 2, "0"));
+            initComprobante.setNumeroStr(StringUtils.leftPad(initComprobante.getNumero().toString(), 8, "0"));
+            initComprobante.setNumeroActualStr(StringUtils.leftPad(initComprobante.getNumeroActual().toString(), 8, "0"));
+        });
+
+        return initComprobantes;
+    }
+
     public Page<InitComprobante> listar(Pageable page, String buscar, Long tipoComprobante , Long almacenId) throws Exception {
         //return bancoDAO.listar();
 
@@ -129,6 +163,7 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("EMPRESA_ID",EmpresaId);
         params.put("BUSCAR","%"+buscar+"%");
+        params.put("ALMACEN_ID_GENERAL",Constantes.CANTIDAD_ZERO_LONG);
 
         if(tipoComprobante.compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
             params.put("TIPO_COMPROBANTE_ID",tipoComprobante);

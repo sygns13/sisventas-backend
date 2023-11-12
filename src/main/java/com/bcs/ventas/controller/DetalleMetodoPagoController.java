@@ -38,8 +38,9 @@ public class DetalleMetodoPagoController {
     }
 
     @GetMapping("/listar-all")
-    public ResponseEntity<List<DetalleMetodoPago>> listarAll() throws Exception{
-        List<DetalleMetodoPago> resultado = detalleMetodoPagoService.listar();
+    public ResponseEntity<List<DetalleMetodoPago>> listarAll( @RequestParam(name = "metodos_pago_id", defaultValue = "0") Long metodoPagoId,
+                                                              @RequestParam(name = "banco_id", defaultValue = "0") Long bancoId) throws Exception{
+        List<DetalleMetodoPago> resultado = detalleMetodoPagoService.listar(metodoPagoId, bancoId);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }

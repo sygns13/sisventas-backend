@@ -1,6 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.entities.CobroVenta;
 import com.bcs.ventas.model.entities.DetalleVenta;
 import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Venta;
@@ -148,5 +149,14 @@ public class VentaController {
         Venta obj = ventaService.resetVenta(v);
 
         return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/cobrarventa")
+    public ResponseEntity<CobroVenta> cobrarVenta(@Valid @RequestBody CobroVenta a) throws Exception{
+        if(a.getVenta() == null || a.getVenta().getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+        CobroVenta obj = ventaService.cobrarVenta(a);
+        return new ResponseEntity<CobroVenta>(obj, HttpStatus.OK);
     }
 }

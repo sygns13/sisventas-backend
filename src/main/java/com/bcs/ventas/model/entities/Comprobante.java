@@ -27,7 +27,7 @@ public class Comprobante implements Serializable {
 
     @Schema(description = "Serie del Comprobante")
     @NotNull( message = "{comprobante.serie.notnull}")
-    @Size(min = 4, max = 4, message = "{comprobante.serie.size}")
+    //@Size(min = 4, max = 4, message = "{comprobante.serie.size}")
     @Column(name="serie", nullable = true, length= 46)
     private String serie;
 

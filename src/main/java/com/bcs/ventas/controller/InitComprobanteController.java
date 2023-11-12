@@ -38,8 +38,9 @@ public class InitComprobanteController {
     }
 
     @GetMapping("/listar-all")
-    public ResponseEntity<List<InitComprobante>> listarAll() throws Exception{
-        List<InitComprobante> resultado = initComprobanteService.listar();
+    public ResponseEntity<List<InitComprobante>> listarAll( @RequestParam(name = "tipo_comprobante_id", defaultValue = "0") Long tipoComprobante,
+                                                            @RequestParam(name = "almacen_id", defaultValue = "0") Long almacenId) throws Exception{
+        List<InitComprobante> resultado = initComprobanteService.listar(tipoComprobante, almacenId);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
