@@ -76,32 +76,35 @@
     </select>
 
     <select id="getTotalElements" resultType="java.lang.Long">
-        select COUNT(*) from init_comprobantes
+        select COUNT(*) from init_comprobantes i
+            inner join
+            tipo_comprobantes t on t.id = i.tipo_comprobante_id
+            left join
+            almacens a on a.id = i.almacen_id
         <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="NUM_SERIE != null"> AND num_serie = #{NUM_SERIE}</if>
-            <if test="LETRA_SERIE != null"> AND letra_serie = #{LETRA_SERIE}</if>
-            <if test="NUMERO != null"> AND numero = #{NUMERO}</if>
-            <if test="NUMERO_ACTUAL != null"> AND numero_actual = #{NUMERO_ACTUAL}</if>
-            <if test="CANTIDAD_DIGITOS != null"> AND cantidad_digitos = #{CANTIDAD_DIGITOS}</if>
-            <if test="TIPO_COMPROBANTE_ID != null"> AND tipo_comprobante_id = #{TIPO_COMPROBANTE_ID}</if>
+            <if test="ID != null"> AND i.id = #{ID}</if>
+            <if test="NUM_SERIE != null"> AND i.num_serie = #{NUM_SERIE}</if>
+            <if test="LETRA_SERIE != null"> AND i.letra_serie = #{LETRA_SERIE}</if>
+            <if test="NUMERO != null"> AND i.numero = #{NUMERO}</if>
+            <if test="NUMERO_ACTUAL != null"> AND i.numero_actual = #{NUMERO_ACTUAL}</if>
+            <if test="CANTIDAD_DIGITOS != null"> AND i.cantidad_digitos = #{CANTIDAD_DIGITOS}</if>
+            <if test="TIPO_COMPROBANTE_ID != null"> AND i.tipo_comprobante_id = #{TIPO_COMPROBANTE_ID}</if>
 
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+            <if test="USER_ID != null"> AND i.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND i.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND i.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND i.borrado = #{BORRADO}</if>
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+            <if test="NO_ID != null"> AND i.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND i.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND i.activo != #{NO_ACTIVO}</if>
 
             <if test="ALMACEN_ID_GENERAL != null"> AND ( i.almacen_id = #{ALMACEN_ID_GENERAL}
                 <if test="ALMACEN_ID != null"> OR i.almacen_id = #{ALMACEN_ID}</if>
                 )
             </if>
-
         </where>
-        order by tipo_comprobante_id, letra_serie, num_serie, id
+        order by i.tipo_comprobante_id, i.letra_serie, i.num_serie, i.id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
