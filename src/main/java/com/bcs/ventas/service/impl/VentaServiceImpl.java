@@ -26,10 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -84,7 +81,17 @@ public class VentaServiceImpl implements VentaService {
     @Autowired
     private InitComprobanteService initComprobanteService;
 
+    @Autowired
+    private TipoDocumentoMapper tipoDocumentoMapper;
 
+    @Autowired
+    private TipoDocumentoDAO tipoDocumentoDAO;
+
+    @Autowired
+    private TipoComprobanteDAO tipoComprobanteDAO;
+
+    @Autowired
+    private InitComprobanteDAO initComprobanteDAO;
 
     @Override
     public Venta registrar(Venta v) throws Exception {
@@ -250,8 +257,50 @@ public class VentaServiceImpl implements VentaService {
 
         List<Venta> ventas = ventaMapper.listByParameterMap(params);
 
-        if(ventas.size() > 0)
+        if(!ventas.isEmpty()){
+            params.clear();
+            params.put("VENTA_ID",ventas.get(0).getId());
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+            List<DetalleVenta> detallesVentas = detalleVentaMapper.listByParameterMap(params);
+            ventas.get(0).setDetalleVentas(detallesVentas);
+
+            if(ventas.get(0).getEstado().equals(Constantes.VENTA_ESTADO_ANULADO))
+                ventas.get(0).setEstadoStr(Constantes.VENTA_ESTADO_ANULADO_STR);
+
+            if(ventas.get(0).getEstado().equals(Constantes.VENTA_ESTADO_INICIADO))
+                ventas.get(0).setEstadoStr(Constantes.VENTA_ESTADO_INICIADO_STR);
+
+            if(ventas.get(0).getEstado().equals(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA))
+                ventas.get(0).setEstadoStr(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA_STR);
+
+            if(ventas.get(0).getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL))
+                ventas.get(0).setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL_STR);
+
+            if(ventas.get(0).getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL))
+                ventas.get(0).setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL_STR);
+
+            if(ventas.get(0).getCliente() != null && ventas.get(0).getCliente().getTipoDocumento() != null){
+                try {
+                    TipoDocumento tipoDocumento = tipoDocumentoDAO.listarPorId(ventas.get(0).getCliente().getTipoDocumento().getId());
+                    ventas.get(0).getCliente().setTipoDocumento(tipoDocumento);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(ventas.get(0).getComprobante() != null && ventas.get(0).getComprobante().getInitComprobante() != null){
+                try {
+                    InitComprobante initComprobante = initComprobanteDAO.listarPorId(ventas.get(0).getComprobante().getInitComprobante().getId());
+                    ventas.get(0).getComprobante().setInitComprobante(initComprobante);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             return ventas.get(0);
+        }
+
         else
             return null;
     }
@@ -593,8 +642,8 @@ public class VentaServiceImpl implements VentaService {
 
             if(detallesVentas.isEmpty()){
                 this.grabarRegistroDetalle(venta, detalleVenta);
-                Venta ventaRes = this.recalcularVenta(venta);
-                return ventaRes;
+                //Venta ventaRes = this.recalcularVenta(venta);
+                return venta;
             }
 
             this.grabarModificarDetalleAdd(venta, detalleVenta, detallesVentas.get(0));
@@ -776,6 +825,11 @@ public class VentaServiceImpl implements VentaService {
 
     }
 
+    @Override
+    public Venta recalcularVentaPublic(Venta venta) throws  Exception {
+        return this.recalcularVenta(venta);
+    }
+
     private boolean validacionVentaDetalle(DetalleVenta detalleVenta, Map<String, Object> resultValidacion) throws Exception {
 
         boolean resultado = true;
@@ -928,7 +982,7 @@ public class VentaServiceImpl implements VentaService {
         Long EmpresaId = 1L;
         //Todo: Temporal hasta incluir Oauth final
 
-        DetalleVenta d = detalleVentaDAO.registrar(detalleVenta);
+        detalleVenta = detalleVentaDAO.registrar(detalleVenta);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("PRODUCTO_ID", detalleVenta.getProducto().getId());
@@ -1125,9 +1179,7 @@ public class VentaServiceImpl implements VentaService {
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     private Venta recalcularVenta(Venta venta) throws Exception {
-
         return  this.recalcularVenta(venta, null);
-
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
@@ -1496,11 +1548,12 @@ public class VentaServiceImpl implements VentaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("EMPRESA_ID", EmpresaId);
+        params.put("ORDER_DESC", Constantes.CANTIDAD_UNIDAD);
 
         if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
             params.put("ALMACEN_ID",filtros.getAlmacenId());
 
-        if(filtros.getNumeroVenta() != null && filtros.getNumeroVenta().trim().length() > 0)
+        if(filtros.getNumeroVenta() != null && !filtros.getNumeroVenta().trim().isEmpty())
             params.put("NUMERO_VENTA", filtros.getNumeroVenta());
 
         if(filtros.getId() != null && filtros.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
@@ -1520,16 +1573,16 @@ public class VentaServiceImpl implements VentaService {
         if(filtros.getPagado() != null)
             params.put("PAGADO", filtros.getPagado());
 
-        if(filtros.getTipoVenta() != null)
+        if(filtros.getTipoVenta() != null && filtros.getTipoVenta() > Constantes.CANTIDAD_ZERO)
             params.put("TIPO", filtros.getTipoVenta());
 
         if(filtros.getIdCliente() != null && filtros.getIdCliente().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
             params.put("CLIENTE_ID", filtros.getIdCliente());
 
-        if(filtros.getNombreCliente() != null && filtros.getNombreCliente().trim().length() > 0)
+        if(filtros.getNombreCliente() != null && !filtros.getNombreCliente().trim().isEmpty())
             params.put("CLI_NOMBRE", "%"+filtros.getNombreCliente()+"%");
 
-        if(filtros.getDocumentoCliente() != null && filtros.getDocumentoCliente().trim().length() > 0)
+        if(filtros.getDocumentoCliente() != null && !filtros.getDocumentoCliente().trim().isEmpty())
             params.put("CLI_DOCUMENTO", filtros.getDocumentoCliente());
 
         if(filtros.getIdTipoDocumentoCliente() != null)
@@ -1538,10 +1591,10 @@ public class VentaServiceImpl implements VentaService {
         if(filtros.getIdComprobante() != null && filtros.getIdComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
             params.put("COMPROBANTE_ID", filtros.getIdComprobante());
 
-        if(filtros.getSerieComprobante() != null && filtros.getSerieComprobante().trim().length() > 0)
+        if(filtros.getSerieComprobante() != null && !filtros.getSerieComprobante().trim().isEmpty())
             params.put("CO_SERIE", filtros.getSerieComprobante());
 
-        if(filtros.getNumeroComprobante() != null && filtros.getNumeroComprobante().trim().length() > 0)
+        if(filtros.getNumeroComprobante() != null && !filtros.getNumeroComprobante().trim().isEmpty())
             params.put("CO_NUMERO", filtros.getNumeroComprobante());
 
         if(filtros.getIdTipoComprobante() != null && filtros.getIdTipoComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
@@ -1550,17 +1603,21 @@ public class VentaServiceImpl implements VentaService {
         if(filtros.getIdUser() != null && filtros.getIdUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
             params.put("USER_ID", filtros.getIdUser());
 
-        if(filtros.getNameUser() != null && filtros.getNameUser().trim().length() > 0)
+        if(filtros.getNameUser() != null && !filtros.getNameUser().trim().isEmpty())
             params.put("U_NAME", filtros.getNameUser());
 
-        if(filtros.getEmailUser() != null && filtros.getEmailUser().trim().length() > 0)
+        if(filtros.getEmailUser() != null && !filtros.getEmailUser().trim().isEmpty())
             params.put("U_EMAIL", filtros.getEmailUser());
 
         if(filtros.getIdTipoUser() != null && filtros.getIdTipoUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
             params.put("U_TIPO_USER_ID", filtros.getIdTipoUser());
 
-        if(filtros.getBuscarDatosUser() != null && filtros.getBuscarDatosUser().trim().length() > 0)
+        if(filtros.getBuscarDatosUser() != null && !filtros.getBuscarDatosUser().trim().isEmpty())
             params.put("U_BUSCAR", filtros.getBuscarDatosUser());
+
+        //Buscar General
+        if(filtros.getBuscarDatos() != null && !filtros.getBuscarDatos().trim().isEmpty())
+            params.put("BUSCAR_GENERAL", "%"+filtros.getBuscarDatos()+"%");
 
 
         Long total = ventaMapper.getTotalElements(params);
@@ -1571,6 +1628,43 @@ public class VentaServiceImpl implements VentaService {
         params.put("OFFSET", offset);
 
         List<Venta> ventas = ventaMapper.listByParameterMap(params);
+
+        ventas.forEach((venta) -> {
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_ANULADO))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_ANULADO_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_INICIADO))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_INICIADO_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL_STR);
+
+            if(venta.getCliente() != null && venta.getCliente().getTipoDocumento() != null){
+                try {
+                    TipoDocumento tipoDocumento = tipoDocumentoDAO.listarPorId(venta.getCliente().getTipoDocumento().getId());
+                    venta.getCliente().setTipoDocumento(tipoDocumento);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(venta.getComprobante() != null && venta.getComprobante().getInitComprobante() != null){
+                try {
+                    InitComprobante initComprobante = initComprobanteDAO.listarPorId(venta.getComprobante().getInitComprobante().getId());
+                    venta.getComprobante().setInitComprobante(initComprobante);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        //ventas = ventas.stream().sorted((Comparator.comparing(Venta::getId))).collect(Collectors.toList());
 
         return new PageImpl<>(ventas, page, total);
     }

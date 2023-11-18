@@ -110,12 +110,12 @@ public class VentaController {
     public ResponseEntity<Venta> registrarDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
         d.setId(null);
         Venta obj = ventaService.registrarDetalle(d);
-        //obj = ventaService.listarPorId(obj.getId());
+        Venta res = ventaService.recalcularVentaPublic(obj);
 
         //URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
         //return  ResponseEntity.created(location).build();
-        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+        return new ResponseEntity<Venta>(res, HttpStatus.OK);
     }
 
     @PostMapping("/add-producto-venta")

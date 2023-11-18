@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Constantes {
+public  class Constantes {
     public static final String VOID = "";
 
 
@@ -56,6 +56,29 @@ public class Constantes {
     public static final Integer VENTA_ESTADO_VENTA_NO_COBRADA = 2;
     public static final Integer VENTA_ESTADO_VENTA_COBRADA_PARCIAL = 3;
     public static final Integer VENTA_ESTADO_VENTA_COBRADA_TOTAL = 4;
+
+    public enum VentaStatus {
+        VENTA_ESTADO_ANULADO(0),
+        VENTA_ESTADO_INICIADO(1),
+        VENTA_ESTADO_VENTA_NO_COBRADA(2),
+        VENTA_ESTADO_VENTA_COBRADA_PARCIAL(3),
+        VENTA_ESTADO_VENTA_COBRADA_TOTAL(4);
+
+        private int value;
+        VentaStatus(int i) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public static final String VENTA_ESTADO_ANULADO_STR = "VENTA ANULADA";
+    public static final String VENTA_ESTADO_INICIADO_STR = "VENTA INICIADA";
+    public static final String VENTA_ESTADO_VENTA_NO_COBRADA_STR = "VENTA FACTURADA NO PAGADA";
+    public static final String VENTA_ESTADO_VENTA_COBRADA_PARCIAL_STR = "VENTA FACTURADA PAGADA PARCIALMENTE";
+    public static final String VENTA_ESTADO_VENTA_COBRADA_TOTAL_STR = "VENTA FACTURADA PAGADA";
 
     public static final Integer VENTA_NO_PAGADO = 0;
     public static final Integer VENTA_SI_PAGADO = 1;

@@ -28,4 +28,6 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Venta resetVenta(Venta venta) throws Exception;
 
     CobroVenta cobrarVenta(CobroVenta cobroVenta) throws Exception;
+
+    Venta recalcularVentaPublic(Venta venta) throws Exception;
 }

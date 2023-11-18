@@ -352,8 +352,18 @@
             <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
 
             <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="BUSCAR_GENERAL != null"> AND ( v.numero_venta like #{BUSCAR_GENERAL} OR
+                                c.documento like #{BUSCAR_GENERAL} or c.nombre like #{BUSCAR_GENERAL} OR
+                                CONCAT(co.serie,'-', co.numero) like #{BUSCAR_GENERAL} OR
+                                u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
+                                du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
+            </if>
         </where>
-        order by v.fecha, v.hora, v.id
+
+        <if test="ORDER_DESC != null"> order by v.id desc </if>
+        <if test="ORDER_DESC == null"> order by v.fecha, v.hora, v.id </if>
+
         <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
@@ -434,8 +444,17 @@
             <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
 
             <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="BUSCAR_GENERAL != null"> AND ( v.numero_venta = #{BUSCAR_GENERAL} OR
+                c.documento like #{BUSCAR_GENERAL} or c.nombre like #{BUSCAR_GENERAL} OR
+                CONCAT(co.serie, co.numero) like #{BUSCAR_GENERAL} OR
+                u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
+                du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
+            </if>
         </where>
-        order by v.fecha, v.hora, v.id
+
+        <if test="ORDER_DESC != null"> order by v.id desc </if>
+        <if test="ORDER_DESC == null"> order by v.fecha, v.hora, v.id </if>
     </select>
 
     <update id="updateByPrimaryKeySelective">

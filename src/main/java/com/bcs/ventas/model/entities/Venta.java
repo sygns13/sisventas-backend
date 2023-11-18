@@ -148,6 +148,10 @@ public class Venta implements Serializable {
     @OneToMany(mappedBy = "venta", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private List<DetalleVenta> detalleVentas;
 
+    @Schema(description = "Detalle de Estado")
+    @Transient
+    private String estadoStr;
+
     public Venta() {
     }
 
@@ -414,5 +418,13 @@ public class Venta implements Serializable {
 
     public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
         this.detalleVentas = detalleVentas;
+    }
+
+    public String getEstadoStr() {
+        return estadoStr;
+    }
+
+    public void setEstadoStr(String estadoStr) {
+        this.estadoStr = estadoStr;
     }
 }

@@ -38,10 +38,14 @@ public class FiltroVenta {
     private Long idTipoUser;
     private String buscarDatosUser;
 
+    //Buscar General
+    private String buscarDatos;
+
     public FiltroVenta() {
     }
 
-    public FiltroVenta(Long id, LocalDate fecha, LocalTime hora, LocalDate fechaInicio, LocalDate fechaFinal, Integer estadoVenta, Integer pagado, Integer tipoVenta, Long idCliente, String nombreCliente, String documentoCliente, Long idTipoDocumentoCliente, Long idComprobante, String serieComprobante, String numeroComprobante, Long idTipoComprobante, Long idUser, String nameUser, String emailUser, Long idTipoUser, String buscarDatosUser, Long almacenId) {
+    public FiltroVenta(Long almacenId, Long id, LocalDate fecha, LocalTime hora, LocalDate fechaInicio, LocalDate fechaFinal, Integer estadoVenta, Integer pagado, Integer tipoVenta, String numeroVenta, Long idCliente, String nombreCliente, String documentoCliente, Long idTipoDocumentoCliente, Long idComprobante, String serieComprobante, String numeroComprobante, Long idTipoComprobante, Long idUser, String nameUser, String emailUser, Long idTipoUser, String buscarDatosUser, String buscarDatos) {
+        this.almacenId = almacenId;
         this.id = id;
         this.fecha = fecha;
         this.hora = hora;
@@ -50,6 +54,7 @@ public class FiltroVenta {
         this.estadoVenta = estadoVenta;
         this.pagado = pagado;
         this.tipoVenta = tipoVenta;
+        this.numeroVenta = numeroVenta;
         this.idCliente = idCliente;
         this.nombreCliente = nombreCliente;
         this.documentoCliente = documentoCliente;
@@ -63,7 +68,7 @@ public class FiltroVenta {
         this.emailUser = emailUser;
         this.idTipoUser = idTipoUser;
         this.buscarDatosUser = buscarDatosUser;
-        this.almacenId = almacenId;
+        this.buscarDatos = buscarDatos;
     }
 
     public Long getId() {
@@ -248,5 +253,13 @@ public class FiltroVenta {
 
     public void setNumeroVenta(String numeroVenta) {
         this.numeroVenta = numeroVenta;
+    }
+
+    public String getBuscarDatos() {
+        return buscarDatos;
+    }
+
+    public void setBuscarDatos(String buscarDatos) {
+        this.buscarDatos = buscarDatos;
     }
 }
