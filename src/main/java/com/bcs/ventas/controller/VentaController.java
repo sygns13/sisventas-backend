@@ -121,7 +121,8 @@ public class VentaController {
     @PostMapping("/add-producto-venta")
     public ResponseEntity<Venta> agregarProductoVenta(@RequestBody AgregarProductoBean addProductoVenta) throws Exception{
         Venta obj = ventaService.agregarProducto(addProductoVenta);
-        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+        Venta res = ventaService.recalcularVentaPublic(obj);
+        return new ResponseEntity<Venta>(res, HttpStatus.OK);
     }
 
     @PostMapping("/delete-detalle-venta")

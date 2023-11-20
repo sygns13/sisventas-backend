@@ -545,7 +545,7 @@ public class VentaServiceImpl implements VentaService {
 
         if(new BigDecimal(productoVenta.getStock().getCantidad()).compareTo(new BigDecimal(productoVenta.getDetalleUnidadProducto().getUnidad().getCantidad())) < 0){
             validacion = false;
-            error = "No se tiene stock del producto " +productoVenta.getProducto().getNombre()+ " para la canitidad solicitada de " + productoVenta.getDetalleUnidadProducto().getUnidad().getCantidad() + "unidades";
+            error = "No se tiene stock del producto " +productoVenta.getProducto().getNombre()+ " para la canitidad solicitada de " + productoVenta.getDetalleUnidadProducto().getUnidad().getCantidad() + " unidades";
             errors.add(error);
         }
 
