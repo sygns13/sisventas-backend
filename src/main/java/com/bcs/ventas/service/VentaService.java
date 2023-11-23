@@ -34,4 +34,6 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Venta recalcularVentaPublic(Venta venta) throws Exception;
 
     Venta generarComprobante(Venta venta) throws Exception;
+
+    void anular(Long id) throws Exception;
 }

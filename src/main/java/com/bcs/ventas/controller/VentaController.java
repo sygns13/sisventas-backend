@@ -107,6 +107,18 @@ public class VentaController {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
+    @PatchMapping("/anular/{id}")
+    public ResponseEntity<Void> anular(@PathVariable("id") Long id) throws Exception{
+        Venta obj = ventaService.listarPorId(id);
+
+        if(obj == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ id);
+        }
+        ventaService.anular(id);
+
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/add-detalle-venta")
     public ResponseEntity<Venta> registrarDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
         d.setId(null);

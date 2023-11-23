@@ -351,6 +351,28 @@ public class VentaServiceImpl implements VentaService {
         }
     }
 
+    @Override
+    public void anular(Long id) throws Exception {
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionAnulacion(id, resultValidacion);
+
+        if(validacion) {
+            this.grabarAnular(id);
+        }
+        else {
+            String errorValidacion = "Error de validación Método Anular venta";
+
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
+    }
+
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public Venta grabarRegistro(Venta v) throws Exception {
@@ -1214,6 +1236,36 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
+    public void devolverStockVenta(Long ventaId) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("VENTA_ID", ventaId);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleVenta> detallesVentas = detalleVentaMapper.listByParameterMap(params);
+        for (DetalleVenta dv: detallesVentas) {
+            params.clear();
+            params.put("PRODUCTO_ID", dv.getProducto().getId());
+            params.put("ALMACEN_ID", dv.getAlmacenId());
+            params.put("EMPRESA_ID", EmpresaId);
+
+            List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+            Lote loteBD = null;
+
+            if(dv.getLote() != null && dv.getLote().getId() != null)
+                loteBD = loteDAO.listarPorId(dv.getLote().getId());
+
+
+            this.modificarStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD, dv.getCantidad() * dv.getCantidadReal());
+            //detalleVentaDAO.eliminar(dv.getId());
+        }
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarDeleteDetalle(Venta venta, DetalleVenta detalleVenta) throws Exception {
 
         //TODO: Temporal hasta incluir Oauth inicio
@@ -1468,21 +1520,46 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Override
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     public void grabarEliminar(Long id) throws Exception {
         LocalDateTime fechaActualDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String fechaUpdate = fechaActualDateTime.format(formatter);
+
+        //Devolver Stocks
+        this.devolverStockVenta(id);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("UPDATED_AT",fechaUpdate);
 
-
         int res= ventaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
             throw new RuntimeException("No se pudo eliminar la venta indicada, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+        }
+    }
+
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private void grabarAnular(Long id) throws Exception {
+        LocalDateTime fechaActualDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fechaUpdate = fechaActualDateTime.format(formatter);
+
+        //Devolver Stocks
+        this.devolverStockVenta(id);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",id);
+        params.put("ESTADO",Constantes.VENTA_ESTADO_ANULADO);
+        params.put("UPDATED_AT",fechaUpdate);
+
+        int res= ventaMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo anular la venta indicada, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
     }
 
@@ -1616,12 +1693,66 @@ public class VentaServiceImpl implements VentaService {
         String error;
         String warning;
 
-        Venta v = this.listarPorId(id);
+        Venta venta = this.listarPorId(id);
 
-        //Lógica de Validaciones para Eliminación Venta
-        if(v.getComprobante() != null){
+        if(venta.getEstado().intValue() == Constantes.VENTA_ESTADO_ANULADO){
             resultado = false;
-            error = "No se puede eliminar la Venta porque ya Cuenta con un Comprobante asociado";
+            error = "La Venta remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(venta.getEstado().intValue() > Constantes.VENTA_ESTADO_INICIADO){
+            if(venta.getComprobante() != null && venta.getComprobante().getInitComprobante() != null && venta.getComprobante().getInitComprobante().getId() != null){
+
+                InitComprobante initComprobante = new InitComprobante();
+                initComprobante = initComprobanteService.listarPorId(venta.getComprobante().getInitComprobante().getId());
+
+                if(initComprobante.getTipoComprobante().getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_FACTURA)){
+                    resultado = false;
+                    error = "No se puede Eliminar una Ventas con Comprobante de Tipo Factura";
+                    errors.add(error);
+                }
+                if(initComprobante.getTipoComprobante().getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_BOLETA)){
+                    resultado = false;
+                    error = "No se puede Eliminar una Ventas con Comprobante de Tipo Boleta";
+                    errors.add(error);
+                }
+            }
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+    private boolean validacionAnulacion(Long id, Map<String, Object> resultValidacion) throws Exception {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        Venta venta = this.listarPorId(id);
+
+        if(venta.getEstado().intValue() == Constantes.VENTA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Venta remitida ya se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(venta.getEstado().intValue() == Constantes.VENTA_ESTADO_INICIADO){
+            resultado = false;
+            error = "No se puede Anular una venta que aun no fue pagada y que no se ha generado ningún comprobante";
             errors.add(error);
         }
 
