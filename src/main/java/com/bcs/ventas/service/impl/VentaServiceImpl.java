@@ -407,6 +407,46 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private Venta grabarGenerarComprobante(Venta venta, InitComprobante initComprobante) throws Exception {
+
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+
+        initComprobante.setNumeroActual(initComprobante.getNumeroActual() + Constantes.CANTIDAD_UNIDAD_INTEGER);
+        initComprobanteService.modificar(initComprobante);
+
+        Comprobante comprobante = new Comprobante();
+        comprobante.setSerie(initComprobante.getLetraSerieStr()+initComprobante.getNumSerieStr());
+        comprobante.setNumero(StringUtils.leftPad(initComprobante.getNumeroActual().toString(), initComprobante.getCantidadDigitos(), "0"));
+        comprobante.setCantidadDigitos(initComprobante.getCantidadDigitos());
+        comprobante.setInitComprobante(initComprobante);
+        comprobante.setEstado(Constantes.COMPROBANTE_ESTADO_CREADO);
+        //TODO: Temporal hasta incluir Oauth inicio
+        comprobante.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+        comprobante.setAlmacenId(venta.getAlmacen().getId());
+        comprobante.setEmpresaId(venta.getEmpresaId());
+        comprobante.setActivo(Constantes.REGISTRO_ACTIVO);
+        comprobante.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+        comprobante.setCreatedAt(fechaActualTime);
+        comprobante.setUpdatedAd(fechaActualTime);
+
+        comprobante = comprobanteDAO.registrar(comprobante);
+
+        venta.setComprobante(comprobante);
+        venta.setUpdatedAd(fechaActualTime);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", venta.getId());
+        //params.put("ESTADO", venta.getEstado());
+        params.put("COMPROBANTE_ID", comprobante.getId());
+        params.put("UPDATED_AT", venta.getUpdatedAd());
+        ventaMapper.updateByPrimaryKeySelective(params);
+
+
+        return venta;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public int grabarRectificar(Venta v) throws Exception {
 
@@ -743,6 +783,35 @@ public class VentaServiceImpl implements VentaService {
         this.graberResetVenta(venta);
         Venta ventaRes = this.recalcularVentaReset(venta);
         return ventaRes;
+
+    }
+
+    @Override
+    public Venta generarComprobante(Venta venta) throws Exception {
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        Venta ventaBD = this.listarPorId(venta.getId());
+
+        boolean validacion = this.validacionGenerarComprobante(venta, ventaBD, resultValidacion);
+
+        if(validacion){
+            InitComprobante initComprobante = new InitComprobante();
+            initComprobante = initComprobanteService.listarPorId(venta.getInitComprobanteId());
+            Venta ventaGenComp = this.grabarGenerarComprobante(ventaBD, initComprobante);
+            Venta ventaRes = this.recalcularVenta(ventaGenComp);
+            return ventaRes;
+        }
+
+        String errorValidacion = "Error de validación Generar Comprobante de Pago";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
 
     }
 
@@ -1867,7 +1936,101 @@ public class VentaServiceImpl implements VentaService {
             resultado = false;
             error = "Debe de seleccionar una Serie de Método de Pago Válida";
             errors.add(error);
+        } else{
+            InitComprobante initComprobante = new InitComprobante();
+            initComprobante = initComprobanteService.listarPorId(cobroVenta.getInitComprobanteId());
+
+            if(initComprobante.getTipoComprobante().getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_FACTURA)){
+                if(cobroVenta.getVenta().getCliente().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_OTROS_DOCUMENTOS)){
+                    resultado = false;
+                    error = "No se puede Emitir Factura al tipo de Cliente con tipo de Documento Otros Documentos";
+                    errors.add(error);
+                }
+                if(cobroVenta.getVenta().getCliente().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_DNI)){
+                    resultado = false;
+                    error = "No se puede Emitir Factura al tipo de Cliente con tipo de Documento DNI";
+                    errors.add(error);
+                }
+                if(cobroVenta.getVenta().getCliente().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_PARTIDA_NACIMIENTO)){
+                    resultado = false;
+                    error = "No se puede Emitir Factura al tipo de Cliente con tipo de Documento Partida de Nacimiento";
+                    errors.add(error);
+                }
+            }
         }
+
+
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    private boolean validacionGenerarComprobante(Venta venta, Venta ventaBD, Map<String, Object> resultValidacion) throws Exception {
+
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(venta.getCliente() == null){
+            resultado = false;
+            error = "Debe de seleccionar un Cliente";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(ventaBD.getEstado().intValue() == Constantes.VENTA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Venta remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(venta.getInitComprobanteId() == null || venta.getInitComprobanteId().compareTo(Constantes.CANTIDAD_ZERO_LONG) < 0){
+            resultado = false;
+            error = "Debe de seleccionar una Serie de Método de Pago Válida";
+            errors.add(error);
+        } else{
+            InitComprobante initComprobante = new InitComprobante();
+            initComprobante = initComprobanteService.listarPorId(venta.getInitComprobanteId());
+
+            if(initComprobante.getTipoComprobante().getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_NOTA_VENTA)){
+                resultado = false;
+                error = "El comprobante a generar debe de ser una Factura o una Boleta";
+                errors.add(error);
+            }
+
+            if(initComprobante.getTipoComprobante().getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_FACTURA)){
+                if(venta.getCliente().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_OTROS_DOCUMENTOS)){
+                    resultado = false;
+                    error = "No se puede Emitir Factura al tipo de Cliente con tipo de Documento Otros Documentos";
+                    errors.add(error);
+                }
+                if(venta.getCliente().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_DNI)){
+                    resultado = false;
+                    error = "No se puede Emitir Factura al tipo de Cliente con tipo de Documento DNI";
+                    errors.add(error);
+                }
+                if(venta.getCliente().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_PARTIDA_NACIMIENTO)){
+                    resultado = false;
+                    error = "No se puede Emitir Factura al tipo de Cliente con tipo de Documento Partida de Nacimiento";
+                    errors.add(error);
+                }
+            }
+        }
+
+
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);

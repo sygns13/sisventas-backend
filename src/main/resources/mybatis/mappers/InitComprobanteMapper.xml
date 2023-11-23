@@ -17,6 +17,7 @@
         <result property="tipoComprobante.nombre" column="tipo_comprobante_nombre" />
         <result property="tipoComprobante.prefix" column="tipo_comprobante_prefix" />
         <result property="tipoComprobante.paraVenta" column="tipo_comprobante_para_venta" />
+        <result property="tipoComprobante.activo" column="tipo_comprobante_activo" />
 
         <result property="empresaId" column="empresa_id" />
         <result property="userId" column="user_id" />
@@ -57,6 +58,7 @@
         t.nombre as tipo_comprobante_nombre,
         t.prefix as tipo_comprobante_prefix,
         t.para_venta as tipo_comprobante_para_venta,
+        t.activo as tipo_comprobante_activo,
 
         ifnull(a.id, 0) as al_id,
         ifnull(a.nombre, 'GENERAL (TODOS LOS LOCALES)') as al_nombre,
@@ -127,6 +129,7 @@
             t.nombre as tipo_comprobante_nombre,
             t.prefix as tipo_comprobante_prefix,
             t.para_venta as tipo_comprobante_para_venta,
+            t.activo as tipo_comprobante_activo,
 
             ifnull(a.id, 0) as al_id,
             ifnull(a.nombre, 'GENERAL (TODOS LOS LOCALES)') as al_nombre,

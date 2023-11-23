@@ -161,4 +161,19 @@ public class VentaController {
         CobroVenta obj = ventaService.cobrarVenta(a);
         return new ResponseEntity<CobroVenta>(obj, HttpStatus.OK);
     }
+
+    @PutMapping("/generarcomprobante")
+    public ResponseEntity<Venta> generarComprobante(@RequestBody Venta v) throws Exception{
+        if(v.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+        Venta objBD = ventaService.listarPorId(v.getId());
+        if(objBD == null) {
+            throw new ModeloNotFoundException("ID NO ENCONTRADO "+ v.getId());
+        }
+
+        Venta obj = ventaService.generarComprobante(v);
+
+        return new ResponseEntity<Venta>(obj, HttpStatus.OK);
+    }
 }

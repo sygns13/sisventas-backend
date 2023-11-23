@@ -120,4 +120,20 @@ public  class Constantes {
     public static final String COMPROBANTE_ESTADO_CREADO = "1";
     public static final String COMPROBANTE_ESTADO_FACTURADO = "2";
 
+    //Prefijos de Comprobantes
+    public static final String COMPROBANTE_PREFIJO_BOLETA = "B";
+    public static final String COMPROBANTE_PREFIJO_FACTURA = "F";
+    public static final String COMPROBANTE_PREFIJO_NOTA_VENTA = "NV";
+
+    //Tipos de Documentos
+    public static final String COMPROBANTE_TIPO_OTROS_DOCUMENTOS = "0";
+    public static final String COMPROBANTE_TIPO_DOCUMENTO_DNI = "1";
+    public static final String COMPROBANTE_TIPO_DOCUMENTO_CARNET_EXTRANJERIA = "4";
+    public static final String COMPROBANTE_TIPO_DOCUMENTO_RUC = "6";
+    public static final String COMPROBANTE_TIPO_DOCUMENTO_PASAPORTE = "7";
+    public static final String COMPROBANTE_TIPO_DOCUMENTO_PARTIDA_NACIMIENTO = "11";
+    public static final String COMPROBANTE_TIPO_DOCUMENTO_CEDULA_DIPLOMATICA_IDENTIDAD = "A";
+
+
+
 }

@@ -152,6 +152,10 @@ public class Venta implements Serializable {
     @Transient
     private String estadoStr;
 
+    @Schema(description = "InitComprobanteId")
+    @Transient
+    private Long initComprobanteId;
+
     public Venta() {
     }
 
@@ -426,5 +430,13 @@ public class Venta implements Serializable {
 
     public void setEstadoStr(String estadoStr) {
         this.estadoStr = estadoStr;
+    }
+
+    public Long getInitComprobanteId() {
+        return initComprobanteId;
+    }
+
+    public void setInitComprobanteId(Long initComprobanteId) {
+        this.initComprobanteId = initComprobanteId;
     }
 }
