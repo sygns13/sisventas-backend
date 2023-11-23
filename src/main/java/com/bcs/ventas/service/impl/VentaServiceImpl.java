@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.AlmacenService;
+import com.bcs.ventas.service.ClienteService;
 import com.bcs.ventas.service.InitComprobanteService;
 import com.bcs.ventas.service.VentaService;
 import com.bcs.ventas.utils.Constantes;
@@ -92,6 +93,9 @@ public class VentaServiceImpl implements VentaService {
 
     @Autowired
     private InitComprobanteDAO initComprobanteDAO;
+
+    @Autowired
+    private ClienteMapper clienteMapper;
 
     @Override
     public Venta registrar(Venta v) throws Exception {
@@ -242,6 +246,26 @@ public class VentaServiceImpl implements VentaService {
         }
 
         throw new ValidationServiceException(errorValidacion);
+    }
+
+    public Venta modificarVentaClienteFirst(Venta v) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO_2);
+        params.put("EMPRESA_ID",EmpresaId);
+
+        List<Cliente> clientes = clienteMapper.listByParameterMap(params);
+
+        if(clientes.size() > 0){
+            v.setCliente(clientes.get(0));
+            return this.modificarVentaCliente(v);
+        }
+            return v;
     }
 
     @Override

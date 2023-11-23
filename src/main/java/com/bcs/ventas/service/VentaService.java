@@ -16,6 +16,8 @@ public interface VentaService extends GeneralService<Venta, Long> {
 
     Venta modificarVenta(Venta venta) throws Exception;
 
+    Venta modificarVentaClienteFirst(Venta venta) throws Exception;
+
     Venta modificarVentaCliente(Venta venta) throws Exception;
 
 

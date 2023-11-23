@@ -9,6 +9,8 @@ public  class Constantes {
 
 
     public static final Integer REGISTRO_ACTIVO = 1;
+
+    public static final Integer REGISTRO_ACTIVO_2 = 2;
     public static final Integer REGISTRO_INACTIVO = 0;
 
     public static final Integer REGISTRO_BORRADO = 1;

@@ -55,6 +55,7 @@ public class VentaController {
         a.setId(null);
         Venta obj = ventaService.registrar(a);
         obj = ventaService.listarPorId(obj.getId());
+        obj = ventaService.modificarVentaClienteFirst(obj);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 
