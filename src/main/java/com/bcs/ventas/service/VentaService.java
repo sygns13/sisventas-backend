@@ -36,4 +36,8 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Venta generarComprobante(Venta venta) throws Exception;
 
     void anular(Long id) throws Exception;
+
+    Page<Venta> listarCobrado(Pageable pageable, FiltroVenta filtros) throws Exception;
+
+    Page<CobroVenta> listarPagos(Pageable pageable, Long id) throws Exception;
 }

@@ -262,4 +262,6 @@ public class FiltroVenta {
     public void setBuscarDatos(String buscarDatos) {
         this.buscarDatos = buscarDatos;
     }
+
+
 }

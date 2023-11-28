@@ -156,6 +156,18 @@ public class Venta implements Serializable {
     @Transient
     private Long initComprobanteId;
 
+    @Schema(description = "importe Total Decimales")
+    @Transient
+    private BigDecimal importeTotal;
+
+    @Schema(description = "importe Cobrado Decimales")
+    @Transient
+    private BigDecimal montoCobrado;
+
+    @Schema(description = "importe Por Cobrar Decimales")
+    @Transient
+    private BigDecimal montoPorCobrar;
+
     public Venta() {
     }
 
@@ -438,5 +450,29 @@ public class Venta implements Serializable {
 
     public void setInitComprobanteId(Long initComprobanteId) {
         this.initComprobanteId = initComprobanteId;
+    }
+
+    public BigDecimal getImporteTotal() {
+        return importeTotal;
+    }
+
+    public void setImporteTotal(BigDecimal importeTotal) {
+        this.importeTotal = importeTotal;
+    }
+
+    public BigDecimal getMontoCobrado() {
+        return montoCobrado;
+    }
+
+    public void setMontoCobrado(BigDecimal montoCobrado) {
+        this.montoCobrado = montoCobrado;
+    }
+
+    public BigDecimal getMontoPorCobrar() {
+        return montoPorCobrar;
+    }
+
+    public void setMontoPorCobrar(BigDecimal montoPorCobrar) {
+        this.montoPorCobrar = montoPorCobrar;
     }
 }

@@ -382,7 +382,8 @@ public class VentaServiceImpl implements VentaService {
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     private CobroVenta grabarRegistroCobro(CobroVenta c, InitComprobante initComprobante) throws Exception {
-        CobroVenta cobroVenta = cobroVentaDAO.registrar(c);
+
+        c.getVenta().setPagado(Constantes.VENTA_NO_PAGADO);
 
         if(c.getImporte().compareTo(new BigDecimal(0)) <= 0)
             c.getVenta().setEstado(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA);
@@ -392,8 +393,11 @@ public class VentaServiceImpl implements VentaService {
 
         if(c.getImporte().compareTo(new BigDecimal(0)) > 0 && c.getImporte().compareTo(c.getVenta().getTotalMonto()) >= 0){
             c.getVenta().setEstado(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL);
+            c.getVenta().setPagado(Constantes.VENTA_SI_PAGADO);
             c.setImporte(c.getVenta().getTotalMonto());
         }
+
+        CobroVenta cobroVenta = cobroVentaDAO.registrar(c);
 
 
         initComprobante.setNumeroActual(initComprobante.getNumeroActual() + Constantes.CANTIDAD_UNIDAD_INTEGER);
@@ -420,6 +424,7 @@ public class VentaServiceImpl implements VentaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID", c.getVenta().getId());
         params.put("ESTADO", c.getVenta().getEstado());
+        params.put("PAGADO", c.getVenta().getPagado());
         params.put("COMPROBANTE_ID", comprobante.getId());
         params.put("UPDATED_AT", c.getVenta().getUpdatedAd());
         ventaMapper.updateByPrimaryKeySelective(params);
@@ -914,12 +919,13 @@ public class VentaServiceImpl implements VentaService {
 
                 cobroVenta.setNumeroCheque(Constantes.VOID);
             }
-            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_WIRE_TRANSFER)){
+            if(cobroVenta.getMetodoPago().getTipoId().equals(Constantes.ID_TIPO_METODO_PAGO_CHEQUE)){
                 cobroVenta.setTipoTarjeta(Constantes.VOID);
                 cobroVenta.setSiglaTarjeta(Constantes.VOID);
                 cobroVenta.setNumeroTarjeta(Constantes.VOID);
 
                 cobroVenta.setNumeroCelular(Constantes.VOID);
+                cobroVenta.setNumeroCuenta(Constantes.VOID);
                 cobroVenta.setCodigoOperacion(Constantes.VOID);
             }
 
@@ -1893,6 +1899,138 @@ public class VentaServiceImpl implements VentaService {
         return new PageImpl<>(ventas, page, total);
     }
 
+    @Override
+    public Page<Venta> listarCobrado(Pageable page, FiltroVenta filtros) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", EmpresaId);
+        params.put("ORDER_DESC", Constantes.CANTIDAD_UNIDAD);
+        params.put("ESTADO_MAYOR", Constantes.VENTA_ESTADO_INICIADO);
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+
+        if(filtros.getNumeroVenta() != null && !filtros.getNumeroVenta().trim().isEmpty())
+            params.put("NUMERO_VENTA", filtros.getNumeroVenta());
+
+        if(filtros.getId() != null && filtros.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ID",filtros.getId());
+
+        if(filtros.getFecha() != null)
+            params.put("FECHA", filtros.getFecha());
+
+        if(filtros.getFechaInicio() != null && filtros.getFechaFinal() != null){
+            params.put("FECHA_INI", filtros.getFechaInicio());
+            params.put("FECHA_FIN", filtros.getFechaFinal());
+        }
+
+        if(filtros.getEstadoVenta() != null)
+            params.put("ESTADO", filtros.getEstadoVenta());
+
+        if(filtros.getPagado() != null)
+            params.put("PAGADO", filtros.getPagado());
+
+        if(filtros.getTipoVenta() != null && filtros.getTipoVenta() > Constantes.CANTIDAD_ZERO)
+            params.put("TIPO", filtros.getTipoVenta());
+
+        if(filtros.getIdCliente() != null && filtros.getIdCliente().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("CLIENTE_ID", filtros.getIdCliente());
+
+        if(filtros.getNombreCliente() != null && !filtros.getNombreCliente().trim().isEmpty())
+            params.put("CLI_NOMBRE", "%"+filtros.getNombreCliente()+"%");
+
+        if(filtros.getDocumentoCliente() != null && !filtros.getDocumentoCliente().trim().isEmpty())
+            params.put("CLI_DOCUMENTO", filtros.getDocumentoCliente());
+
+        if(filtros.getIdTipoDocumentoCliente() != null)
+            params.put("CLI_TIPO_DOCUMENTO_ID", filtros.getIdTipoDocumentoCliente());
+
+        if(filtros.getIdComprobante() != null && filtros.getIdComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("COMPROBANTE_ID", filtros.getIdComprobante());
+
+        if(filtros.getSerieComprobante() != null && !filtros.getSerieComprobante().trim().isEmpty())
+            params.put("CO_SERIE", filtros.getSerieComprobante());
+
+        if(filtros.getNumeroComprobante() != null && !filtros.getNumeroComprobante().trim().isEmpty())
+            params.put("CO_NUMERO", filtros.getNumeroComprobante());
+
+        if(filtros.getIdTipoComprobante() != null && filtros.getIdTipoComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("CO_TIPO_COMPROBANTE_ID", filtros.getIdTipoComprobante());
+
+        if(filtros.getIdUser() != null && filtros.getIdUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("USER_ID", filtros.getIdUser());
+
+        if(filtros.getNameUser() != null && !filtros.getNameUser().trim().isEmpty())
+            params.put("U_NAME", filtros.getNameUser());
+
+        if(filtros.getEmailUser() != null && !filtros.getEmailUser().trim().isEmpty())
+            params.put("U_EMAIL", filtros.getEmailUser());
+
+        if(filtros.getIdTipoUser() != null && filtros.getIdTipoUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("U_TIPO_USER_ID", filtros.getIdTipoUser());
+
+        if(filtros.getBuscarDatosUser() != null && !filtros.getBuscarDatosUser().trim().isEmpty())
+            params.put("U_BUSCAR", filtros.getBuscarDatosUser());
+
+        //Buscar General
+        if(filtros.getBuscarDatos() != null && !filtros.getBuscarDatos().trim().isEmpty())
+            params.put("BUSCAR_GENERAL", "%"+filtros.getBuscarDatos()+"%");
+
+
+        Long total = ventaMapper.getTotalElementsCobrar(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<Venta> ventas = ventaMapper.listByParameterMapCobrar(params);
+
+        ventas.forEach((venta) -> {
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_ANULADO))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_ANULADO_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_INICIADO))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_INICIADO_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL_STR);
+
+            if(venta.getCliente() != null && venta.getCliente().getTipoDocumento() != null){
+                try {
+                    TipoDocumento tipoDocumento = tipoDocumentoDAO.listarPorId(venta.getCliente().getTipoDocumento().getId());
+                    venta.getCliente().setTipoDocumento(tipoDocumento);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(venta.getComprobante() != null && venta.getComprobante().getInitComprobante() != null){
+                try {
+                    InitComprobante initComprobante = initComprobanteDAO.listarPorId(venta.getComprobante().getInitComprobante().getId());
+                    venta.getComprobante().setInitComprobante(initComprobante);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        //ventas = ventas.stream().sorted((Comparator.comparing(Venta::getId))).collect(Collectors.toList());
+
+        return new PageImpl<>(ventas, page, total);
+    }
+
 
     private boolean validacionRegistroCobro(CobroVenta cobroVenta, Map<String, Object> resultValidacion) throws Exception {
 
@@ -2044,12 +2182,6 @@ public class VentaServiceImpl implements VentaService {
                 errors.add(error);
             }
 
-            if(cobroVenta.getNumeroCuenta().trim().isEmpty()){
-                resultado = false;
-                error = "Debe de Seleccionar una Cuenta Bancaria Válida";
-                errors.add(error);
-            }
-
             if(cobroVenta.getNumeroCheque().trim().isEmpty()){
                 resultado = false;
                 error = "Debe de Ingresar un Número de Cheque";
@@ -2194,5 +2326,32 @@ public class VentaServiceImpl implements VentaService {
         sequence++;
 
         return sequence;
+    }
+
+    @Override
+    public Page<CobroVenta> listarPagos(Pageable page, Long id) throws Exception {
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        Long EmpresaId = 1L;
+        //Todo: Temporal hasta incluir Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", EmpresaId);
+
+        params.put("VENTA_ID", id);
+        params.put("MAYOR_MIN_IMPORTE", Constantes.CANTIDAD_ZERO);
+
+
+        Long total = cobroVentaMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<CobroVenta> cobroVentas = cobroVentaMapper.listByParameterMap(params);
+
+        return new PageImpl<>(cobroVentas, page, total);
     }
 }

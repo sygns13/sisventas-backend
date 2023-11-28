@@ -188,4 +188,24 @@ public class VentaController {
 
         return new ResponseEntity<Venta>(obj, HttpStatus.OK);
     }
+
+    @PostMapping("/get-ventas-cobrar")
+    public ResponseEntity<Page<Venta>> listarVentasCobrar(@RequestParam(name = "page", defaultValue = "0") int page,
+                                              @RequestParam(name = "size", defaultValue = "5") int size,
+                                              @RequestBody FiltroVenta filtros) throws Exception{
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Venta> obj = ventaService.listarCobrado(pageable, filtros);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/get-pagos/{id}")
+    public ResponseEntity<Page<CobroVenta>> listarPagos(@RequestParam(name = "page", defaultValue = "0") int page,
+                                              @RequestParam(name = "size", defaultValue = "5") int size,
+                                              @PathVariable("id") Long id) throws Exception{
+        Pageable pageable = PageRequest.of(page,size);
+        Page<CobroVenta> obj = ventaService.listarPagos(pageable, id);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
 }
