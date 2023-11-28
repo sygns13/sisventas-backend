@@ -8,7 +8,14 @@
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Proveedor">
         <result property="id" column="id" />
         <result property="nombre" column="nombre" />
-        <result property="tipoDocumentoId" column="tipo_documento_id" />
+
+        <result property="tipoDocumento.id" column="td_id" />
+        <result property="tipoDocumento.tipo" column="td_tipo" />
+        <result property="tipoDocumento.key" column="td_key" />
+        <result property="tipoDocumento.descripcion" column="td_descripcion" />
+        <result property="tipoDocumento.activo" column="td_activo" />
+        <result property="tipoDocumento.borrado" column="td_borrado" />
+
         <result property="documento" column="documento" />
         <result property="direccion" column="direccion" />
         <result property="telefono" column="telefono" />
@@ -24,30 +31,117 @@
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from proveedors
+        select p.id,
+        p.tipo_documento_id,
+        p.documento,
+        p.nombre,
+        p.direccion,
+        p.telefono,
+        p.anexo,
+        p.celular,
+        p.responsable,
+        p.activo,
+        p.borrado,
+        p.user_id,
+        p.empresa_id,
+        p.created_at,
+        p.updated_at,
+
+        t.id as td_id,
+        t.tipo as td_tipo,
+        t.key as td_key,
+        t.descripcion as td_descripcion,
+        t.activo as td_activo,
+        t.borrado as td_borrado,
+        t.created_at as td_created_at,
+        t.updated_at as td_updated_at,
+        t.user_id as td_user_id
+
+        from proveedors p
+        inner join tipo_documentos t on p.tipo_documento_id=t.id
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from proveedors p
+        inner join tipo_documentos t on p.tipo_documento_id=t.id
+        <where>
+            <if test="ID != null"> AND p.id = #{ID}</if>
+            <if test="NOMBRE != null"> AND p.nombre = #{NOMBRE}</if>
+            <if test="TIPO_DOCUMENTO_ID != null"> AND p.tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
+            <if test="DOCUMENTO != null"> AND p.documento = #{DOCUMENTO}</if>
+            <if test="DIRECCION != null"> AND p.direccion = #{DIRECCION}</if>
+            <if test="TELEFONO != null"> AND p.telefono = #{TELEFONO}</if>
+            <if test="ANEXO != null"> AND p.anexo = #{ANEXO}</if>
+            <if test="CELULAR != null"> AND p.celular = #{CELULAR}</if>
+            <if test="RESPONSABLE != null"> AND p.responsable = #{RESPONSABLE}</if>
+            <if test="EMPRESA_ID != null"> AND p.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND p.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND p.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND p.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND p.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND p.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND p.activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (p.documento like #{BUSCAR} or p.nombre like #{BUSCAR} )</if>
+        </where>
+        order by p.nombre, p.documento, p.id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from proveedors
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
-            <if test="TIPO_DOCUMENTO_ID != null"> AND tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
-            <if test="DOCUMENTO != null"> AND documento = #{DOCUMENTO}</if>
-            <if test="DIRECCION != null"> AND direccion = #{DIRECCION}</if>
-            <if test="TELEFONO != null"> AND telefono = #{TELEFONO}</if>
-            <if test="ANEXO != null"> AND anexo = #{ANEXO}</if>
-            <if test="CELULAR != null"> AND celular = #{CELULAR}</if>
-            <if test="RESPONSABLE != null"> AND responsable = #{RESPONSABLE}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+        select p.id,
+            p.tipo_documento_id,
+            p.documento,
+            p.nombre,
+            p.direccion,
+            p.telefono,
+            p.anexo,
+            p.celular,
+            p.responsable,
+            p.activo,
+            p.borrado,
+            p.user_id,
+            p.empresa_id,
+            p.created_at,
+            p.updated_at,
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+            t.id as td_id,
+            t.tipo as td_tipo,
+            t.key as td_key,
+            t.descripcion as td_descripcion,
+            t.activo as td_activo,
+            t.borrado as td_borrado,
+            t.created_at as td_created_at,
+            t.updated_at as td_updated_at,
+            t.user_id as td_user_id
+
+            from proveedors p
+            inner join tipo_documentos t on p.tipo_documento_id=t.id
+        <where>
+            <if test="ID != null"> AND p.id = #{ID}</if>
+            <if test="NOMBRE != null"> AND p.nombre = #{NOMBRE}</if>
+            <if test="TIPO_DOCUMENTO_ID != null"> AND p.tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
+            <if test="DOCUMENTO != null"> AND p.documento = #{DOCUMENTO}</if>
+            <if test="DIRECCION != null"> AND p.direccion = #{DIRECCION}</if>
+            <if test="TELEFONO != null"> AND p.telefono = #{TELEFONO}</if>
+            <if test="ANEXO != null"> AND p.anexo = #{ANEXO}</if>
+            <if test="CELULAR != null"> AND p.celular = #{CELULAR}</if>
+            <if test="RESPONSABLE != null"> AND p.responsable = #{RESPONSABLE}</if>
+            <if test="EMPRESA_ID != null"> AND p.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND p.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND p.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND p.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND p.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND p.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND p.activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (p.documento like #{BUSCAR} or p.nombre like #{BUSCAR} )</if>
+            <if test="BUSCAR != null"> AND (p.documento like #{BUSCAR} or p.nombre like #{BUSCAR} )</if>
         </where>
+        order by p.nombre, p.documento, p.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">

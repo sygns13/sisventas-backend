@@ -37,7 +37,7 @@ public class Cliente implements Serializable {
     @Column(name="tipo_documento_id", nullable = true)
     private Long tipoDocumentoId;*/
 
-    @Schema(description = "Tipo Documento del CLiente")
+    @Schema(description = "Tipo Documento del Cliente")
     @NotNull( message = "{cliente.tipoDocumentoId.notnull}")
     @ManyToOne
     @JoinColumn(name = "tipo_documento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_tipo_documento"))
@@ -69,7 +69,7 @@ public class Cliente implements Serializable {
     @Column(name="correo2", nullable = true, length= 1000)
     private String correo2;
 
-    @Schema(description = "ID User Padre")
+    @Schema(description = "ID User")
     //@NotNull( message = "{producto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;

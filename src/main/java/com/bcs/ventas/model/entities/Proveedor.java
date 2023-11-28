@@ -1,11 +1,17 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Proveedor Model")
 @Entity
 @Table(name = "proveedors")
 public class Proveedor implements Serializable {
@@ -19,87 +25,83 @@ public class Proveedor implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*
     @Column(name="tipo_documento_id", nullable = true)
     private Long tipoDocumentoId;
+     */
 
-    @Column(name="documento", nullable = true, length= 20)
+    @Schema(description = "Tipo Documento del Proveedor")
+    @NotNull( message = "{proveedor.tipoDocumentoId.notnull}")
+    @ManyToOne
+    @JoinColumn(name = "tipo_documento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_tipo_documento"))
+    private TipoDocumento tipoDocumento;
+
+    @Schema(description = "Documento del Proveedor")
+    @NotNull( message = "{proveedor.documento.notnull}")
+    @Size(min = 8, max = 45, message = "{proveedor.documento.size}")
+    @Column(name="documento", nullable = true, length= 45)
     private String documento;
 
+    @Schema(description = "Nombre del Proveedor")
+    @NotNull( message = "{proveedor.nombre.notnull}")
+    @Size(max = 500, message = "{proveedor.nombre.size}")
     @Column(name="nombre", nullable = true, length= 500)
     private String nombre;
 
+    @Schema(description = "Dirección del Proveedor")
+    @Size(max = 500, message = "{proveedor.direccion.size}")
     @Column(name="direccion", nullable = true, length= 500)
     private String direccion;
 
-    @Column(name="telefono", nullable = true, length= 45)
+    @Schema(description = "Teléfono del Proveedor")
+    @Size(max = 25, message = "{proveedor.telefono.size}")
+    @Column(name="telefono", nullable = true, length= 25)
     private String telefono;
 
+    @Schema(description = "Anexo del Proveedor")
+    @Size(max = 25, message = "{proveedor.anexo.size}")
     @Column(name="anexo", nullable = true, length= 45)
     private String anexo;
 
+    @Schema(description = "Celular del Proveedor")
+    @Size(max = 25, message = "{proveedor.celular.size}")
     @Column(name="celular", nullable = true, length= 45)
     private String celular;
 
+    @Schema(description = "Nombre del Responsable del Proveedor")
+    @Size(max = 500, message = "{proveedor.responsable.size}")
     @Column(name="responsable", nullable = true, length= 500)
     private String responsable;
 
+    @Schema(description = "ID User")
+    //@NotNull( message = "{producto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
+    @Schema(description = "ID Empresa Padre")
+    //@NotNull( message = "{producto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
 
     public Proveedor() {
-    }
-
-    public Proveedor(Long id, Long tipoDocumentoId, String documento, String nombre, String direccion, String telefono, String anexo, String celular, String responsable, Long userId, Long empresaId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.tipoDocumentoId = tipoDocumentoId;
-        this.documento = documento;
-        this.nombre = nombre;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.anexo = anexo;
-        this.celular = celular;
-        this.responsable = responsable;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-    }
-
-    public Proveedor(Long id, Long tipoDocumentoId, String documento, String nombre, String direccion, String telefono, String anexo, String celular, String responsable, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.tipoDocumentoId = tipoDocumentoId;
-        this.documento = documento;
-        this.nombre = nombre;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.anexo = anexo;
-        this.celular = celular;
-        this.responsable = responsable;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
     }
 
     public Long getId() {
@@ -110,12 +112,12 @@ public class Proveedor implements Serializable {
         this.id = id;
     }
 
-    public Long getTipoDocumentoId() {
-        return tipoDocumentoId;
+    public TipoDocumento getTipoDocumento() {
+        return tipoDocumento;
     }
 
-    public void setTipoDocumentoId(Long tipoDocumentoId) {
-        this.tipoDocumentoId = tipoDocumentoId;
+    public void setTipoDocumento(TipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 
     public String getDocumento() {
@@ -206,19 +208,19 @@ public class Proveedor implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }
