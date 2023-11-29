@@ -7,71 +7,448 @@
 
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.PagoProveedor">
         <result property="id" column="id" />
-        <result property="fechaPago" column="fecha_pago" />
+        <result property="fecha" column="fecha" />
         <result property="montoPago" column="monto_pago" />
         <result property="montoReal" column="monto_real" />
         <result property="tipoPago" column="tipo_pago" />
-        <result property="bancoIdEmisor" column="banco_id_emisor" />
-        <result property="bancoIdProveedor" column="banco_id_proveedor" />
-        <result property="cuentaProveedorId" column="cuenta_proveedor_id" />
+        <result property="tipoTarjeta" column="tipo_tarjeta" />
+        <result property="siglaTarjeta" column="sigla_tarjeta" />
+        <result property="numeroTarjeta" column="numero_tarjeta" />
+        <result property="banco" column="banco" />
+        <result property="numeroCuenta" column="numero_cuenta" />
+        <result property="numeroCelular" column="numero_celular" />
         <result property="numeroCheque" column="numero_cheque" />
-        <result property="facturaProveedorId" column="factura_proveedor_id" />
-        <result property="esSoles" column="es_soles" />
         <result property="codigoOperacion" column="codigo_operacion" />
-        <result property="empresaId" column="empresa_id" />
         <result property="userId" column="user_id" />
+        <result property="empresaId" column="empresa_id" />
         <result property="activo" column="activo" />
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+
+        <result property="metodoPago.id" column="metodos_pago_id" />
+        <result property="metodoPago.nombre" column="metodos_pago_nombre" />
+        <result property="metodoPago.tipoId" column="metodos_pago_tipo_id" />
+        <result property="metodoPago.tipo" column="metodos_pago_tipo" />
+
+        <result property="entradaStock.id" column="entrada_stock_id" />
+        <result property="entradaStock.numero" column="entrada_stock_numero" />
+        <result property="entradaStock.fecha" column="entrada_stock_fecha" />
+        <result property="entradaStock.hora" column="entrada_stock_hora" />
+        <result property="entradaStock.ordenCompraId" column="entrada_stock_orden_compra_id" />
+        <result property="entradaStock.facturado" column="entrada_stock_facturado" />
+        <result property="entradaStock.actualizado" column="entrada_stock_actualizado" />
+        <result property="entradaStock.estado" column="entrada_stock_estado" />
+        <result property="entradaStock.totalMonto" column="entrada_stock_total_monto" />
+        <result property="entradaStock.empresaId" column="entrada_stock_empresa_id" />
+        <result property="entradaStock.activo" column="entrada_stock_activo" />
+        <result property="entradaStock.borrado" column="entrada_stock_borrado" />
+        <result property="entradaStock.createdAt" column="entrada_stock_created_at" />
+        <result property="entradaStock.updatedAd" column="entrada_stock_updated_at" />
+
+        <result property="entradaStock.proveedor.id" column="entrada_stock_pro_id" />
+        <result property="entradaStock.proveedor.nombre" column="entrada_stock_pro_nombre" />
+        <result property="entradaStock.proveedor.tipoDocumento.id" column="entrada_stock_pro_tipo_documento_id" />
+        <result property="entradaStock.proveedor.documento" column="entrada_stock_pro_documento" />
+        <result property="entradaStock.proveedor.direccion" column="entrada_stock_pro_direccion" />
+        <result property="entradaStock.proveedor.telefono" column="entrada_stock_pro_telefono" />
+        <result property="entradaStock.proveedor.anexo" column="entrada_stock_pro_anexo" />
+        <result property="entradaStock.proveedor.celular" column="entrada_stock_pro_celular" />
+        <result property="entradaStock.proveedor.responsable" column="entrada_stock_pro_responsable" />
+        <result property="entradaStock.proveedor.userId" column="entrada_stock_pro_user_id" />
+        <result property="entradaStock.proveedor.empresaId" column="entrada_stock_pro_empresa_id" />
+        <result property="entradaStock.proveedor.activo" column="entrada_stock_pro_activo" />
+        <result property="entradaStock.proveedor.borrado" column="entrada_stock_pro_borrado" />
+
+        <result property="entradaStock.facturaProveedor.id" column="entrada_stock_co_id" />
+        <result property="entradaStock.facturaProveedor.serie" column="entrada_stock_co_serie" />
+        <result property="entradaStock.facturaProveedor.numero" column="entrada_stock_co_numero" />
+        <result property="entradaStock.facturaProveedor.fecha" column="entrada_stock_co_fecha" />
+        <result property="entradaStock.facturaProveedor.tipoComprobante.id" column="entrada_stock_co_tipo_comprobante_id" />
+        <result property="entradaStock.facturaProveedor.estado" column="entrada_stock_co_estado" />
+        <result property="entradaStock.facturaProveedor.observaciones" column="entrada_stock_co_observaciones" />
+        <result property="entradaStock.facturaProveedor.empresaId" column="entrada_stock_co_empresa_id" />
+        <result property="entradaStock.facturaProveedor.userId" column="entrada_stock_co_user_id" />
+        <result property="entradaStock.facturaProveedor.activo" column="entrada_stock_co_activo" />
+        <result property="entradaStock.facturaProveedor.borrado" column="entrada_stock_co_borrado" />
+        <result property="entradaStock.facturaProveedor.almacenId" column="entrada_stock_co_almacen_id" />
+
+        <result property="entradaStock.user.id" column="entrada_stock_user_id" />
+        <result property="entradaStock.user.name" column="entrada_stock_user_name" />
+        <result property="entradaStock.user.email" column="entrada_stock_user_email" />
+        <result property="entradaStock.user.tipoUser.id" column="entrada_stock_user_tipo_user_id" />
+        <result property="entradaStock.user.userId" column="entrada_stock_user_user_id" />
+        <result property="entradaStock.user.empresaId" column="entrada_stock_user_empresa_id" />
+        <result property="entradaStock.user.activo" column="entrada_stock_user_activo" />
+        <result property="entradaStock.user.borrado" column="entrada_stock_user_borrado" />
+        <result property="entradaStock.user.almacenId" column="entrada_stock_user_almacen_id" />
+
+        <result property="entradaStock.user.datos.id" column="entrada_stock_du_id" />
+        <result property="entradaStock.user.datos.nombres" column="entrada_stock_du_nombres" />
+        <result property="entradaStock.user.datos.apellidoPaterno" column="entrada_stock_du_apellido_paterno" />
+        <result property="entradaStock.user.datos.apellidoMaterno" column="entrada_stock_du_apellido_materno" />
+        <result property="entradaStock.user.datos.direccion" column="entrada_stock_du_direccion" />
+        <result property="entradaStock.user.datos.telefono" column="entrada_stock_du_telefono" />
+        <result property="entradaStock.user.datos.tipoDocumento.id" column="entrada_stock_du_tipo_documento_id" />
+        <result property="entradaStock.user.datos.documento" column="entrada_stock_du_documento" />
+        <result property="entradaStock.user.datos.email" column="entrada_stock_du_email" />
+        <result property="entradaStock.user.datos.userId" column="entrada_stock_du_user_id" />
+        <result property="entradaStock.user.datos.userGestionaId" column="entrada_stock_du_user_gestiona_id" />
+        <result property="entradaStock.user.datos.empresaId" column="entrada_stock_du_empresa_id" />
+        <result property="entradaStock.user.datos.activo" column="entrada_stock_du_activo" />
+        <result property="entradaStock.user.datos.borrado" column="entrada_stock_du_borrado" />
+
+        <result property="entradaStock.almacen.id" column="entrada_stock_al_id" />
+        <result property="entradaStock.almacen.nombre" column="entrada_stock_al_nombre" />
+        <result property="entradaStock.almacen.direccion" column="entrada_stock_al_direccion" />
+        <result property="entradaStock.almacen.empresaId" column="entrada_stock_al_empresa_id" />
+        <result property="entradaStock.almacen.userId" column="entrada_stock_al_user_id" />
+        <result property="entradaStock.almacen.activo" column="entrada_stock_al_activo" />
+        <result property="entradaStock.almacen.borrado" column="entrada_stock_al_borrado" />
+        <result property="entradaStock.almacen.distritoId" column="entrada_stock_al_distrito_id" />
+        <result property="entradaStock.almacen.codigo" column="entrada_stock_al_codigo" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from pago_proveedors
+        select pp.id,
+        pp.entrada_stock_id,
+        pp.fecha,
+        pp.metodos_pago_id,
+        pp.monto_pago,
+        pp.monto_real,
+        pp.tipo_pago,
+        pp.tipo_tarjeta,
+        pp.sigla_tarjeta,
+        pp.numero_tarjeta,
+        pp.banco,
+        pp.numero_cuenta,
+        pp.numero_celular,
+        pp.numero_cheque,
+        pp.codigo_operacion,
+        pp.empresa_id,
+        pp.user_id,
+        pp.created_at,
+        pp.updated_at,
+        pp.activo,
+        pp.borrado,
+
+        m.id as metodos_pago_id,
+        m.nombre as metodos_pago_nombre,
+        m.tipo_id as metodos_pago_tipo_id,
+        m.tipo as metodos_pago_tipo,
+
+        e.id as entrada_stock_id,
+        e.numero as entrada_stock_numero,
+        e.fecha as entrada_stock_fecha,
+        e.hora as entrada_stock_hora,
+        e.proveedor_id as entrada_stock_proveedor_id,
+        e.orden_compra_id as entrada_stock_orden_compra_id,
+        e.facturado as entrada_stock_facturado,
+        e.actualizado as entrada_stock_actualizado,
+        e.estado as entrada_stock_estado,
+        e.total_monto as entrada_stock_total_monto,
+        e.factura_proveedor_id as entrada_stock_factura_proveedor_id,
+        e.empresa_id as entrada_stock_empresa_id,
+        e.user_id as entrada_stock_user_id,
+        e.activo as entrada_stock_activo,
+        e.borrado as entrada_stock_borrado,
+        e.created_at as entrada_stock_created_at,
+        e.updated_at as entrada_stock_updated_at,
+        e.almacen_id as entrada_stock_almacen_id,
+
+        a.id as entrada_stock_al_id,
+        a.nombre as entrada_stock_al_nombre,
+        a.direccion as entrada_stock_al_direccion,
+        a.empresa_id as entrada_stock_al_empresa_id,
+        a.user_id as entrada_stock_al_user_id,
+        a.activo as entrada_stock_al_activo,
+        a.borrado as entrada_stock_al_borrado,
+        a.distrito_id as entrada_stock_al_distrito_id,
+        a.codigo as entrada_stock_al_codigo,
+
+        u.id as entrada_stock_user_id,
+        u.name as entrada_stock_user_name,
+        u.email as entrada_stock_user_email,
+        u.tipo_user_id as entrada_stock_user_tipo_user_id,
+        u.user_id as entrada_stock_user_user_id,
+        u.empresa_id as entrada_stock_user_empresa_id,
+        u.activo as entrada_stock_user_activo,
+        u.borrado as entrada_stock_user_borrado,
+        u.almacen_id as entrada_stock_user_almacen_id,
+
+        du.id as entrada_stock_du_id,
+        du.nombres as entrada_stock_du_nombres,
+        du.apellido_paterno as entrada_stock_du_apellido_paterno,
+        du.apellido_materno as entrada_stock_du_apellido_materno,
+        du.direccion as entrada_stock_du_direccion,
+        du.telefono as entrada_stock_du_telefono,
+        du.tipo_documento_id as entrada_stock_du_tipo_documento_id,
+        du.documento as entrada_stock_du_documento,
+        du.email as entrada_stock_du_email,
+        du.user_id as entrada_stock_du_user_id,
+        du.user_gestiona_id as entrada_stock_du_user_gestiona_id,
+        du.empresa_id as entrada_stock_du_empresa_id,
+        du.activo as entrada_stock_du_activo,
+        du.borrado as entrada_stock_du_borrado,
+
+        p.id as entrada_stock_pro_id,
+        p.tipo_documento_id as entrada_stock_pro_tipo_documento_id,
+        p.documento as entrada_stock_pro_documento,
+        p.nombre as entrada_stock_pro_nombre,
+        p.direccion as entrada_stock_pro_direccion,
+        p.telefono as entrada_stock_pro_telefono,
+        p.anexo as entrada_stock_pro_anexo,
+        p.celular as entrada_stock_pro_celular,
+        p.responsable as entrada_stock_pro_responsable,
+        p.activo as entrada_stock_pro_activo,
+        p.borrado as entrada_stock_pro_borrado,
+        p.user_id as entrada_stock_pro_user_id,
+        p.empresa_id as entrada_stock_pro_empresa_id,
+        p.created_at as entrada_stock_pro_created_at,
+        p.updated_at as entrada_stock_pro_updated_at,
+
+        f.id as entrada_stock_co_id,
+        f.tipo_comprobante_id as entrada_stock_co_tipo_comprobante_id,
+        f.serie as entrada_stock_co_serie,
+        f.numero as entrada_stock_co_numero,
+        f.fecha as entrada_stock_co_fecha,
+        f.estado as entrada_stock_co_estado,
+        f.observaciones as entrada_stock_co_observaciones,
+        f.user_id as entrada_stock_co_user_id,
+        f.empresa_id as entrada_stock_co_empresa_id,
+        f.activo as entrada_stock_co_activo,
+        f.borrado as entrada_stock_co_borrado,
+        f.created_at as entrada_stock_co_created_at,
+        f.updated_at as entrada_stock_co_updated_at,
+        f.almacen_id as entrada_stock_co_almacen_id
+
+        from pago_proveedors pp
+        inner join metodos_pagos m on m.id = pp.metodos_pago_id
+        inner join  entrada_stocks e on e.id = pp.entrada_stock_id
+        inner join almacens a on a.id = e.almacen_id
+        inner join users u on u.id = e.user_id
+        left join datos_users du on du.user_id = u.id
+        left join proveedors p on p.id = e.proveedor_id
+        left join factura_proveedors f on f.id = e.factura_proveedor_id
+
+        where pp.borrado = '0'
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from pago_proveedors
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="FECHA_PAGO != null"> AND fecha_pago = #{FECHA_PAGO}</if>
-            <if test="MONTO_PAGO != null"> AND monto_pago = #{MONTO_PAGO}</if>
-            <if test="MONTO_REAL != null"> AND monto_real = #{MONTO_REAL}</if>
-            <if test="TIPO_PAGO != null"> AND tipo_pago = #{TIPO_PAGO}</if>
-            <if test="BANCO_ID_EMISOR != null"> AND banco_id_emisor = #{BANCO_ID_EMISOR}</if>
-            <if test="BANCO_ID_PROVEEDOR != null"> AND banco_id_proveedor = #{BANCO_ID_PROVEEDOR}</if>
-            <if test="CUENTA_PROVEEDOR_ID != null"> AND cuenta_proveedor_id = #{CUENTA_PROVEEDOR_ID}</if>
-            <if test="NUMERO_CHEQUE != null"> AND numero_cheque = #{NUMERO_CHEQUE}</if>
-            <if test="FACTURA_PROVEEDOR_ID != null"> AND factura_proveedor_id = #{FACTURA_PROVEEDOR_ID}</if>
-            <if test="ES_SOLES != null"> AND es_soles = #{ES_SOLES}</if>
-            <if test="CODIGO_OPERACION != null"> AND codigo_operacion = #{CODIGO_OPERACION}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+        select pp.id,
+        pp.entrada_stock_id,
+        pp.fecha,
+        pp.metodos_pago_id,
+        pp.monto_pago,
+        pp.monto_real,
+        pp.tipo_pago,
+        pp.tipo_tarjeta,
+        pp.sigla_tarjeta,
+        pp.numero_tarjeta,
+        pp.banco,
+        pp.numero_cuenta,
+        pp.numero_celular,
+        pp.numero_cheque,
+        pp.codigo_operacion,
+        pp.empresa_id,
+        pp.user_id,
+        pp.created_at,
+        pp.updated_at,
+        pp.activo,
+        pp.borrado,
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        m.id as metodos_pago_id,
+        m.nombre as metodos_pago_nombre,
+        m.tipo_id as metodos_pago_tipo_id,
+        m.tipo as metodos_pago_tipo,
+
+        e.id as entrada_stock_id,
+        e.numero as entrada_stock_numero,
+        e.fecha as entrada_stock_fecha,
+        e.hora as entrada_stock_hora,
+        e.proveedor_id as entrada_stock_proveedor_id,
+        e.orden_compra_id as entrada_stock_orden_compra_id,
+        e.facturado as entrada_stock_facturado,
+        e.actualizado as entrada_stock_actualizado,
+        e.estado as entrada_stock_estado,
+        e.total_monto as entrada_stock_total_monto,
+        e.factura_proveedor_id as entrada_stock_factura_proveedor_id,
+        e.empresa_id as entrada_stock_empresa_id,
+        e.user_id as entrada_stock_user_id,
+        e.activo as entrada_stock_activo,
+        e.borrado as entrada_stock_borrado,
+        e.created_at as entrada_stock_created_at,
+        e.updated_at as entrada_stock_updated_at,
+        e.almacen_id as entrada_stock_almacen_id,
+
+        a.id as entrada_stock_al_id,
+        a.nombre as entrada_stock_al_nombre,
+        a.direccion as entrada_stock_al_direccion,
+        a.empresa_id as entrada_stock_al_empresa_id,
+        a.user_id as entrada_stock_al_user_id,
+        a.activo as entrada_stock_al_activo,
+        a.borrado as entrada_stock_al_borrado,
+        a.distrito_id as entrada_stock_al_distrito_id,
+        a.codigo as entrada_stock_al_codigo,
+
+        u.id as entrada_stock_user_id,
+        u.name as entrada_stock_user_name,
+        u.email as entrada_stock_user_email,
+        u.tipo_user_id as entrada_stock_user_tipo_user_id,
+        u.user_id as entrada_stock_user_user_id,
+        u.empresa_id as entrada_stock_user_empresa_id,
+        u.activo as entrada_stock_user_activo,
+        u.borrado as entrada_stock_user_borrado,
+        u.almacen_id as entrada_stock_user_almacen_id,
+
+        du.id as entrada_stock_du_id,
+        du.nombres as entrada_stock_du_nombres,
+        du.apellido_paterno as entrada_stock_du_apellido_paterno,
+        du.apellido_materno as entrada_stock_du_apellido_materno,
+        du.direccion as entrada_stock_du_direccion,
+        du.telefono as entrada_stock_du_telefono,
+        du.tipo_documento_id as entrada_stock_du_tipo_documento_id,
+        du.documento as entrada_stock_du_documento,
+        du.email as entrada_stock_du_email,
+        du.user_id as entrada_stock_du_user_id,
+        du.user_gestiona_id as entrada_stock_du_user_gestiona_id,
+        du.empresa_id as entrada_stock_du_empresa_id,
+        du.activo as entrada_stock_du_activo,
+        du.borrado as entrada_stock_du_borrado,
+
+        p.id as entrada_stock_pro_id,
+        p.tipo_documento_id as entrada_stock_pro_tipo_documento_id,
+        p.documento as entrada_stock_pro_documento,
+        p.nombre as entrada_stock_pro_nombre,
+        p.direccion as entrada_stock_pro_direccion,
+        p.telefono as entrada_stock_pro_telefono,
+        p.anexo as entrada_stock_pro_anexo,
+        p.celular as entrada_stock_pro_celular,
+        p.responsable as entrada_stock_pro_responsable,
+        p.activo as entrada_stock_pro_activo,
+        p.borrado as entrada_stock_pro_borrado,
+        p.user_id as entrada_stock_pro_user_id,
+        p.empresa_id as entrada_stock_pro_empresa_id,
+        p.created_at as entrada_stock_pro_created_at,
+        p.updated_at as entrada_stock_pro_updated_at,
+
+        f.id as entrada_stock_co_id,
+        f.tipo_comprobante_id as entrada_stock_co_tipo_comprobante_id,
+        f.serie as entrada_stock_co_serie,
+        f.numero as entrada_stock_co_numero,
+        f.fecha as entrada_stock_co_fecha,
+        f.estado as entrada_stock_co_estado,
+        f.observaciones as entrada_stock_co_observaciones,
+        f.user_id as entrada_stock_co_user_id,
+        f.empresa_id as entrada_stock_co_empresa_id,
+        f.activo as entrada_stock_co_activo,
+        f.borrado as entrada_stock_co_borrado,
+        f.created_at as entrada_stock_co_created_at,
+        f.updated_at as entrada_stock_co_updated_at,
+        f.almacen_id as entrada_stock_co_almacen_id
+
+        from pago_proveedors pp
+        inner join metodos_pagos m on m.id = pp.metodos_pago_id
+        inner join  entrada_stocks e on e.id = pp.entrada_stock_id
+        inner join almacens a on a.id = e.almacen_id
+        inner join users u on u.id = e.user_id
+        left join datos_users du on du.user_id = u.id
+        left join proveedors p on p.id = e.proveedor_id
+        left join factura_proveedors f on f.id = e.factura_proveedor_id
+        <where>
+            <if test="ID != null"> AND pp.id = #{ID}</if>
+            <if test="ENTRADA_STOCK_ID != null"> AND pp.entrada_stock_id = #{ENTRADA_STOCK_ID}</if>
+            <if test="FECHA != null"> AND pp.fecha = #{FECHA}</if>
+            <if test="METODOS_PAGO_ID != null"> AND pp.metodos_pago_id = #{METODOS_PAGO_ID}</if>
+            <if test="MONTO_PAGO != null"> AND pp.monto_pago = #{MONTO_PAGO}</if>
+            <if test="MONTO_REAL != null"> AND pp.monto_real = #{MONTO_REAL}</if>
+            <if test="TIPO_PAGO != null"> AND pp.tipo_pago = #{TIPO_PAGO}</if>
+            <if test="TIPO_TARJETA != null"> AND pp.tipo_tarjeta = #{TIPO_TARJETA}</if>
+            <if test="SIGLA_TARJETA != null"> AND pp.sigla_tarjeta = #{SIGLA_TARJETA}</if>
+            <if test="NUMERO_TARJETA != null"> AND pp.numero_tarjeta = #{NUMERO_TARJETA}</if>
+            <if test="BANCO != null"> AND pp.banco = #{BANCO}</if>
+            <if test="NUMERO_CUENTA != null"> AND pp.numero_cuenta = #{NUMERO_CUENTA}</if>
+            <if test="NUMERO_CELULAR != null"> AND pp.numero_celular = #{NUMERO_CELULAR}</if>
+            <if test="NUMERO_CHEQUE != null"> AND pp.numero_cheque = #{NUMERO_CHEQUE}</if>
+            <if test="CODIGO_OPERACION != null"> AND pp.codigo_operacion = #{CODIGO_OPERACION}</if>
+            <if test="USER_ID != null"> AND pp.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND pp.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND pp.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND pp.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND pp.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND pp.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND pp.activo != #{NO_ACTIVO}</if>
+
+            <if test="MAYOR_MIN_IMPORTE != null"> AND pp.monto_real <![CDATA[ > ]]> #{MAYOR_MIN_IMPORTE}</if>
         </where>
+        order by pp.fecha, pp.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from pago_proveedors pp
+        inner join metodos_pagos m on m.id = pp.metodos_pago_id
+        inner join  entrada_stocks e on e.id = pp.entrada_stock_id
+        inner join almacens a on a.id = e.almacen_id
+        inner join users u on u.id = e.user_id
+        left join datos_users du on du.user_id = u.id
+        left join proveedors p on p.id = e.proveedor_id
+        left join factura_proveedors f on f.id = e.factura_proveedor_id
+        <where>
+            <if test="ID != null"> AND pp.id = #{ID}</if>
+            <if test="ENTRADA_STOCK_ID != null"> AND pp.entrada_stock_id = #{ENTRADA_STOCK_ID}</if>
+            <if test="FECHA != null"> AND pp.fecha = #{FECHA}</if>
+            <if test="METODOS_PAGO_ID != null"> AND pp.metodos_pago_id = #{METODOS_PAGO_ID}</if>
+            <if test="MONTO_PAGO != null"> AND pp.monto_pago = #{MONTO_PAGO}</if>
+            <if test="MONTO_REAL != null"> AND pp.monto_real = #{MONTO_REAL}</if>
+            <if test="TIPO_PAGO != null"> AND pp.tipo_pago = #{TIPO_PAGO}</if>
+            <if test="TIPO_TARJETA != null"> AND pp.tipo_tarjeta = #{TIPO_TARJETA}</if>
+            <if test="SIGLA_TARJETA != null"> AND pp.sigla_tarjeta = #{SIGLA_TARJETA}</if>
+            <if test="NUMERO_TARJETA != null"> AND pp.numero_tarjeta = #{NUMERO_TARJETA}</if>
+            <if test="BANCO != null"> AND pp.banco = #{BANCO}</if>
+            <if test="NUMERO_CUENTA != null"> AND pp.numero_cuenta = #{NUMERO_CUENTA}</if>
+            <if test="NUMERO_CELULAR != null"> AND pp.numero_celular = #{NUMERO_CELULAR}</if>
+            <if test="NUMERO_CHEQUE != null"> AND pp.numero_cheque = #{NUMERO_CHEQUE}</if>
+            <if test="CODIGO_OPERACION != null"> AND pp.codigo_operacion = #{CODIGO_OPERACION}</if>
+            <if test="USER_ID != null"> AND pp.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND pp.empresa_id = #{EMPRESA_ID}</if>
+            <if test="ACTIVO != null"> AND pp.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND pp.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND pp.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND pp.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND pp.activo != #{NO_ACTIVO}</if>
+
+            <if test="MAYOR_MIN_IMPORTE != null"> AND pp.monto_real <![CDATA[ > ]]> #{MAYOR_MIN_IMPORTE}</if>
+
+            <!--<if test="BUSCAR != null"> AND cov.nombre like #{BUSCAR}</if>-->
+        </where>
+        order by pp.fecha, pp.id
     </select>
 
     <update id="updateByPrimaryKeySelective">
         update pago_proveedors
         <set>
-            <if test="FECHA_PAGO != null"> fecha_pago = #{FECHA_PAGO}, </if>
-            <if test="MONTO_PAGO != null"> monto_pago = #{MONTO_PAGO}, </if>
-            <if test="MONTO_REAL != null"> monto_real = #{MONTO_REAL}, </if>
-            <if test="TIPO_PAGO != null"> tipo_pago = #{TIPO_PAGO}, </if>
-            <if test="BANCO_ID_EMISOR != null"> banco_id_emisor = #{BANCO_ID_EMISOR}, </if>
-            <if test="BANCO_ID_PROVEEDOR != null"> banco_id_proveedor = #{BANCO_ID_PROVEEDOR}, </if>
-            <if test="CUENTA_PROVEEDOR_ID != null"> cuenta_proveedor_id = #{CUENTA_PROVEEDOR_ID}, </if>
-            <if test="NUMERO_CHEQUE != null"> numero_cheque = #{NUMERO_CHEQUE}, </if>
-            <if test="FACTURA_PROVEEDOR_ID != null"> factura_proveedor_id = #{FACTURA_PROVEEDOR_ID}, </if>
-            <if test="ES_SOLES != null"> es_soles = #{ES_SOLES}, </if>
-            <if test="CODIGO_OPERACION != null"> codigo_operacion = #{CODIGO_OPERACION}, </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+            <if test="ENTRADA_STOCK_ID != null">  entrada_stock_id = #{ENTRADA_STOCK_ID}, </if>
+            <if test="FECHA != null">  fecha = #{FECHA}, </if>
+            <if test="METODOS_PAGO_ID != null">  metodos_pago_id = #{METODOS_PAGO_ID}, </if>
+            <if test="MONTO_PAGO != null">  monto_pago = #{MONTO_PAGO}, </if>
+            <if test="MONTO_REAL != null">  monto_real = #{MONTO_REAL}, </if>
+            <if test="TIPO_PAGO != null">  tipo_pago = #{TIPO_PAGO}, </if>
+            <if test="TIPO_TARJETA != null">  tipo_tarjeta = #{TIPO_TARJETA}, </if>
+            <if test="SIGLA_TARJETA != null">  sigla_tarjeta = #{SIGLA_TARJETA}, </if>
+            <if test="NUMERO_TARJETA != null">  numero_tarjeta = #{NUMERO_TARJETA}, </if>
+            <if test="BANCO != null">  banco = #{BANCO}, </if>
+            <if test="NUMERO_CUENTA != null">  numero_cuenta = #{NUMERO_CUENTA}, </if>
+            <if test="NUMERO_CELULAR != null">  numero_celular = #{NUMERO_CELULAR}, </if>
+            <if test="NUMERO_CHEQUE != null">  numero_cheque = #{NUMERO_CHEQUE}, </if>
+            <if test="CODIGO_OPERACION != null">  codigo_operacion = #{CODIGO_OPERACION}, </if>
+
+
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 

@@ -7,45 +7,185 @@
 
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.DetalleEntradaStock">
         <result property="id" column="id" />
-        <result property="entradaStockId" column="entrada_stock_id" />
-        <result property="productoId" column="producto_id" />
+        <result property="entradaStock.id" column="entrada_stock_id" />
+        <result property="producto.id" column="producto_id" />
         <result property="cantidad" column="cantidad" />
         <result property="costo" column="costo" />
         <result property="almacenId" column="almacen_id" />
         <result property="cantreal" column="cantreal" />
+        <result property="costoTotal" column="costo_total" />
         <result property="unidad" column="unidad" />
-        <result property="loteId" column="lote_id" />
+        <result property="lote.id" column="lote_id" />
         <result property="userId" column="user_id" />
         <result property="activo" column="activo" />
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+        <result property="empresaId" column="empresa_id" />
+    </resultMap>
+
+    <resultMap id="principalResultMapComplete" type="com.bcs.ventas.model.entities.DetalleEntradaStock">
+        <result property="id" column="id" />
+        <result property="entradaStock.id" column="entrada_stock_id" />
+
+        <result property="cantidad" column="cantidad" />
+        <result property="costo" column="costo" />
+        <result property="almacenId" column="almacen_id" />
+        <result property="cantreal" column="cantreal" />
+        <result property="costoTotal" column="costo_total" />
+        <result property="unidad" column="unidad" />
+        <result property="lote.id" column="lote_id" />
+        <result property="userId" column="user_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+        <result property="empresaId" column="empresa_id" />
+
+        <result property="producto.id" column="p_id" />
+        <result property="producto.nombre" column="p_nombre" />
+        <result property="producto.stockMinimo" column="p_stock_minimo" />
+        <result property="producto.precioUnidad" column="p_precio_unidad" />
+        <result property="producto.precioCompra" column="p_precio_compra" />
+        <result property="producto.fecha" column="p_fecha" />
+        <result property="producto.codigoUnidad" column="p_codigo_unidad" />
+        <result property="producto.codigoProducto" column="p_codigo_producto" />
+        <result property="producto.composicion" column="p_composicion" />
+        <result property="producto.prioridad" column="p_prioridad" />
+        <result property="producto.ubicacion" column="p_ubicacion" />
+        <result property="producto.activoLotes" column="p_activo_lotes" />
+        <result property="producto.afectoIsc" column="p_afecto_isc" />
+        <result property="producto.tipoTasaIsc" column="p_tipo_tasa_isc" />
+        <result property="producto.tasaIsc" column="p_tasa_isc" />
+        <result property="producto.afectoIgv" column="p_afecto_igv" />
+        <result property="producto.empresaId" column="p_empresa_id" />
+        <result property="producto.userId" column="p_user_id" />
+        <result property="producto.activo" column="p_activo" />
+        <result property="producto.borrado" column="p_borrado" />
+        <result property="producto.createdAt" column="p_created_at" />
+        <result property="producto.updatedAd" column="p_updated_at" />
+
+        <result property="producto.tipoProducto.id" column="tp_id" />
+        <result property="producto.tipoProducto.tipo" column="tp_tipo" />
+        <result property="producto.tipoProducto.tipoProductoId" column="tp_tipo_producto_id" />
+        <result property="producto.tipoProducto.activo" column="tp_activo" />
+        <result property="producto.tipoProducto.borrado" column="tp_borrado" />
+        <result property="producto.marca.id" column="m_id" />
+        <result property="producto.marca.nombre" column="m_nombre" />
+        <result property="producto.marca.activo" column="m_activo" />
+        <result property="producto.marca.borrado" column="m_borrado" />
+        <result property="producto.presentacion.id" column="pe_id" />
+        <result property="producto.presentacion.presentacion" column="pe_presentacion" />
+        <result property="producto.presentacion.activo" column="pe_activo" />
+        <result property="producto.presentacion.borrado" column="pe_borrado" />
+
+        <result property="lote.id" column="lote_id" />
+        <result property="lote.orden" column="l_orden" />
+        <result property="lote.nombre" column="l_nombre" />
+        <result property="lote.fechaIngreso" column="l_fecha_ingreso" />
+        <result property="lote.fechaVencimiento" column="l_fecha_vencimiento" />
+        <result property="lote.activoVencimiento" column="l_activo_vencimiento" />
+        <result property="lote.productoId" column="l_producto_id" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
         select * from detalle_entrada_stocks
     </select>
 
-    <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from detalle_entrada_stocks
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="ENTRADA_STOCK_ID != null"> AND entrada_stock_id = #{ENTRADA_STOCK_ID}</if>
-            <if test="PRODUCTO_ID != null"> AND producto_id = #{PRODUCTO_ID}</if>
-            <if test="CANTIDAD != null"> AND cantidad = #{CANTIDAD}</if>
-            <if test="COSTO != null"> AND costo = #{COSTO}</if>
-            <if test="ALMACEN_ID != null"> AND almacen_id = #{ALMACEN_ID}</if>
-            <if test="CANTREAL != null"> AND cantreal = #{CANTREAL}</if>
-            <if test="UNIDAD != null"> AND unidad = #{UNIDAD}</if>
-            <if test="LOTE_ID != null"> AND lote_id = #{LOTE_ID}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+    <select id="listByParameterMap" resultMap="principalResultMapComplete">
+        select
+        d.id,
+        d.entrada_stock_id,
+        d.producto_id,
+        d.cantidad,
+        d.costo,
+        d.almacen_id,
+        d.cantreal,
+        d.costo_total,
+        d.unidad,
+        d.user_id,
+        d.activo,
+        d.borrado,
+        d.created_at,
+        d.updated_at,
+        d.lote_id,
+        d.empresa_id,
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        p.id as p_id,
+        p.nombre as p_nombre,
+        p.tipo_producto_id as p_tipo_producto_id,
+        p.marca_id as p_marca_id,
+        p.stock_minimo as p_stock_minimo,
+        p.precio_unidad as p_precio_unidad,
+        p.precio_compra as p_precio_compra,
+        p.fecha as p_fecha,
+        p.codigo_unidad as p_codigo_unidad,
+        p.codigo_producto as p_codigo_producto,
+        p.presentacion_id as p_presentacion_id,
+        p.composicion as p_composicion,
+        p.prioridad as p_prioridad,
+        p.ubicacion as p_ubicacion,
+        p.activo_lotes as p_activo_lotes,
+        p.user_id as p_user_id,
+        p.empresa_id as p_empresa_id,
+        p.activo as p_activo,
+        p.borrado as p_borrado,
+        p.created_at as p_created_at,
+        p.updated_at as p_updated_at,
+        p.afecto_isc as p_afecto_isc,
+        p.tipo_tasa_isc as p_tipo_tasa_isc,
+        p.tasa_isc as p_tasa_isc,
+        p.afecto_igv as p_afecto_igv,
+
+        tp.id as tp_id,
+        tp.tipo as tp_tipo,
+        tp.tipo_producto_id as tp_tipo_producto_id,
+        tp.activo as tp_activo,
+        tp.borrado as tp_borrado,
+        m.id as m_id,
+        m.nombre as m_nombre,
+        m.activo as m_activo,
+        m.borrado as m_borrado,
+        pe.id as pe_id,
+        pe.presentacion as pe_presentacion,
+        pe.activo as pe_activo,
+        pe.borrado as pe_borrado,
+
+        ifnull(l.id, 0) as l_id,
+        ifnull(l.orden, '') as l_orden,
+        ifnull(l.nombre, '') as l_nombre,
+        ifnull(l.fecha_ingreso, null) as l_fecha_ingreso,
+        ifnull(l.fecha_vencimiento, null) as l_fecha_vencimiento,
+        ifnull(l.activo_vencimiento, null) as l_activo_vencimiento,
+        ifnull(l.producto_id, '') as l_producto_id
+
+        from detalle_entrada_stocks d
+        inner join productos p on d.producto_id = p.id
+        inner join tipo_productos tp on p.tipo_producto_id = tp.id
+        inner join marcas m on p.marca_id=m.id
+        inner join presentacions pe on p.presentacion_id=pe.id
+        left join lotes l on d.lote_id = l.id
+        <where>
+            <if test="ID != null"> AND d.id = #{ID}</if>
+            <if test="DETALLE_ENTRADA_STOCKS != null"> AND d.detalle_entrada_stocks = #{DETALLE_ENTRADA_STOCKS}</if>
+            <if test="PRODUCTO_ID != null"> AND d.producto_id = #{PRODUCTO_ID}</if>
+            <if test="CANTIDAD != null"> AND d.cantidad = #{CANTIDAD}</if>
+            <if test="COSTO != null"> AND d.costo = #{COSTO}</if>
+            <if test="ALMACEN_ID != null"> AND d.almacen_id = #{ALMACEN_ID}</if>
+            <if test="CANTREAL != null"> AND d.cantreal = #{CANTREAL}</if>
+            <if test="COSTO_TOTAL != null"> AND d.costo_total = #{COSTO_TOTAL}</if>
+            <if test="UNIDAD != null"> AND d.unidad = #{UNIDAD}</if>
+            <if test="LOTE_ID != null"> AND d.lote_id = #{LOTE_ID}</if>
+            <if test="EMPRESA_ID != null"> AND d.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND d.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND d.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND d.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND d.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND d.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND d.activo != #{NO_ACTIVO}</if>
         </where>
+        order by d.detalle_entrada_stocks, d.id
     </select>
 
     <update id="updateByPrimaryKeySelective">
@@ -57,11 +197,13 @@
             <if test="COSTO != null">  costo = #{COSTO}, </if>
             <if test="ALMACEN_ID != null">  almacen_id = #{ALMACEN_ID}, </if>
             <if test="CANTREAL != null">  cantreal = #{CANTREAL}, </if>
+            <if test="COSTO_TOTAL != null">  costo_total = #{COSTO_TOTAL}, </if>
             <if test="UNIDAD != null">  unidad = #{UNIDAD}, </if>
             <if test="LOTE_ID != null">  lote_id = #{LOTE_ID}, </if>
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>

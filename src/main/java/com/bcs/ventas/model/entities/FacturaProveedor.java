@@ -1,11 +1,18 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Comprobante Proveedor Model")
 @Entity
 @Table(name = "factura_proveedors")
 public class FacturaProveedor implements Serializable {
@@ -19,99 +26,74 @@ public class FacturaProveedor implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="proveedor_id", nullable = true)
-    private Long proveedorId;
+    //@Column(name="tipo_comprobante_id", nullable = true)
+    //private Long tipoComprobanteId;
+    @Schema(description = "Tipo de Comprobante")
+    @ManyToOne
+    @JoinColumn(name = "tipo_comprobante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_factura_proveedors_comprobante"))
+    private TipoComprobante tipoComprobante;
 
+    @Schema(description = "Serie del Comprobante")
+    @NotNull( message = "{factura_proveedors.serie.notnull}")
+    @Size(min = 1, max = 20, message = "{factura_proveedors.serie.size}")
     @Column(name="serie", nullable = true, length= 45)
     private String serie;
 
+    @Schema(description = "Numero del Comprobante")
+    @NotNull( message = "{factura_proveedors.numero.notnull}")
+    @Size(min = 1, max = 50, message = "{factura_proveedors.numero.size}")
     @Column(name="numero", nullable = true, length= 45)
     private String numero;
 
+    @Schema(description = "Fecha de registro de la Compra")
+    @NotNull( message = "{factura_proveedors.fecha.notnull}")
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="fecha", nullable = true)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date fecha;
+    private LocalDate fecha;
 
-    @Column(name="pagado", nullable = true)
-    private Integer pagado;
+    @Schema(description = "Estado del Comprobante")
+    @Column(name="estado", nullable = true, length= 45)
+    private String estado;
 
-    @Column(name="total", nullable = true)
-    private Double total;
-
+    @Schema(description = "Observaciones del Comprobante")
+    @Size(max = 1024, message = "{factura_proveedors.observaciones.size}")
     @Column(name="observaciones", nullable = true, length= 1024)
     private String observaciones;
 
-    @Column(name="tipo_comprobante_id", nullable = true)
-    private Long tipoComprobanteId;
-
-    @Column(name="total_soles", nullable = true)
-    private Double totalSoles;
-
-    @Column(name="en_soles", nullable = true)
-    private Integer enSoles;
-
+    @Schema(description = "ID User Padre")
+    //@NotNull( message = "{producto.user_id.notnull}")
     @Column(name="user_id", nullable = true)
     private Long userId;
 
+    @Schema(description = "ID del Local")
+    @NotNull( message = "{factura_proveedors.almacen_id.notnull}")
+    @Column(name="almacen_id", nullable = true)
+    private Long almacenId;
+
+    @Schema(description = "ID Empresa Padre")
+    //@NotNull( message = "{producto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
 
     public FacturaProveedor() {
-    }
-
-    public FacturaProveedor(Long id, Long proveedorId, String serie, String numero, Date fecha, Integer pagado, Double total, String observaciones, Long tipoComprobanteId, Double totalSoles, Integer enSoles, Long userId, Long empresaId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.proveedorId = proveedorId;
-        this.serie = serie;
-        this.numero = numero;
-        this.fecha = fecha;
-        this.pagado = pagado;
-        this.total = total;
-        this.observaciones = observaciones;
-        this.tipoComprobanteId = tipoComprobanteId;
-        this.totalSoles = totalSoles;
-        this.enSoles = enSoles;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-    }
-
-    public FacturaProveedor(Long id, Long proveedorId, String serie, String numero, Date fecha, Integer pagado, Double total, String observaciones, Long tipoComprobanteId, Double totalSoles, Integer enSoles, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.proveedorId = proveedorId;
-        this.serie = serie;
-        this.numero = numero;
-        this.fecha = fecha;
-        this.pagado = pagado;
-        this.total = total;
-        this.observaciones = observaciones;
-        this.tipoComprobanteId = tipoComprobanteId;
-        this.totalSoles = totalSoles;
-        this.enSoles = enSoles;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
     }
 
     public Long getId() {
@@ -122,12 +104,12 @@ public class FacturaProveedor implements Serializable {
         this.id = id;
     }
 
-    public Long getProveedorId() {
-        return proveedorId;
+    public TipoComprobante getTipoComprobante() {
+        return tipoComprobante;
     }
 
-    public void setProveedorId(Long proveedorId) {
-        this.proveedorId = proveedorId;
+    public void setTipoComprobante(TipoComprobante tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
     }
 
     public String getSerie() {
@@ -146,28 +128,20 @@ public class FacturaProveedor implements Serializable {
         this.numero = numero;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
-    public Integer getPagado() {
-        return pagado;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setPagado(Integer pagado) {
-        this.pagado = pagado;
-    }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public String getObservaciones() {
@@ -178,36 +152,20 @@ public class FacturaProveedor implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Long getTipoComprobanteId() {
-        return tipoComprobanteId;
-    }
-
-    public void setTipoComprobanteId(Long tipoComprobanteId) {
-        this.tipoComprobanteId = tipoComprobanteId;
-    }
-
-    public Double getTotalSoles() {
-        return totalSoles;
-    }
-
-    public void setTotalSoles(Double totalSoles) {
-        this.totalSoles = totalSoles;
-    }
-
-    public Integer getEnSoles() {
-        return enSoles;
-    }
-
-    public void setEnSoles(Integer enSoles) {
-        this.enSoles = enSoles;
-    }
-
     public Long getUserId() {
         return userId;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getAlmacenId() {
+        return almacenId;
+    }
+
+    public void setAlmacenId(Long almacenId) {
+        this.almacenId = almacenId;
     }
 
     public Long getEmpresaId() {
@@ -234,19 +192,19 @@ public class FacturaProveedor implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }

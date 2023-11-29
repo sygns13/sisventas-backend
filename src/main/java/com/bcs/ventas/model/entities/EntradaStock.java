@@ -1,11 +1,19 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
+@Schema(description = "Compra Model")
 @Entity
 @Table(name = "entrada_stocks")
 public class EntradaStock implements Serializable {
@@ -19,84 +27,113 @@ public class EntradaStock implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="numero", nullable = true, length= 45)
+    @Schema(description = "Numero de Venta por Sucursal")
+    @Column(name="numero", nullable = true)
     private String numero;
 
+    @Schema(description = "Fecha de registro de la Compra")
+    //@NotNull( message = "{entrada_stocks.fecha.notnull}")
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="fecha", nullable = true)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date fecha;
+    private LocalDate fecha;
 
-    @Column(name="proveedor_id", nullable = true)
-    private Long proveedorId;
+    @Schema(description = "Hora de la Venta")
+    @Column(name="hora", nullable = true)
+    @JsonFormat(pattern="HH:mm:ss")
+    //@Temporal(TemporalType.TIME)
+    //@DateTimeFormat(pattern="HH:mm:ss")
+    private LocalTime hora;
 
+    //@Column(name="proveedor_id", nullable = true)
+    //private Long proveedorId;
+
+    @Schema(description = "Proveedor de la Compra")
+    @ManyToOne
+    @JoinColumn(name = "proveedor_id", nullable = true, foreignKey = @ForeignKey(name = "FK_proveedor_entrada_stocks"))
+    private Proveedor proveedor;
+
+    @Schema(description = "Orden de Compra ID")
     @Column(name="orden_compra_id", nullable = true)
     private Long ordenCompraId;
 
+    @Schema(description = "Orden de Compra ID")
     @Column(name="facturado", nullable = true)
     private Integer facturado;
 
+    @Schema(description = "Actualizado Stock")
     @Column(name="actualizado", nullable = true)
     private Integer actualizado;
 
-    @Column(name="factura_proveedor_id", nullable = true)
-    private Long facturaProveedorId;
+    @Schema(description = "Estado de la Compra")
+    @Column(name="estado", nullable = true)
+    private Integer estado;
 
-    @Column(name="user_id", nullable = true)
-    private Long userId;
+    @Schema(description = "Monto Total de la Venta")
+    @Column(name="total_monto", nullable = true)
+    private BigDecimal totalMonto;
 
+    //@Column(name="factura_proveedor_id", nullable = true)
+    //private Long facturaProveedorId;
+
+    @Schema(description = "Comprobante de la Compra")
+    @OneToOne
+    @JoinColumn(name = "factura_proveedor_id", nullable = true, foreignKey = @ForeignKey(name = "FK_factura_proveedor_id_entrada_stocks"))
+    private FacturaProveedor facturaProveedor;
+
+    @Schema(description = "Almacen donde se realizó la Venta")
+    @ManyToOne
+    @JoinColumn(name = "almacen_id", nullable = false, foreignKey = @ForeignKey(name = "FK_almacen_venta"))
+    private Almacen almacen;
+
+    @Schema(description = "User que se realizó la Venta")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_user_venta"))
+    private User user;
+
+    @Schema(description = "ID Empresa Padre")
+    //@NotNull( message = "{producto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
+
+    @Schema(description = "Detalles de Compra")
+    @OneToMany(mappedBy = "entrada_stocks", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    private List<DetalleEntradaStock> detalleEntradaStock;
+
+    @Schema(description = "Detalle de Estado")
+    @Transient
+    private String estadoStr;
+
+    @Schema(description = "importe Total Decimales")
+    @Transient
+    private BigDecimal importeTotal;
+
+    @Schema(description = "importe Pagado Decimales")
+    @Transient
+    private BigDecimal montoPagado;
+
+    @Schema(description = "importe Por Pagar Decimales")
+    @Transient
+    private BigDecimal montoPorPagar;
 
     public EntradaStock() {
-    }
-
-    public EntradaStock(Long id, String numero, Date fecha, Long proveedorId, Long ordenCompraId, Integer facturado, Integer actualizado, Long facturaProveedorId, Long userId, Long empresaId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.numero = numero;
-        this.fecha = fecha;
-        this.proveedorId = proveedorId;
-        this.ordenCompraId = ordenCompraId;
-        this.facturado = facturado;
-        this.actualizado = actualizado;
-        this.facturaProveedorId = facturaProveedorId;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-    }
-
-    public EntradaStock(Long id, String numero, Date fecha, Long proveedorId, Long ordenCompraId, Integer facturado, Integer actualizado, Long facturaProveedorId, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.numero = numero;
-        this.fecha = fecha;
-        this.proveedorId = proveedorId;
-        this.ordenCompraId = ordenCompraId;
-        this.facturado = facturado;
-        this.actualizado = actualizado;
-        this.facturaProveedorId = facturaProveedorId;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
     }
 
     public Long getId() {
@@ -115,20 +152,28 @@ public class EntradaStock implements Serializable {
         this.numero = numero;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
-    public Long getProveedorId() {
-        return proveedorId;
+    public LocalTime getHora() {
+        return hora;
     }
 
-    public void setProveedorId(Long proveedorId) {
-        this.proveedorId = proveedorId;
+    public void setHora(LocalTime hora) {
+        this.hora = hora;
+    }
+
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 
     public Long getOrdenCompraId() {
@@ -155,20 +200,36 @@ public class EntradaStock implements Serializable {
         this.actualizado = actualizado;
     }
 
-    public Long getFacturaProveedorId() {
-        return facturaProveedorId;
+    public Integer getEstado() {
+        return estado;
     }
 
-    public void setFacturaProveedorId(Long facturaProveedorId) {
-        this.facturaProveedorId = facturaProveedorId;
+    public void setEstado(Integer estado) {
+        this.estado = estado;
     }
 
-    public Long getUserId() {
-        return userId;
+    public FacturaProveedor getFacturaProveedor() {
+        return facturaProveedor;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setFacturaProveedor(FacturaProveedor facturaProveedor) {
+        this.facturaProveedor = facturaProveedor;
+    }
+
+    public Almacen getAlmacen() {
+        return almacen;
+    }
+
+    public void setAlmacen(Almacen almacen) {
+        this.almacen = almacen;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getEmpresaId() {
@@ -195,19 +256,67 @@ public class EntradaStock implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public List<DetalleEntradaStock> getDetalleEntradaStock() {
+        return detalleEntradaStock;
+    }
+
+    public void setDetalleEntradaStock(List<DetalleEntradaStock> detalleEntradaStock) {
+        this.detalleEntradaStock = detalleEntradaStock;
+    }
+
+    public String getEstadoStr() {
+        return estadoStr;
+    }
+
+    public void setEstadoStr(String estadoStr) {
+        this.estadoStr = estadoStr;
+    }
+
+    public BigDecimal getImporteTotal() {
+        return importeTotal;
+    }
+
+    public void setImporteTotal(BigDecimal importeTotal) {
+        this.importeTotal = importeTotal;
+    }
+
+    public BigDecimal getMontoPagado() {
+        return montoPagado;
+    }
+
+    public void setMontoPagado(BigDecimal montoPagado) {
+        this.montoPagado = montoPagado;
+    }
+
+    public BigDecimal getMontoPorPagar() {
+        return montoPorPagar;
+    }
+
+    public void setMontoPorPagar(BigDecimal montoPorPagar) {
+        this.montoPorPagar = montoPorPagar;
+    }
+
+    public BigDecimal getTotalMonto() {
+        return totalMonto;
+    }
+
+    public void setTotalMonto(BigDecimal totalMonto) {
+        this.totalMonto = totalMonto;
     }
 }
