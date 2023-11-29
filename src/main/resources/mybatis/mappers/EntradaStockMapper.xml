@@ -458,6 +458,7 @@
             <if test="FECHA != null">  fecha = #{FECHA}, </if>
             <if test="HORA != null">  hora = #{HORA}, </if>
             <if test="PROVEEDOR_ID != null">  proveedor_id = #{PROVEEDOR_ID}, </if>
+            <if test="PROVEEDOR_ID_NULLABLE != null"> proveedor_id = NULL, </if>
             <if test="ORDEN_COMPRA_ID != null">  orden_compra_id = #{ORDEN_COMPRA_ID}, </if>
             <if test="FACTURADO != null">  facturado = #{FACTURADO}, </if>
             <if test="ACTUALIZADO != null">  actualizado = #{ACTUALIZADO}, </if>

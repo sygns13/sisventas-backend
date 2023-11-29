@@ -590,7 +590,7 @@ public class VentaServiceImpl implements VentaService {
         Venta venta = this.listarPorId(addProductoVenta.getIdVenta());
         if(venta == null){
             validacion = false;
-            error = "No se envió un Producto Válido";
+            error = "No se envió una Venta Válida";
             errors.add(error);
         }
 
@@ -807,7 +807,7 @@ public class VentaServiceImpl implements VentaService {
 
         venta.setUpdatedAd(fechaActualTime);
 
-        this.graberResetVenta(venta);
+        this.grabarResetVenta(venta);
         Venta ventaRes = this.recalcularVentaReset(venta);
         return ventaRes;
 
@@ -1210,7 +1210,7 @@ public class VentaServiceImpl implements VentaService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
-    public Venta graberResetVenta(Venta venta) throws Exception {
+    public Venta grabarResetVenta(Venta venta) throws Exception {
 
         //TODO: Temporal hasta incluir Oauth inicio
         Long EmpresaId = 1L;

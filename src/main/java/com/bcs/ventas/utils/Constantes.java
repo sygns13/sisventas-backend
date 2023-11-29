@@ -134,6 +134,23 @@ public  class Constantes {
     public static final String COMPROBANTE_TIPO_DOCUMENTO_PARTIDA_NACIMIENTO = "11";
     public static final String COMPROBANTE_TIPO_DOCUMENTO_CEDULA_DIPLOMATICA_IDENTIDAD = "A";
 
+    //Estados Compras
+    public static final Integer COMPRA_ESTADO_ANULADO = 0;
+    public static final Integer COMPRA_ESTADO_INICIADO = 1;
+    public static final Integer COMPRA_ESTADO_COMPRA_NO_COBRADA = 2;
+    public static final Integer COMPRA_ESTADO_COMPRA_COBRADA_PARCIAL = 3;
+    public static final Integer COMPRA_ESTADO_COMPRA_COBRADA_TOTAL = 4;
+
+    public static final String COMPRA_ESTADO_ANULADO_STR = "COMPRA ANULADA";
+    public static final String COMPRA_ESTADO_INICIADO_STR = "COMPRA INICIADA";
+    public static final String COMPRA_ESTADO_COMPRA_NO_COBRADA_STR = "COMPRA FACTURADA NO PAGADA";
+    public static final String COMPRA_ESTADO_COMPRA_COBRADA_PARCIAL_STR = "COMPRA FACTURADA PAGADA PARCIALMENTE";
+    public static final String COMPRA_ESTADO_COMPRA_COBRADA_TOTAL_STR = "COMPRA FACTURADA PAGADA";
+
+
+    public static final Integer COMPRA_NO_FACTURADO = 0;
+    public static final Integer COMPRA_SI_FACTURADO = 1;
+
 
 
 }

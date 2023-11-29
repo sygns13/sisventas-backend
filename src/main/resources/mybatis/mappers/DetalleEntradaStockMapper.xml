@@ -167,7 +167,7 @@
         left join lotes l on d.lote_id = l.id
         <where>
             <if test="ID != null"> AND d.id = #{ID}</if>
-            <if test="DETALLE_ENTRADA_STOCKS != null"> AND d.detalle_entrada_stocks = #{DETALLE_ENTRADA_STOCKS}</if>
+            <if test="ENTRADA_STOCK_ID != null"> AND d.entrada_stock_id = #{ENTRADA_STOCK_ID}</if>
             <if test="PRODUCTO_ID != null"> AND d.producto_id = #{PRODUCTO_ID}</if>
             <if test="CANTIDAD != null"> AND d.cantidad = #{CANTIDAD}</if>
             <if test="COSTO != null"> AND d.costo = #{COSTO}</if>

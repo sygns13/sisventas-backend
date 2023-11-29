@@ -435,7 +435,7 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         int res= cobroVentaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
-            throw new RuntimeException("No se pudo eliminar el Banco indicado, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+            throw new RuntimeException("No se pudo eliminar el Pago indicado, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
 
     }
