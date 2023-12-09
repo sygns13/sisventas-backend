@@ -7,6 +7,7 @@ import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.AlmacenService;
 import com.bcs.ventas.service.EntradaStockService;
+import com.bcs.ventas.service.LoteService;
 import com.bcs.ventas.service.TipoDocumentoService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
@@ -97,6 +98,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Autowired
     private ProveedorMapper proveedorMapper;
 
+    @Autowired
+    private LoteService loteService;
     @Override
     public EntradaStock registrar(EntradaStock entradaStock) throws Exception {
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -397,8 +400,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             params.put("FECHA_FIN", filtros.getFechaFinal());
         }
 
-        if(filtros.getEstadoEntradaStock() != null)
-            params.put("ESTADO", filtros.getEstadoEntradaStock());
+        if(filtros.getEstado() != null)
+            params.put("ESTADO", filtros.getEstado());
 
         if(filtros.getActualizado() != null)
             params.put("ACTUALIZADO", filtros.getActualizado());
@@ -527,8 +530,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             params.put("FECHA_FIN", filtros.getFechaFinal());
         }
 
-        if(filtros.getEstadoEntradaStock() != null)
-            params.put("ESTADO", filtros.getEstadoEntradaStock());
+        if(filtros.getEstado() != null)
+            params.put("ESTADO", filtros.getEstado());
 
         if(filtros.getActualizado() != null)
             params.put("ACTUALIZADO", filtros.getActualizado());
@@ -662,6 +665,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             detalleEntradaStock.setCostoTotal(precioTotalFix);
 
             //Get Anteriores registros mismo prod mismo lote misma unidad
+            /*
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("ENTRADA_STOCK_ID", entradaStock.getId());
             params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
@@ -680,9 +684,14 @@ public class EntradaStockServiceImpl implements EntradaStockService {
                 return entradaStock;
             }
 
+
             this.grabarModificarDetalleAdd(entradaStock, detalleEntradaStock, detalleEntradaStocks.get(0));
             EntradaStock entradaStockRes = this.recalcularEntradaStock(entradaStock);
             return entradaStockRes;
+            */
+            this.grabarRegistroDetalle(entradaStock, detalleEntradaStock);
+            //Venta ventaRes = this.recalcularVenta(venta);
+            return entradaStock;
         }
 
 
@@ -707,21 +716,32 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         Long EmpresaId = 1L;
         //Todo: Temporal hasta incluir Oauth final
 
+        Lote loteBD = null;
+        if(detalleEntradaStock.getLote() != null){
+            detalleEntradaStock.getLote().setCantidad(detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
+            detalleEntradaStock.getLote().setMotivo(Constantes.MOTIVO_INGRESO_COMPRA);
+            loteBD = loteService.registrarOnlyNuevoLote(detalleEntradaStock.getLote());
+            detalleEntradaStock.setLote(loteBD);
+        }
+
+
         detalleEntradaStock = detalleEntradaStockDAO.registrar(detalleEntradaStock);
 
+        /*
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("PRODUCTO_ID", detalleEntradaStock.getProducto().getId());
         params.put("ALMACEN_ID", detalleEntradaStock.getAlmacenId());
         params.put("EMPRESA_ID", EmpresaId);
 
         List<Stock> stockG1 = stockMapper.listByParameterMap(params);
-        Lote loteBD = null;
+
 
         if(detalleEntradaStock.getLote() != null)
             loteBD = loteDAO.listarPorId(detalleEntradaStock.getLote().getId());
+        */
 
         //this.recalcularVenta(venta);
-        this.modificarStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD, detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
+        //this.modificarStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD, detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
 
         return entradaStock;
     }
@@ -769,14 +789,11 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         Long EmpresaId = 1L;
         //Todo: Temporal hasta incluir Oauth final
 
-        Lote loteBD1 = null;
-        Lote loteBD2 = null;
+        Lote loteBD = null;
 
         if(detalleEntradaStockBD.getLote() != null)
-            loteBD1 = loteDAO.listarPorId(detalleEntradaStockBD.getLote().getId());
+            loteBD = loteDAO.listarPorId(detalleEntradaStockBD.getLote().getId());
 
-        if(detalleEntradaStock.getLote() != null)
-            loteBD2 = loteDAO.listarPorId(detalleEntradaStock.getLote().getId());
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("PRODUCTO_ID", detalleEntradaStock.getProducto().getId());
@@ -789,6 +806,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ID", detalleEntradaStockBD.getId());
         params.put("CANTIDAD", detalleEntradaStock.getCantidad());
 
+        params.put("COSTO", detalleEntradaStock.getCosto());
         params.put("COSTO_TOTAL", detalleEntradaStock.getCostoTotal());
         params.put("CANTREAL", detalleEntradaStock.getCantreal());
 
@@ -798,14 +816,29 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         int res = detalleEntradaStockMapper.updateByPrimaryKeySelective(params);
 
         //this.recalcularVenta(venta);
-        this.modificarStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD1, (detalleEntradaStockBD.getCantidad() * detalleEntradaStockBD.getCantreal()));
-        this.modificarStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD2, (detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal()));
+        //this.modificarOnlyStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD2, (detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal()));
+        //this.modificarOnlyStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD1, (detalleEntradaStockBD.getCantidad() * detalleEntradaStockBD.getCantreal()));
+
+
+        if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0){
+            LocalDateTime fechaActualUpdated = LocalDateTime.now();
+
+            loteBD.setNombre(detalleEntradaStock.getLote().getNombre());
+            loteBD.setCantidad(detalleEntradaStock.getLote().getCantidad());
+            loteBD.setFechaVencimiento(detalleEntradaStock.getLote().getFechaVencimiento());
+            loteBD.setFechaIngreso(detalleEntradaStock.getLote().getFechaIngreso());
+            loteBD.setActivoVencimiento(detalleEntradaStock.getLote().getActivoVencimiento());
+            loteBD.setUpdatedAd(fechaActualUpdated);
+
+            Lote loteEdited = loteDAO.modificar(loteBD);
+        }
 
         return entradaStock;
     }
 
     private boolean validacionCompraDetalle(DetalleEntradaStock detalleEntradaStock, Map<String, Object> resultValidacion) throws Exception {
 
+        LocalDate fechaActual = LocalDate.now();
         boolean resultado = true;
         List<String> errors = new ArrayList<String>();
         List<String> warnings = new ArrayList<String>();
@@ -815,7 +848,42 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         //TODO: Temporal hasta incluir Oauth inicio
         Long EmpresaId = 1L;
         //Todo: Temporal hasta incluir Oauth final
-        BigDecimal cantidadTotal = BigDecimal.valueOf(detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
+        //BigDecimal cantidadTotal = BigDecimal.valueOf(detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
+
+        if(detalleEntradaStock.getCantidad() == null || new BigDecimal(detalleEntradaStock.getCantidad()).compareTo(new BigDecimal(0)) <= 0){
+            resultado = false;
+            error = "Debe de Agregar una cantidad válida";
+            errors.add(error);
+        }
+
+        if(detalleEntradaStock.getCosto() == null || detalleEntradaStock.getCosto().compareTo(new BigDecimal(0)) <= 0){
+            resultado = false;
+            error = "Debe de Enviar un costo válido";
+            errors.add(error);
+        }
+
+        //Validaciones Lotes
+        if(detalleEntradaStock.getProducto().getActivoLotes().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
+            if(detalleEntradaStock.getLote() == null ){
+                resultado = false;
+                error = "Debe de remitir el lote a agregar";
+                errors.add(error);
+            } else {
+                detalleEntradaStock.getLote().setFechaIngreso(fechaActual);
+                if(detalleEntradaStock.getLote().getNombre() == null || detalleEntradaStock.getLote().getNombre().trim().isEmpty()){
+                    resultado = false;
+                    error = "Debe de ingresar el nombre del Lote para registrarlo";
+                    errors.add(error);
+                }
+
+                if(detalleEntradaStock.getLote().getFechaIngreso() == null ){
+                    resultado = false;
+                    error = "Debe de ingresar la fecha de ingreso del Lote para registrarlo";
+                    errors.add(error);
+                }
+            }
+
+        }
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
@@ -979,9 +1047,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             BigDecimal precioTotalFix = detalleEntradaStock.getCostoTotal().setScale(2, RoundingMode.HALF_UP);
             detalleEntradaStock.setCostoTotal(precioTotalFix);
 
-            this.grabarModificarDetalle(entradaStock, detalleEntradaStock, detalleEntradaStockBD);
-            EntradaStock entradaStockRes = this.resetEntradaStock(entradaStock);
-            return entradaStockRes;
+            return this.grabarModificarDetalle(entradaStock, detalleEntradaStock, detalleEntradaStockBD);
+            //EntradaStock entradaStockRes = this.recalcularEntradaStock(entradaStock);
+            //return entradaStockRes;
         }
 
 
@@ -1009,6 +1077,42 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         Long EmpresaId = 1L;
         //Todo: Temporal hasta incluir Oauth final
         DetalleEntradaStock detalleEntradaStockBD = detalleEntradaStockDAO.listarPorId(detalleEntradaStock.getId());
+
+        if(detalleEntradaStock.getCantidad() == null || new BigDecimal(detalleEntradaStock.getCantidad()).compareTo(new BigDecimal(0)) <= 0){
+            resultado = false;
+            error = "Debe de Agregar una cantidad válida";
+            errors.add(error);
+        }
+
+        if(detalleEntradaStock.getCosto() == null || detalleEntradaStock.getCosto().compareTo(new BigDecimal(0)) <= 0){
+            resultado = false;
+            error = "Debe de Enviar un costo válido";
+            errors.add(error);
+        }
+
+        //Validaciones Lotes
+        if(detalleEntradaStock.getProducto().getActivoLotes().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
+            if(detalleEntradaStock.getLote() == null ){
+                resultado = false;
+                error = "Debe de remitir el lote a agregar";
+                errors.add(error);
+            } else {
+                LocalDate fechaActual = LocalDate.now();
+                detalleEntradaStock.getLote().setFechaIngreso(fechaActual);
+                if(detalleEntradaStock.getLote().getNombre() == null || detalleEntradaStock.getLote().getNombre().trim().isEmpty()){
+                    resultado = false;
+                    error = "Debe de ingresar el nombre del Lote para modificarlo";
+                    errors.add(error);
+                }
+
+                if(detalleEntradaStock.getLote().getFechaIngreso() == null ){
+                    resultado = false;
+                    error = "Debe de ingresar la fecha de ingreso del Lote para modificarlo";
+                    errors.add(error);
+                }
+            }
+
+        }
 
 
         resultValidacion.put("errors",errors);
@@ -1410,8 +1514,10 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             loteBD = loteDAO.listarPorId(detalleEntradaStock.getLote().getId());
 
 
-        this.modificarStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD, detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
+        //this.modificarStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD, detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
         detalleEntradaStockDAO.eliminar(detalleEntradaStock.getId());
+        if(loteBD != null)
+            loteService.eliminarOnlyLote(loteBD.getId());
         //this.recalcularVenta(venta);
 
         return entradaStock;
@@ -1432,6 +1538,28 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         stockModificar.setUpdatedAd(fechaActualTime);
         stockDAO.modificar(stockModificar);
+
+        if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0){
+
+            //Modificaion Stock Lote
+            if(tipoMovimiento.equals(Constantes.TIPO_ENTRADA_PRODUCTOS))
+                loteBD.setCantidad(loteBD.getCantidad() + cantidad);
+
+            if(tipoMovimiento.equals(Constantes.TIPO_RETIRO_PRODUCTOS))
+                loteBD.setCantidad(loteBD.getCantidad() - cantidad);
+
+            loteBD.setUpdatedAd(fechaActualTime);
+            loteDAO.modificar(loteBD);
+
+        }
+    }
+
+    private void modificarOnlyStocks(Integer tipoMovimiento, Stock stockModificar, Lote loteBD, Double cantidad) throws Exception {
+
+        //Modificaion Stock
+        LocalDate fechaActual = LocalDate.now();
+        LocalTime horaActual = LocalTime.now();
+        LocalDateTime fechaActualTime = LocalDateTime.now();
 
         if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0){
 

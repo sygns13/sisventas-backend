@@ -145,6 +145,52 @@ public class LoteServiceImpl implements LoteService {
     }
 
     @Override
+    public Lote registrarOnlyNuevoLote(Lote lote) throws Exception {
+        LocalDateTime fechaActual = LocalDateTime.now();
+        lote.setCreatedAt(fechaActual);
+        lote.setUpdatedAd(fechaActual);
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        lote.setEmpresaId(1L);
+        lote.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
+        lote.setActivo(Constantes.REGISTRO_ACTIVO_2);
+        lote.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+
+        if(lote.getNombre() == null)    lote.setNombre("");
+        lote.setNombre(lote.getNombre());
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionRegistroNuevoLote(lote, resultValidacion);
+
+        if(validacion){
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+            params.put("EMPRESA_ID",lote.getEmpresaId());
+            params.put("ALMACEN_ID", lote.getAlmacenId());
+            params.put("PRODUCTO_ID", lote.getProductoId());
+
+            Long cantLotes = loteMapper.getTotalElements(params);
+            cantLotes ++;
+            lote.setOrden(cantLotes);
+
+            return this.grabarRegistroOnlyNuevoLote(lote);
+        }
+
+        String errorValidacion = "Error de validación Método Registrar Lote";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    @Override
     public void modificarOrden(LotesChangeOrdenDTO lotes) throws Exception {
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
@@ -252,6 +298,30 @@ public class LoteServiceImpl implements LoteService {
 
     }
 
+    @Override
+    public void eliminarOnlyLote(Long id) throws Exception {
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionEliminacion(id, resultValidacion);
+
+        if(validacion) {
+            this.grabarEliminarDeletedLote(id);
+        }
+        else {
+            String errorValidacion = "Error de validación Método Eliminar Lote";
+
+            if (resultValidacion.get("errors") != null) {
+                List<String> errors = (List<String>) resultValidacion.get("errors");
+                if (errors.size() > 0)
+                    errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+            }
+
+            throw new ValidationServiceException(errorValidacion);
+        }
+
+    }
+
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public Lote grabarRegistro(Lote lote) throws Exception {
@@ -323,6 +393,28 @@ public class LoteServiceImpl implements LoteService {
 
 
         retiroEntradaProductoDAO.registrar(retiroEntradaProducto);
+
+        return lote;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private Lote grabarRegistroOnlyNuevoLote(Lote lote) throws Exception {
+
+        if(lote.getActivoVencimiento().intValue() == Constantes.REGISTRO_INACTIVO.intValue()){
+            lote.setFechaVencimiento(null);
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",lote.getEmpresaId());
+        params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+
+        List<Unidad> unidadG1 = unidadMapper.listByParameterMap(params);
+
+        lote.setUnidadId(unidadG1.get(0).getId());
+
+        lote = loteDAO.registrar(lote);
 
         return lote;
     }
@@ -573,6 +665,11 @@ public class LoteServiceImpl implements LoteService {
         retiroEntradaProductoDAO.registrar(retiroEntradaProducto);
 
         loteDAO.modificar(lote);
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    public void grabarEliminarDeletedLote(Long id) throws Exception {
+        loteDAO.eliminar(id);
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)

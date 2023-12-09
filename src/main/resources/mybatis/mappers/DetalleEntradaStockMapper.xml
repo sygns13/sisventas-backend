@@ -185,7 +185,7 @@
             <if test="NO_BORRADO != null"> AND d.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND d.activo != #{NO_ACTIVO}</if>
         </where>
-        order by d.detalle_entrada_stocks, d.id
+        order by d.entrada_stock_id, d.id
     </select>
 
     <update id="updateByPrimaryKeySelective">

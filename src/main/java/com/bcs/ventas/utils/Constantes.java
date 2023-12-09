@@ -151,6 +151,8 @@ public  class Constantes {
     public static final Integer COMPRA_NO_FACTURADO = 0;
     public static final Integer COMPRA_SI_FACTURADO = 1;
 
+    public static final String MOTIVO_INGRESO_COMPRA = "Ingreso de Productos por Compra de Producto en el Módulo de Registro de Compras";
+
 
 
 }

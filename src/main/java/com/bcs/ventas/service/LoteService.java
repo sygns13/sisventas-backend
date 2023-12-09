@@ -8,5 +8,8 @@ public interface LoteService extends GeneralService<Lote, Long> {
 
     Lote registrarNuevoLote(Lote lote) throws Exception;
 
+    Lote registrarOnlyNuevoLote(Lote lote) throws Exception;
+
     void modificarOrden(LotesChangeOrdenDTO lotes) throws Exception;
+    void eliminarOnlyLote(Long id) throws Exception;
 }

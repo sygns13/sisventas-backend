@@ -14,7 +14,6 @@ public class FiltroEntradaStock {
     private LocalTime hora;
     private LocalDate fechaInicio;
     private LocalDate fechaFinal;
-    private Integer estadoEntradaStock;
     private Integer facturado;
     private Integer actualizado;
     private Integer estado;
@@ -89,14 +88,6 @@ public class FiltroEntradaStock {
 
     public void setFechaFinal(LocalDate fechaFinal) {
         this.fechaFinal = fechaFinal;
-    }
-
-    public Integer getEstadoEntradaStock() {
-        return estadoEntradaStock;
-    }
-
-    public void setEstadoEntradaStock(Integer estadoEntradaStock) {
-        this.estadoEntradaStock = estadoEntradaStock;
     }
 
     public Integer getFacturado() {

@@ -27,7 +27,7 @@ public class EntradaStock implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "Numero de Venta por Sucursal")
+    @Schema(description = "Numero de Compra por Sucursal")
     @Column(name="numero", nullable = true)
     private String numero;
 
@@ -37,7 +37,7 @@ public class EntradaStock implements Serializable {
     @Column(name="fecha", nullable = true)
     private LocalDate fecha;
 
-    @Schema(description = "Hora de la Venta")
+    @Schema(description = "Hora de la Compra")
     @Column(name="hora", nullable = true)
     @JsonFormat(pattern="HH:mm:ss")
     //@Temporal(TemporalType.TIME)
@@ -68,7 +68,7 @@ public class EntradaStock implements Serializable {
     @Column(name="estado", nullable = true)
     private Integer estado;
 
-    @Schema(description = "Monto Total de la Venta")
+    @Schema(description = "Monto Total de la Compra")
     @Column(name="total_monto", nullable = true)
     private BigDecimal totalMonto;
 
@@ -80,12 +80,12 @@ public class EntradaStock implements Serializable {
     @JoinColumn(name = "factura_proveedor_id", nullable = true, foreignKey = @ForeignKey(name = "FK_factura_proveedor_id_entrada_stocks"))
     private FacturaProveedor facturaProveedor;
 
-    @Schema(description = "Almacen donde se realizó la Venta")
+    @Schema(description = "Almacen donde se realizó la Compra")
     @ManyToOne
     @JoinColumn(name = "almacen_id", nullable = false, foreignKey = @ForeignKey(name = "FK_almacen_venta"))
     private Almacen almacen;
 
-    @Schema(description = "User que se realizó la Venta")
+    @Schema(description = "User que se realizó la Compra")
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_user_venta"))
     private User user;
@@ -114,7 +114,7 @@ public class EntradaStock implements Serializable {
     private LocalDateTime updatedAd;
 
     @Schema(description = "Detalles de Compra")
-    @OneToMany(mappedBy = "entrada_stocks", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "entradaStock", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private List<DetalleEntradaStock> detalleEntradaStock;
 
     @Schema(description = "Detalle de Estado")

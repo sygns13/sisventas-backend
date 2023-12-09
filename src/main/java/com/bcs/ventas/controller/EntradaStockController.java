@@ -116,7 +116,7 @@ public class EntradaStockController {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/add-detalle-venta")
+    @PostMapping("/add-detalle-entrada-stock")
     public ResponseEntity<EntradaStock> registrarDetalleEntradaStock(@Valid @RequestBody DetalleEntradaStock d) throws Exception{
         d.setId(null);
         EntradaStock obj = entradaStockService.registrarDetalle(d);
@@ -128,26 +128,27 @@ public class EntradaStockController {
         return new ResponseEntity<EntradaStock>(res, HttpStatus.OK);
     }
 
-    @PostMapping("/add-producto-venta")
+    @PostMapping("/add-producto-entrada-stock")
     public ResponseEntity<EntradaStock> agregarProductoEntradaStock(@RequestBody AgregarProductoBean addProductoEntradaStock) throws Exception{
         EntradaStock obj = entradaStockService.agregarProducto(addProductoEntradaStock);
         EntradaStock res = entradaStockService.recalcularEntradaStockPublic(obj);
         return new ResponseEntity<EntradaStock>(res, HttpStatus.OK);
     }
 
-    @PostMapping("/delete-detalle-venta")
+    @PostMapping("/delete-detalle-entrada-stock")
     public ResponseEntity<EntradaStock> deleteDetalleEntradaStock(@Valid @RequestBody DetalleEntradaStock d) throws Exception{
         EntradaStock obj = entradaStockService.eliminarDetalle(d);
         return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar-detalle-venta")
+    @PostMapping("/modificar-detalle-entrada-stock")
     public ResponseEntity<EntradaStock> modificarDetalleEntradaStock(@Valid @RequestBody DetalleEntradaStock d) throws Exception{
         EntradaStock obj = entradaStockService.modificarDetalle(d);
-        return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
+        EntradaStock res = entradaStockService.recalcularEntradaStockPublic(obj);
+        return new ResponseEntity<EntradaStock>(res, HttpStatus.OK);
     }
 
-    @PutMapping("/resetventa")
+    @PutMapping("/resetentrada-stock")
     public ResponseEntity<EntradaStock> resetEntradaStock(@RequestBody EntradaStock v) throws Exception{
         if(v.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
@@ -163,7 +164,7 @@ public class EntradaStockController {
     }
 
     @PostMapping("/pago-proveedor")
-    public ResponseEntity<PagoProveedor> cobrarEntradaStock(@Valid @RequestBody PagoProveedor a) throws Exception{
+    public ResponseEntity<PagoProveedor> pagarEntradaStock(@Valid @RequestBody PagoProveedor a) throws Exception{
         if(a.getEntradaStock() == null || a.getEntradaStock().getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
