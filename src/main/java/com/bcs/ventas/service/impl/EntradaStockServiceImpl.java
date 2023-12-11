@@ -816,8 +816,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         int res = detalleEntradaStockMapper.updateByPrimaryKeySelective(params);
 
         //this.recalcularVenta(venta);
-        //this.modificarOnlyStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD2, (detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal()));
-        //this.modificarOnlyStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD1, (detalleEntradaStockBD.getCantidad() * detalleEntradaStockBD.getCantreal()));
+        //this.modificarOnlyLotes(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD2, (detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal()));
+        //this.modificarOnlyLotes(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD1, (detalleEntradaStockBD.getCantidad() * detalleEntradaStockBD.getCantreal()));
 
 
         if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0){
@@ -1176,17 +1176,17 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     public PagoProveedor cobrarEntradaStock(PagoProveedor pagoProveedor) throws Exception {
         LocalDateTime fechaActualTime = LocalDateTime.now();
         LocalDate fechaActual = LocalDate.now();
-        EntradaStock entradaStock = this.listarPorId(pagoProveedor.getEntradaStock().getId());
+        EntradaStock entradaStockBD = this.listarPorId(pagoProveedor.getEntradaStock().getId());
 
-        entradaStock.setUpdatedAd(fechaActualTime);
+        entradaStockBD.setUpdatedAd(fechaActualTime);
         User user = new User();
 
         //TODO: Temporal hasta incluir Oauth inicio
         user.setUserId(2L);
         //Todo: Temporal hasta incluir Oauth final
-        entradaStock.setUser(user);
+        entradaStockBD.setUser(user);
 
-        pagoProveedor.setEntradaStock(entradaStock);
+        //pagoProveedor.setEntradaStock(entradaStock);
         pagoProveedor.setCreatedAt(fechaActualTime);
         pagoProveedor.setUpdatedAd(fechaActualTime);
 
@@ -1199,13 +1199,14 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         pagoProveedor.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         pagoProveedor.setActivo(Constantes.REGISTRO_ACTIVO);
+        pagoProveedor.setFecha(fechaActual);
 
 
 
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
-        boolean validacion = this.validacionRegistroPago(pagoProveedor, resultValidacion);
+        boolean validacion = this.validacionRegistroPago(pagoProveedor, entradaStockBD, resultValidacion);
 
         if(validacion){
             TipoComprobante tipoComprobante = new TipoComprobante();
@@ -1260,7 +1261,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             }
 
 
-            return this.grabarRegistroPago(pagoProveedor, tipoComprobante);
+            return this.grabarRegistroPago(pagoProveedor, entradaStockBD, tipoComprobante);
         }
 
 
@@ -1321,9 +1322,17 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
-    private PagoProveedor grabarRegistroPago(PagoProveedor pagoProveedor, TipoComprobante tipoComprobante) throws Exception {
+    private PagoProveedor grabarRegistroPago(PagoProveedor pagoProveedor, EntradaStock entradaStockBD, TipoComprobante tipoComprobante) throws Exception {
 
-        pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_NO_FACTURADO);
+        entradaStockBD.setFacturado( pagoProveedor.getEntradaStock().getFacturado());
+        entradaStockBD.setActualizado( pagoProveedor.getEntradaStock().getActualizado());
+        entradaStockBD.setFacturaProveedor( pagoProveedor.getEntradaStock().getFacturaProveedor());
+
+        pagoProveedor.setEntradaStock(entradaStockBD);
+
+        //FIXME: Temporal hasta incluir currencys
+        pagoProveedor.setMontoReal(pagoProveedor.getMontoPago());
+        pagoProveedor.setTipoPago(Constantes.TIPO_PAGO_SOLES);
 
         if(pagoProveedor.getMontoReal().compareTo(new BigDecimal(0)) <= 0)
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_NO_COBRADA);
@@ -1333,7 +1342,6 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         if(pagoProveedor.getMontoReal().compareTo(new BigDecimal(0)) > 0 && pagoProveedor.getMontoReal().compareTo(pagoProveedor.getEntradaStock().getTotalMonto()) >= 0){
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
-            pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_SI_FACTURADO);
             pagoProveedor.setMontoReal(pagoProveedor.getEntradaStock().getTotalMonto());
             pagoProveedor.setMontoPago(pagoProveedor.getEntradaStock().getTotalMonto());
         }
@@ -1343,7 +1351,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        if(pagoProveedor.getEntradaStock().getFacturaProveedor() != null){
+        if(pagoProveedor.getEntradaStock().getFacturado().compareTo(Constantes.COMPRA_SI_FACTURADO) == 0 && pagoProveedor.getEntradaStock().getFacturaProveedor() != null){
             FacturaProveedor comprobante = new FacturaProveedor();
             comprobante.setTipoComprobante(pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante());
             comprobante.setSerie(pagoProveedor.getEntradaStock().getFacturaProveedor().getSerie());
@@ -1366,14 +1374,37 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             params.put("FACTURA_PROVEEDOR_ID", comprobante.getId());
         }
 
-
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
-        params.put("PAGADO", pagoProveedor.getEntradaStock().getFacturado());
+
+        params.put("FACTURADO", pagoProveedor.getEntradaStock().getFacturado());
+        params.put("ACTUALIZADO", pagoProveedor.getEntradaStock().getActualizado());
 
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
+        if(pagoProveedor.getEntradaStock().getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) == 0){
+            //Ingresar Cantidades a Stock
+            params.clear();
+            params.put("ENTRADA_STOCK_ID", pagoProveedor.getEntradaStock().getId());
+            params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+            List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
+            for (DetalleEntradaStock de: detalleEntradaStocks) {
+                params.clear();
+                params.put("PRODUCTO_ID", de.getProducto().getId());
+                params.put("ALMACEN_ID", de.getAlmacenId());
+                params.put("EMPRESA_ID", de.getEmpresaId());
+
+                List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+                Lote loteBD = null;
+
+                if(de.getLote() != null && de.getLote().getId() != null)
+                    loteBD = loteDAO.listarPorId(de.getLote().getId());
+
+                this.modificarStocksOnlyStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD, de.getCantidad() * de.getCantreal());
+            }
+        }
 
         return pagoProveedorReg;
     }
@@ -1554,7 +1585,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         }
     }
 
-    private void modificarOnlyStocks(Integer tipoMovimiento, Stock stockModificar, Lote loteBD, Double cantidad) throws Exception {
+    private void modificarOnlyLotes(Integer tipoMovimiento, Lote loteBD, Double cantidad) throws Exception {
 
         //Modificaion Stock
         LocalDate fechaActual = LocalDate.now();
@@ -1574,6 +1605,32 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             loteDAO.modificar(loteBD);
 
         }
+    }
+
+    private void modificarStocksOnlyStocks(Integer tipoMovimiento, Stock stockModificar, Lote loteBD, Double cantidad) throws Exception {
+
+        //Modificaion Stock
+        LocalDate fechaActual = LocalDate.now();
+        LocalTime horaActual = LocalTime.now();
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+
+
+        //Activacion de Lote
+        if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0) {
+            loteBD.setActivo(Constantes.REGISTRO_ACTIVO);
+            loteBD.setUpdatedAd(fechaActualTime);
+            loteDAO.modificar(loteBD);
+        }
+
+        if(tipoMovimiento.equals(Constantes.TIPO_ENTRADA_PRODUCTOS))
+            stockModificar.setCantidad(stockModificar.getCantidad() + cantidad);
+
+        if(tipoMovimiento.equals(Constantes.TIPO_RETIRO_PRODUCTOS))
+            stockModificar.setCantidad(stockModificar.getCantidad() - cantidad);
+
+        stockModificar.setUpdatedAd(fechaActualTime);
+        stockDAO.modificar(stockModificar);
+
     }
 
     @Override
@@ -1854,7 +1911,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         return sequence;
     }
 
-    private boolean validacionRegistroPago(PagoProveedor pagoProveedor, Map<String, Object> resultValidacion) throws Exception {
+    private boolean validacionRegistroPago(PagoProveedor pagoProveedor,  EntradaStock entradaStockBD, Map<String, Object> resultValidacion) throws Exception {
 
         boolean resultado = true;
         List<String> errors = new ArrayList<String>();
@@ -1873,7 +1930,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             return resultado;
         }
 
-        if(pagoProveedor.getEntradaStock().getProveedor() == null){
+        if(entradaStockBD.getProveedor() == null){
             resultado = false;
             error = "Debe de seleccionar un Proveedor";
             errors.add(error);
@@ -1885,7 +1942,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         }
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("ENTRADA_STOCK_ID",pagoProveedor.getEntradaStock().getId());
+        params.put("ENTRADA_STOCK_ID", entradaStockBD.getId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
@@ -1901,7 +1958,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             return resultado;
         }
 
-        if(pagoProveedor.getEntradaStock().getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
+        if(entradaStockBD.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
             resultado = false;
             error = "La Compra remitida se encuentra anulada";
             errors.add(error);
@@ -1912,7 +1969,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             return resultado;
         }
 
-        if(pagoProveedor.getEntradaStock().getEstado().intValue() == Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL){
+        if(entradaStockBD.getEstado().intValue() == Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL){
             resultado = false;
             error = "La Compra remitida se encuentra pagada en su totalidad";
             errors.add(error);
@@ -1955,7 +2012,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
             if(pagoProveedor.getNumeroCuenta().trim().isEmpty()){
                 resultado = false;
-                error = "Debe de Seleccionar una Cuenta Bancaria Válida";
+                error = "Debe de Ingresar una Cuenta Bancaria Válida";
                 errors.add(error);
             }
 
@@ -1985,7 +2042,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
             if(pagoProveedor.getNumeroCelular().trim().isEmpty()){
                 resultado = false;
-                error = "Debe de Seleccionar un Número de Celular Válido";
+                error = "Debe de Ingresar un Número de Celular Válido";
                 errors.add(error);
             }
 
@@ -2011,39 +2068,91 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             }
         }
 
-        if(pagoProveedor.getMontoReal() == null || pagoProveedor.getMontoReal().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
+        if(pagoProveedor.getMontoPago() == null || pagoProveedor.getMontoPago().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
             resultado = false;
             error = "Debe de remitir un Monto de Pago Válido";
             errors.add(error);
         }
 
-        if(pagoProveedor.getTipoComprobanteId() == null || pagoProveedor.getTipoComprobanteId().compareTo(Constantes.CANTIDAD_ZERO_LONG) < 0){
+        if(pagoProveedor.getEntradaStock().getActualizado() == null
+                || (pagoProveedor.getEntradaStock().getActualizado().compareTo(Constantes.COMPRA_NO_ACTUALIZADO) != 0 &&
+                    pagoProveedor.getEntradaStock().getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) != 0
+        )){
             resultado = false;
-            error = "Debe de seleccionar un Tipo de Comprobante Válido";
+            error = "Debe de remitir un valor adecuado de Compra Actualizada";
             errors.add(error);
-        } else{
-            TipoComprobante tipoComprobante = new TipoComprobante();
-            tipoComprobante = tipoComprobanteDAO.listarPorId(pagoProveedor.getTipoComprobanteId() );
-
-            if(tipoComprobante.getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_FACTURA)){
-                if(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_OTROS_DOCUMENTOS)){
-                    resultado = false;
-                    error = "No se puede Emitir Factura al tipo de Proveedor con tipo de Documento Otros Documentos";
-                    errors.add(error);
-                }
-                if(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_DNI)){
-                    resultado = false;
-                    error = "No se puede Emitir Factura al tipo de Proveedor con tipo de Documento DNI";
-                    errors.add(error);
-                }
-                if(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_PARTIDA_NACIMIENTO)){
-                    resultado = false;
-                    error = "No se puede Emitir Factura al tipo de Proveedor con tipo de Documento Partida de Nacimiento";
-                    errors.add(error);
-                }
-            }
         }
 
+        if(pagoProveedor.getEntradaStock().getFacturado() == null
+                || (pagoProveedor.getEntradaStock().getFacturado().compareTo(Constantes.COMPRA_NO_FACTURADO) != 0 &&
+                    pagoProveedor.getEntradaStock().getFacturado().compareTo(Constantes.COMPRA_SI_FACTURADO) != 0
+        )){
+            resultado = false;
+            error = "Debe de remitir un valor adecuado de Compra Facturada";
+            errors.add(error);
+        }
+
+        if(pagoProveedor.getEntradaStock().getFacturado().compareTo(Constantes.COMPRA_SI_FACTURADO) == 0){
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor() == null){
+                resultado = false;
+                error = "Debe de remitir un Comprobante de Compra";
+                errors.add(error);
+            }
+
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante() == null){
+                resultado = false;
+                error = "Debe de remitir un Tipo de Comprobante de Compra";
+                errors.add(error);
+            }
+
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante().getId() == null){
+                resultado = false;
+                error = "Debe de remitir un Tipo de Comprobante de Compra Válido";
+                errors.add(error);
+            }
+
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor().getSerie() == null || pagoProveedor.getEntradaStock().getFacturaProveedor().getSerie().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de remitir una Serie de Comprobante de Compra Válida";
+                errors.add(error);
+            }
+
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor().getNumero() == null || pagoProveedor.getEntradaStock().getFacturaProveedor().getNumero().trim().isEmpty()){
+                resultado = false;
+                error = "Debe de remitir un Número de Comprobante de Compra Válido";
+                errors.add(error);
+            }
+
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor().getFecha() == null){
+                resultado = false;
+                error = "Debe de remitir una Fecha de Comprobante de Compra Válida";
+                errors.add(error);
+            }
+
+            /*
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante().getId() != null){
+                TipoComprobante tipoComprobante = new TipoComprobante();
+                tipoComprobante = tipoComprobanteDAO.listarPorId(pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante().getId());
+
+                if(tipoComprobante.getPrefix().equals(Constantes.COMPROBANTE_PREFIJO_FACTURA)){
+                    if(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_OTROS_DOCUMENTOS)){
+                        resultado = false;
+                        error = "No se puede Emitir Factura al tipo de Proveedor con tipo de Documento Otros Documentos";
+                        errors.add(error);
+                    }
+                    if(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_DNI)){
+                        resultado = false;
+                        error = "No se puede Emitir Factura al tipo de Proveedor con tipo de Documento DNI";
+                        errors.add(error);
+                    }
+                    if(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getKey().equals(Constantes.COMPROBANTE_TIPO_DOCUMENTO_PARTIDA_NACIMIENTO)){
+                        resultado = false;
+                        error = "No se puede Emitir Factura al tipo de Proveedor con tipo de Documento Partida de Nacimiento";
+                        errors.add(error);
+                    }
+                }
+            } */
+        }
 
 
         resultValidacion.put("errors",errors);

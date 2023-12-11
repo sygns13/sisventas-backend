@@ -528,6 +528,7 @@ public class ProductoServiceImpl implements ProductoService {
         // params.put("BUSCAR","%"+buscar+"%");
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID", EmpresaId);
         //params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
         params.put("UNIDAD_ID", filtros.getUnidadId());
@@ -536,9 +537,6 @@ public class ProductoServiceImpl implements ProductoService {
         if(filtros.getPalabraClave() != null && !filtros.getPalabraClave().isEmpty()){
             params.put("BUSCAR","%"+filtros.getPalabraClave()+"%");
         }
-
-        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
 
         Long total = productoMapper.getTotalElementsProductosVenta(params);
         Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());

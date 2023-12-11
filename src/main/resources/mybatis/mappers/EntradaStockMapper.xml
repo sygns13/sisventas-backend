@@ -174,9 +174,9 @@
         f.updated_at as co_updated_at,
         f.almacen_id as co_almacen_id,
 
-        FORMAT(@a:= e.total_monto,2) AS importe_total,
-        FORMAT(@b:=(SELECT IFNULL(SUM(pp.`monto_real`),0.00) As montoCobrado FROM `pago_proveedors` pp WHERE pp.`entrada_stock_id`=e.`id` and pp.borrado !='1'),2) AS monto_pagado,
-        FORMAT(@a-@b,2) AS monto_por_pagar
+        TRUNCATE(@a:= e.total_monto,2) AS importe_total,
+        TRUNCATE(@b:=(SELECT IFNULL(SUM(pp.`monto_real`),0.00) As montoCobrado FROM `pago_proveedors` pp WHERE pp.`entrada_stock_id`=e.`id` and pp.borrado !='1'),2) AS monto_pagado,
+        TRUNCATE(@a-@b,2) AS monto_por_pagar
 
         from entrada_stocks e
         inner join almacens a on a.id = e.almacen_id
@@ -273,9 +273,9 @@
             f.updated_at as co_updated_at,
             f.almacen_id as co_almacen_id,
 
-            FORMAT(@a:= e.total_monto,2) AS importe_total,
-            FORMAT(@b:=(SELECT IFNULL(SUM(pp.`monto_real`),0.00) As montoCobrado FROM `pago_proveedors` pp WHERE pp.`entrada_stock_id`=e.`id` and pp.borrado !='1'),2) AS monto_pagado,
-            FORMAT(@a-@b,2) AS monto_por_pagar
+            TRUNCATE(@a:= e.total_monto,2) AS importe_total,
+            TRUNCATE(@b:=(SELECT IFNULL(SUM(pp.`monto_real`),0.00) As montoCobrado FROM `pago_proveedors` pp WHERE pp.`entrada_stock_id`=e.`id` and pp.borrado !='1'),2) AS monto_pagado,
+            TRUNCATE(@a-@b,2) AS monto_por_pagar
 
             from entrada_stocks e
             inner join almacens a on a.id = e.almacen_id

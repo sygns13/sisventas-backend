@@ -153,6 +153,13 @@ public  class Constantes {
 
     public static final String MOTIVO_INGRESO_COMPRA = "Ingreso de Productos por Compra de Producto en el Módulo de Registro de Compras";
 
+    public static final Integer COMPRA_NO_ACTUALIZADO = 0;
+    public static final Integer COMPRA_SI_ACTUALIZADO = 1;
+
+
+    public static final Integer TIPO_PAGO_SOLES = 0;
+    public static final Integer TIPO_PAGO_DOLARES = 1;
+
 
 
 }

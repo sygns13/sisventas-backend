@@ -278,8 +278,8 @@
         <result property="stock.id" column="s_id" />
         <result property="stock.cantidad" column="s_cantidad" />
         <result property="detalleUnidadProducto.id" column="d_id" />
-        <result property="detalleUnidadProducto.precio" column="precio_unidad" />
-        <result property="detalleUnidadProducto.costoCompra" column="precio_compra" />
+        <result property="detalleUnidadProducto.precio" column="precio_detalle_unidad" />
+        <result property="detalleUnidadProducto.costoCompra" column="costo_detalle_unidad" />
         <result property="detalleUnidadProducto.codigoUnidad" column="d_codigo_unidad" />
 
         <result property="detalleUnidadProducto.unidad.id" column="u_id" />
@@ -1084,6 +1084,8 @@
         p.afecto_igv,
         p.empresa_id,
         p.user_id,
+        p.precio_unidad,
+        p.precio_compra,
         p.activo,
         p.borrado,
         p.created_at,
@@ -1106,8 +1108,9 @@
         ifnull(s.id, 0) as s_id,
         ifnull(s.cantidad, 0) as s_cantidad,
         ifnull(d.id, 0) as d_id,
-        ifnull(d.precio, p.precio_unidad) as precio_unidad,
-        ifnull(d.costo_compra, p.precio_compra) as precio_compra,
+
+        TRUNCATE(ifnull (d.precio, ( p.precio_unidad * u.cantidad)), 2) as precio_detalle_unidad,
+        TRUNCATE(ifnull (d.costo_compra, ( p.precio_compra * u.cantidad)), 2) as costo_detalle_unidad,
         ifnull(d.codigo_unidad, 'NO CONFIG') as d_codigo_unidad,
 
         ifnull(u.id, 0) as u_id,

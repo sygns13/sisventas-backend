@@ -271,9 +271,9 @@
             a.distrito_id as al_distrito_id,
             a.codigo as al_codigo,
 
-            FORMAT(@a:= v.total_monto,2) AS importe_total,
-            FORMAT(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2) AS monto_cobrado,
-            FORMAT(@a-@b,2) AS monto_por_cobrar
+            TRUNCATE(@a:= v.total_monto,2) AS importe_total,
+            TRUNCATE(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2) AS monto_cobrado,
+            TRUNCATE(@a-@b,2) AS monto_por_cobrar
 
         from ventas v
         inner join almacens a on a.id = v.almacen_id
@@ -371,9 +371,9 @@
             a.distrito_id as al_distrito_id,
             a.codigo as al_codigo,
 
-            FORMAT(@a:= v.total_monto,2) AS importe_total,
-            FORMAT(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2) AS monto_cobrado,
-            FORMAT(@a-@b,2) AS monto_por_cobrar
+            TRUNCATE(@a:= v.total_monto,2) AS importe_total,
+            TRUNCATE(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2) AS monto_cobrado,
+            TRUNCATE(@a-@b,2) AS monto_por_cobrar
 
         from ventas v
         inner join almacens a on a.id = v.almacen_id
@@ -772,9 +772,9 @@
         a.distrito_id as al_distrito_id,
         a.codigo as al_codigo,
 
-        FORMAT(@a:= v.total_monto,2) AS importe_total,
-        FORMAT(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2) AS monto_cobrado,
-        FORMAT(@a-@b,2) AS monto_por_cobrar
+        TRUNCATE(@a:= v.total_monto,2) AS importe_total,
+        TRUNCATE(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2) AS monto_cobrado,
+        TRUNCATE(@a-@b,2) AS monto_por_cobrar
 
         from ventas v
         inner join almacens a on a.id = v.almacen_id
