@@ -478,8 +478,13 @@
         left join clientes c on c.id = v.cliente_id
         left join comprobantes co on co.id = v.comprobante_id
         <where>
+            <if test="ESTADO_MAYOR != null"> AND v.estado <![CDATA[ > ]]> #{ESTADO_MAYOR}</if>
             <if test="ID != null"> AND v.id = #{ID}</if>
             <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND v.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND v.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
             <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
             <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
             <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
@@ -605,6 +610,10 @@
             <if test="ESTADO_MAYOR != null"> AND v.estado <![CDATA[ > ]]> #{ESTADO_MAYOR}</if>
             <if test="ID != null"> AND v.id = #{ID}</if>
             <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND v.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND v.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
             <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
             <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
             <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>

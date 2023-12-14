@@ -336,7 +336,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         boolean validacion = this.validacionEliminacion(id, resultValidacion);
 
         if(validacion) {
-            this.grabarEliminar(id);
+            EntradaStock entradaStock = (EntradaStock) resultValidacion.get("entradaStock");
+            this.grabarEliminar(id, entradaStock);
         }
         else {
             String errorValidacion = "Error de validación Método Eliminar Compra";
@@ -358,7 +359,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         boolean validacion = this.validacionAnulacion(id, resultValidacion);
 
         if(validacion) {
-            this.grabarAnular(id);
+            EntradaStock entradaStock = (EntradaStock) resultValidacion.get("entradaStock");
+            this.grabarAnular(id, entradaStock);
         }
         else {
             String errorValidacion = "Error de validación Método Anular Compra";
@@ -1454,14 +1456,18 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     }
 
     @Override
+    public void grabarEliminar(Long aLong) throws Exception {
+
+    }
+
     @Transactional(readOnly=false,rollbackFor=Exception.class)
-    public void grabarEliminar(Long id) throws Exception {
+    public void grabarEliminar(Long id, EntradaStock entradaStock) throws Exception {
         LocalDateTime fechaActualDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String fechaUpdate = fechaActualDateTime.format(formatter);
 
         //Devolver Stocks
-        this.devolverStockCompra(id);
+        this.devolverStockCompra(id, entradaStock);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
@@ -1476,13 +1482,13 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
-    private void grabarAnular(Long id) throws Exception {
+    private void grabarAnular(Long id, EntradaStock entradaStock) throws Exception {
         LocalDateTime fechaActualDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String fechaUpdate = fechaActualDateTime.format(formatter);
 
         //Devolver Stocks
-        this.devolverStockCompra(id);
+        this.devolverStockCompra(id, entradaStock);
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
@@ -1497,7 +1503,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
-    public void devolverStockCompra(Long compraId) throws Exception {
+    public void devolverStockCompra(Long compraId, EntradaStock entradaStock) throws Exception {
 
         //TODO: Temporal hasta incluir Oauth inicio
         Long EmpresaId = 1L;
@@ -1506,6 +1512,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ENTRADA_STOCK_ID", compraId);
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        boolean stocksDevolver = entradaStock.getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) == 0;
 
         List<DetalleEntradaStock> detalleEntradaStock = detalleEntradaStockMapper.listByParameterMap(params);
         for (DetalleEntradaStock de: detalleEntradaStock) {
@@ -1521,7 +1529,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
                 loteBD = loteDAO.listarPorId(de.getLote().getId());
 
 
-            this.modificarStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD, de.getCantidad() * de.getCantreal());
+            this.modificarStocksDeleteAnula(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD, de.getCantidad() * de.getCantreal(), stocksDevolver);
             //detalleVentaDAO.eliminar(dv.getId());
         }
     }
@@ -1585,6 +1593,37 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         }
     }
 
+    private void modificarStocksDeleteAnula(Integer tipoMovimiento, Stock stockModificar, Lote loteBD, Double cantidad, Boolean stocksDevolver) throws Exception {
+
+        //Modificaion Stock
+        LocalDate fechaActual = LocalDate.now();
+        LocalTime horaActual = LocalTime.now();
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+
+        if(stocksDevolver){
+            if(tipoMovimiento.equals(Constantes.TIPO_ENTRADA_PRODUCTOS))
+                stockModificar.setCantidad(stockModificar.getCantidad() + cantidad);
+
+            if(tipoMovimiento.equals(Constantes.TIPO_RETIRO_PRODUCTOS))
+                stockModificar.setCantidad(stockModificar.getCantidad() - cantidad);
+
+            stockModificar.setUpdatedAd(fechaActualTime);
+            stockDAO.modificar(stockModificar);
+        }
+
+        if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0){
+
+            //Modificaion Stock Lote
+            if(tipoMovimiento.equals(Constantes.TIPO_ENTRADA_PRODUCTOS)){
+                loteBD.setCantidad(loteBD.getCantidad() + cantidad);
+                loteBD.setUpdatedAd(fechaActualTime);
+                loteDAO.modificar(loteBD);
+            }
+            if(tipoMovimiento.equals(Constantes.TIPO_RETIRO_PRODUCTOS))
+                loteDAO.eliminar(loteBD.getId());
+        }
+    }
+
     private void modificarOnlyLotes(Integer tipoMovimiento, Lote loteBD, Double cantidad) throws Exception {
 
         //Modificaion Stock
@@ -1616,8 +1655,15 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
 
         //Activacion de Lote
-        if(loteBD != null && loteBD.getId() != null && loteBD.getId() > 0) {
+        if(tipoMovimiento.equals(Constantes.TIPO_ENTRADA_PRODUCTOS) && loteBD != null && loteBD.getId() != null && loteBD.getId() > 0) {
             loteBD.setActivo(Constantes.REGISTRO_ACTIVO);
+            loteBD.setUpdatedAd(fechaActualTime);
+            loteDAO.modificar(loteBD);
+        }
+
+        //Reversión de Activacion de Lote
+        if(tipoMovimiento.equals(Constantes.TIPO_RETIRO_PRODUCTOS) && loteBD != null && loteBD.getId() != null && loteBD.getId() > 0) {
+            loteBD.setActivo(Constantes.REGISTRO_ACTIVO_2);
             loteBD.setUpdatedAd(fechaActualTime);
             loteDAO.modificar(loteBD);
         }
@@ -1729,6 +1775,22 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         EntradaStock entradaStock = this.listarPorId(id);
 
+        if(entradaStock == null || entradaStock.getId() == null || ( entradaStock.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0)){
+            resultado = false;
+            error = "Debe de remitir correctamente el ID de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+            resultValidacion.put("entradaStock",entradaStock);
+        }
+
+        if(entradaStock.getEstado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de la Compra";
+            errors.add(error);
+        }
+
         if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
             resultado = false;
             error = "La Compra remitida se encuentra anulada";
@@ -1736,12 +1798,51 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
             resultValidacion.put("errors",errors);
             resultValidacion.put("warnings",warnings);
+            resultValidacion.put("entradaStock",entradaStock);
 
             return resultado;
         }
 
+        if(entradaStock.getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) == 0) {
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put("ENTRADA_STOCK_ID", entradaStock.getId());
+            params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
+
+            List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
+            for (DetalleEntradaStock de : detalleEntradaStocks) {
+                params.clear();
+                params.put("PRODUCTO_ID", de.getProducto().getId());
+                params.put("ALMACEN_ID", de.getAlmacenId());
+                params.put("EMPRESA_ID", de.getEmpresaId());
+
+                List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+                Stock stockBD = null;
+
+                if (stockG1 != null && !stockG1.isEmpty())
+                    stockBD = stockG1.get(0);
+                Lote loteBD = null;
+
+                if (de.getLote() != null && de.getLote().getId() != null)
+                    loteBD = loteDAO.listarPorId(de.getLote().getId());
+
+                if (stockBD != null && stockBD.getCantidad().compareTo(de.getCantidad() * de.getCantreal()) < 0) {
+                    resultado = false;
+                    error = "No se puede revertir la Actualización de Stocks, ya que la cantidad del producto a revertir " + de.getProducto().getNombre() + " es mayor a la cantidad actual en Stock";
+                    errors.add(error);
+                }
+
+                if (loteBD != null && loteBD.getCantidad().compareTo(de.getCantidad() * de.getCantreal()) < 0) {
+                    resultado = false;
+                    error = "No se puede revertir la Actualización de Stocks, ya que se han empleado unidades del producto " + de.getProducto().getNombre() + " del lote " + loteBD.getNombre();
+                    errors.add(error);
+                }
+            }
+        }
+
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
+        resultValidacion.put("entradaStock",entradaStock);
 
         return resultado;
     }
@@ -1755,6 +1856,30 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         EntradaStock entradaStock = this.listarPorId(id);
 
+        if(entradaStock == null || entradaStock.getId() == null || ( entradaStock.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0)){
+            resultado = false;
+            error = "Debe de remitir correctamente el ID de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+            resultValidacion.put("entradaStock",entradaStock);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+            resultValidacion.put("entradaStock",entradaStock);
+
+            return resultado;
+        }
+
         if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
             resultado = false;
             error = "La Compra remitida ya se encuentra anulada";
@@ -1762,18 +1887,51 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
             resultValidacion.put("errors",errors);
             resultValidacion.put("warnings",warnings);
+            resultValidacion.put("entradaStock",entradaStock);
 
             return resultado;
         }
 
-        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
-            resultado = false;
-            error = "No se puede Anular una compra que aun no fue pagada y que no se ha generado ningún comprobante";
-            errors.add(error);
+        if(entradaStock.getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) == 0) {
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put("ENTRADA_STOCK_ID", entradaStock.getId());
+            params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
+
+            List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
+            for (DetalleEntradaStock de : detalleEntradaStocks) {
+                params.clear();
+                params.put("PRODUCTO_ID", de.getProducto().getId());
+                params.put("ALMACEN_ID", de.getAlmacenId());
+                params.put("EMPRESA_ID", de.getEmpresaId());
+
+                List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+                Stock stockBD = null;
+
+                if (stockG1 != null && !stockG1.isEmpty())
+                    stockBD = stockG1.get(0);
+                Lote loteBD = null;
+
+                if (de.getLote() != null && de.getLote().getId() != null)
+                    loteBD = loteDAO.listarPorId(de.getLote().getId());
+
+                if (stockBD != null && stockBD.getCantidad().compareTo(de.getCantidad() * de.getCantreal()) < 0) {
+                    resultado = false;
+                    error = "No se puede revertir la Actualización de Stocks, ya que la cantidad del producto a revertir " + de.getProducto().getNombre() + " es mayor a la cantidad actual en Stock";
+                    errors.add(error);
+                }
+
+                if (loteBD != null && loteBD.getCantidad().compareTo(de.getCantidad() * de.getCantreal()) < 0) {
+                    resultado = false;
+                    error = "No se puede revertir la Actualización de Stocks, ya que se han empleado unidades del producto " + de.getProducto().getNombre() + " del lote " + loteBD.getNombre();
+                    errors.add(error);
+                }
+            }
         }
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
+        resultValidacion.put("entradaStock",entradaStock);
 
         return resultado;
     }
@@ -2154,10 +2312,619 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             } */
         }
 
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    @Override
+    public EntradaStock facturarEntradaStock(EntradaStock entradaStock) throws Exception {
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+
+        EntradaStock entradaStockBD = this.listarPorId(entradaStock.getId());
+
+        entradaStockBD.setUpdatedAd(fechaActualTime);
+        entradaStockBD.setFacturaProveedor(entradaStock.getFacturaProveedor());
+
+        User user = new User();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        user.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
+        entradaStockBD.setUser(user);
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionfacturarEntradaStock(entradaStockBD, resultValidacion);
+
+        if(validacion)
+            return this.grabarFacturarEntradaStock(entradaStockBD);
+
+        String errorValidacion = "Error de validación Método Facturar Entrada Stock de Bienes";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    public boolean validacionfacturarEntradaStock(EntradaStock entradaStock, Map<String, Object> resultValidacion) throws Exception {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(entradaStock == null || entradaStock.getId() == null || ( entradaStock.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0)){
+            resultado = false;
+            error = "Debe de remitir correctamente el ID de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_INICIADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra en el estado iniciado, primero registre el pago";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getFacturado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de Facturado de la Compra";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturado().compareTo(Constantes.COMPRA_SI_FACTURADO) == 0){
+            resultado = false;
+            error = "La Compra ya se encuentra Facturada";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturaProveedor() == null){
+            resultado = false;
+            error = "Debe de remitir un Comprobante de Compra";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturaProveedor().getTipoComprobante() == null){
+            resultado = false;
+            error = "Debe de remitir un Tipo de Comprobante de Compra";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturaProveedor().getTipoComprobante().getId() == null){
+            resultado = false;
+            error = "Debe de remitir un Tipo de Comprobante de Compra Válido";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturaProveedor().getSerie() == null || entradaStock.getFacturaProveedor().getSerie().trim().isEmpty()){
+            resultado = false;
+            error = "Debe de remitir una Serie de Comprobante de Compra Válida";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturaProveedor().getNumero() == null || entradaStock.getFacturaProveedor().getNumero().trim().isEmpty()){
+            resultado = false;
+            error = "Debe de remitir un Número de Comprobante de Compra Válido";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturaProveedor().getFecha() == null){
+            resultado = false;
+            error = "Debe de remitir una Fecha de Comprobante de Compra Válida";
+            errors.add(error);
+        }
+
 
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
 
         return resultado;
     }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private EntradaStock grabarFacturarEntradaStock(EntradaStock entradaStock) throws Exception {
+
+        entradaStock.setFacturado(Constantes.COMPRA_SI_FACTURADO);
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        FacturaProveedor comprobante = new FacturaProveedor();
+
+        comprobante.setTipoComprobante(entradaStock.getFacturaProveedor().getTipoComprobante());
+        comprobante.setSerie(entradaStock.getFacturaProveedor().getSerie());
+        comprobante.setNumero(entradaStock.getFacturaProveedor().getNumero());
+        comprobante.setFecha(entradaStock.getFacturaProveedor().getFecha());
+        comprobante.setEstado(Constantes.COMPROBANTE_ESTADO_CREADO);
+        comprobante.setObservaciones(entradaStock.getFacturaProveedor().getObservaciones());
+        comprobante.setUserId(entradaStock.getUser().getId());
+        comprobante.setAlmacenId(entradaStock.getAlmacen().getId());
+        comprobante.setEmpresaId(entradaStock.getEmpresaId());
+        comprobante.setActivo(Constantes.REGISTRO_ACTIVO);
+        comprobante.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+        comprobante.setCreatedAt(entradaStock.getUpdatedAd());
+        comprobante.setUpdatedAd(entradaStock.getUpdatedAd());
+
+        comprobante = facturaProveedorDAO.registrar(comprobante);
+        entradaStock.setFacturaProveedor(comprobante);
+
+        params.put("FACTURA_PROVEEDOR_ID", comprobante.getId());
+        params.put("ID", entradaStock.getId());
+        params.put("FACTURADO", entradaStock.getFacturado());
+        params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+        entradaStockMapper.updateByPrimaryKeySelective(params);
+
+        return entradaStock;
+    }
+
+
+    @Override
+    public EntradaStock actualizarEntradaStock(EntradaStock entradaStock) throws Exception {
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        EntradaStock entradaStockBD = this.listarPorId(entradaStock.getId());
+
+        entradaStockBD.setUpdatedAd(fechaActualTime);
+
+        User user = new User();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        user.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
+        entradaStockBD.setUser(user);
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionActualizarEntradaStock(entradaStockBD, resultValidacion);
+
+        if(validacion)
+            return this.grabarActualizarEntradaStock(entradaStockBD);
+
+        String errorValidacion = "Error de validación Método Actualizar Entrada Stock de Bienes";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    public boolean validacionActualizarEntradaStock(EntradaStock entradaStock, Map<String, Object> resultValidacion) throws Exception {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(entradaStock == null || entradaStock.getId() == null || ( entradaStock.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0)){
+            resultado = false;
+            error = "Debe de remitir correctamente el ID de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_INICIADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra en el estado iniciado, primero registre el pago";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getActualizado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de Actualización de la Compra";
+            errors.add(error);
+        }
+
+        if(entradaStock.getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) == 0){
+            resultado = false;
+            error = "La Compra ya se encuentra con Stocks Actualizados";
+            errors.add(error);
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private EntradaStock grabarActualizarEntradaStock(EntradaStock entradaStock) throws Exception {
+
+        entradaStock.setActualizado(Constantes.COMPRA_SI_ACTUALIZADO);
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        FacturaProveedor comprobante = new FacturaProveedor();
+
+        params.put("ID", entradaStock.getId());
+        params.put("ACTUALIZADO", entradaStock.getActualizado());
+        params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+        entradaStockMapper.updateByPrimaryKeySelective(params);
+
+        //Ingresar Cantidades a Stock
+        params.clear();
+        params.put("ENTRADA_STOCK_ID", entradaStock.getId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
+        for (DetalleEntradaStock de: detalleEntradaStocks) {
+            params.clear();
+            params.put("PRODUCTO_ID", de.getProducto().getId());
+            params.put("ALMACEN_ID", de.getAlmacenId());
+            params.put("EMPRESA_ID", de.getEmpresaId());
+
+            List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+            Lote loteBD = null;
+
+            if(de.getLote() != null && de.getLote().getId() != null)
+                loteBD = loteDAO.listarPorId(de.getLote().getId());
+
+            this.modificarStocksOnlyStocks(Constantes.TIPO_ENTRADA_PRODUCTOS, stockG1.get(0), loteBD, de.getCantidad() * de.getCantreal());
+        }
+
+        return entradaStock;
+    }
+
+    @Override
+    public EntradaStock revertirFacturaEntradaStock(EntradaStock entradaStock) throws Exception {
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        EntradaStock entradaStockBD = this.listarPorId(entradaStock.getId());
+
+        entradaStockBD.setUpdatedAd(fechaActualTime);
+
+        User user = new User();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        user.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
+        entradaStockBD.setUser(user);
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionReversionFacturaEntradaStock(entradaStockBD, resultValidacion);
+
+        if(validacion)
+            return this.grabarReversionFacturaEntradaStock(entradaStockBD);
+
+        String errorValidacion = "Error de validación Método Reversión de Factura de Entrada Stock de Bienes";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    public boolean validacionReversionFacturaEntradaStock(EntradaStock entradaStock, Map<String, Object> resultValidacion) throws Exception {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(entradaStock == null || entradaStock.getId() == null || ( entradaStock.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0)){
+            resultado = false;
+            error = "Debe de remitir correctamente el ID de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_INICIADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra en el estado iniciado, primero registre el pago";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getFacturado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de Facturado de la Compra";
+            errors.add(error);
+        }
+
+        if(entradaStock.getFacturado().compareTo(Constantes.COMPRA_NO_FACTURADO) == 0){
+            resultado = false;
+            error = "La Compra no cuenta con Factura para Revertir";
+            errors.add(error);
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private EntradaStock grabarReversionFacturaEntradaStock(EntradaStock entradaStock) throws Exception {
+
+        entradaStock.setFacturado(Constantes.COMPRA_NO_FACTURADO);
+        entradaStock.setFacturaProveedor(null);
+
+        //entradaStock = entradaStockDAO.modificar(entradaStock);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("FACTURA_PROVEEDOR_ID_NULABLE", Constantes.CANTIDAD_UNIDAD);
+        params.put("ID", entradaStock.getId());
+        params.put("FACTURADO", entradaStock.getFacturado());
+        params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+        entradaStockMapper.updateByPrimaryKeySelective(params);
+
+        return entradaStock;
+    }
+
+
+    @Override
+    public EntradaStock revertirActualizacionEntradaStock(EntradaStock entradaStock) throws Exception {
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+        EntradaStock entradaStockBD = this.listarPorId(entradaStock.getId());
+
+        entradaStockBD.setUpdatedAd(fechaActualTime);
+
+        User user = new User();
+
+        //TODO: Temporal hasta incluir Oauth inicio
+        user.setUserId(2L);
+        //Todo: Temporal hasta incluir Oauth final
+
+        entradaStockBD.setUser(user);
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionReversionActualizacionEntradaStock(entradaStockBD, resultValidacion);
+
+        if(validacion)
+            return this.grabarReversionActualizacionEntradaStock(entradaStockBD);
+
+        String errorValidacion = "Error de validación Método Reversión Actualización Entrada Stock de Bienes";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    public boolean validacionReversionActualizacionEntradaStock(EntradaStock entradaStock, Map<String, Object> resultValidacion) throws Exception {
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+        if(entradaStock == null || entradaStock.getId() == null || ( entradaStock.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0)){
+            resultado = false;
+            error = "Debe de remitir correctamente el ID de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de la Compra";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_ANULADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra anulada";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getEstado().intValue() == Constantes.COMPRA_ESTADO_INICIADO){
+            resultado = false;
+            error = "La Compra remitida se encuentra en el estado iniciado, primero registre el pago";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(entradaStock.getActualizado() == null){
+            resultado = false;
+            error = "Debe de remitir correctamente el Estado de Actualización de la Compra";
+            errors.add(error);
+        }
+
+        if(entradaStock.getActualizado().compareTo(Constantes.COMPRA_NO_ACTUALIZADO) == 0){
+            resultado = false;
+            error = "La Compra no cuenta con Actualización de Stocks Registrada para Revertir";
+            errors.add(error);
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("ENTRADA_STOCK_ID", entradaStock.getId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
+        for (DetalleEntradaStock de: detalleEntradaStocks) {
+            params.clear();
+            params.put("PRODUCTO_ID", de.getProducto().getId());
+            params.put("ALMACEN_ID", de.getAlmacenId());
+            params.put("EMPRESA_ID", de.getEmpresaId());
+
+            List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+            Stock stockBD = null;
+
+            if(stockG1 != null && !stockG1.isEmpty())
+                stockBD = stockG1.get(0);
+            Lote loteBD = null;
+
+            if(de.getLote() != null && de.getLote().getId() != null)
+                loteBD = loteDAO.listarPorId(de.getLote().getId());
+
+            if(stockBD != null && stockBD.getCantidad().compareTo(de.getCantidad() * de.getCantreal()) < 0){
+                resultado = false;
+                error = "No se puede revertir la Actualización de Stocks, ya que la cantidad del producto a revertir " + de.getProducto().getNombre() + " es mayor a la cantidad actual en Stock";
+                errors.add(error);
+            }
+
+            if(loteBD != null && loteBD.getCantidad().compareTo(de.getCantidad() * de.getCantreal()) < 0){
+                resultado = false;
+                error = "No se puede revertir la Actualización de Stocks, ya que se han empleado unidades del producto " + de.getProducto().getNombre() + " del lote " + loteBD.getNombre();
+                errors.add(error);
+            }
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private EntradaStock grabarReversionActualizacionEntradaStock(EntradaStock entradaStock) throws Exception {
+
+        entradaStock.setActualizado(Constantes.COMPRA_NO_ACTUALIZADO);
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("ID", entradaStock.getId());
+        params.put("ACTUALIZADO", entradaStock.getActualizado());
+        params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+        entradaStockMapper.updateByPrimaryKeySelective(params);
+
+        //Revertir Cantidades a Stock
+        params.clear();
+        params.put("ENTRADA_STOCK_ID", entradaStock.getId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleEntradaStock> detalleEntradaStocks = detalleEntradaStockMapper.listByParameterMap(params);
+        for (DetalleEntradaStock de: detalleEntradaStocks) {
+            params.clear();
+            params.put("PRODUCTO_ID", de.getProducto().getId());
+            params.put("ALMACEN_ID", de.getAlmacenId());
+            params.put("EMPRESA_ID", de.getEmpresaId());
+
+            List<Stock> stockG1 = stockMapper.listByParameterMap(params);
+            Lote loteBD = null;
+
+            if(de.getLote() != null && de.getLote().getId() != null)
+                loteBD = loteDAO.listarPorId(de.getLote().getId());
+
+            this.modificarStocksOnlyStocks(Constantes.TIPO_RETIRO_PRODUCTOS, stockG1.get(0), loteBD, de.getCantidad() * de.getCantreal());
+        }
+
+        return entradaStock;
+    }
+
 }

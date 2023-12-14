@@ -1,5 +1,6 @@
 package com.bcs.ventas.controller;
 
+import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
@@ -25,6 +26,9 @@ public class EntradaStockController {
 
     @Autowired
     private EntradaStockService entradaStockService;
+
+    @Autowired
+    private FacturaProveedorDAO facturaProveedorDAO;
 
     @PostMapping("/get-entrada-stocks")
     public ResponseEntity<Page<EntradaStock>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
@@ -190,5 +194,51 @@ public class EntradaStockController {
         Page<PagoProveedor> obj = entradaStockService.listarPagos(pageable, id);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PutMapping("/facturar")
+    public ResponseEntity<EntradaStock> facturarEntradaStock(@Valid @RequestBody EntradaStock v) throws Exception{
+        if(v == null || v.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+
+        EntradaStock obj = entradaStockService.facturarEntradaStock(v);
+        return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
+    }
+
+    @PutMapping("/actualizar")
+    public ResponseEntity<EntradaStock> actualizarEntradaStock(@Valid @RequestBody EntradaStock v) throws Exception{
+        if(v == null || v.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+
+        EntradaStock obj = entradaStockService.actualizarEntradaStock(v);
+        return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
+    }
+
+    @PutMapping("/revertir-facturar")
+    public ResponseEntity<EntradaStock> revertirFacturaEntradaStock(@Valid @RequestBody EntradaStock v) throws Exception{
+        if(v == null || v.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+        Long idFactura = null;
+        if(v.getFacturaProveedor() != null && v.getFacturaProveedor().getId() != null)
+            idFactura = v.getFacturaProveedor().getId();
+
+        EntradaStock obj = entradaStockService.revertirFacturaEntradaStock(v);
+        if(idFactura != null)
+            facturaProveedorDAO.eliminar(idFactura);
+
+        return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
+    }
+
+    @PutMapping("/revertir-actualizar")
+    public ResponseEntity<EntradaStock> revertirActualizacionEntradaStock(@Valid @RequestBody EntradaStock v) throws Exception{
+        if(v == null || v.getId() == null){
+            throw new ModeloNotFoundException("ID NO ENVIADO ");
+        }
+
+        EntradaStock obj = entradaStockService.revertirActualizacionEntradaStock(v);
+        return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
     }
 }

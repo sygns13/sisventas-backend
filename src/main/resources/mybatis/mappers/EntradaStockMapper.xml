@@ -288,6 +288,9 @@
             <if test="ID != null"> AND e.id = #{ID}</if>
             <if test="NUMERO != null"> AND e.numero = #{NUMERO}</if>
             <if test="FECHA != null"> AND e.fecha = #{FECHA}</if>
+            <if test="FECHA_INI != null"> AND e.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND e.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
             <if test="HORA != null"> AND e.hora = #{HORA}</if>
             <if test="PROVEEDOR_ID != null"> AND e.proveedor_id = #{PROVEEDOR_ID}</if>
             <if test="ORDEN_COMPRA_ID != null"> AND e.orden_compra_id = #{ORDEN_COMPRA_ID}</if>
@@ -378,6 +381,9 @@
             <if test="ID != null"> AND e.id = #{ID}</if>
             <if test="NUMERO != null"> AND e.numero = #{NUMERO}</if>
             <if test="FECHA != null"> AND e.fecha = #{FECHA}</if>
+            <if test="FECHA_INI != null"> AND e.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND e.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
             <if test="HORA != null"> AND e.hora = #{HORA}</if>
             <if test="PROVEEDOR_ID != null"> AND e.proveedor_id = #{PROVEEDOR_ID}</if>
             <if test="ORDEN_COMPRA_ID != null"> AND e.orden_compra_id = #{ORDEN_COMPRA_ID}</if>
@@ -470,6 +476,10 @@
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
             <if test="ALMACEN_ID != null"> almacen_id = #{ALMACEN_ID}, </if>
+
+            <if test="FACTURA_PROVEEDOR_ID == null">
+                <if test="FACTURA_PROVEEDOR_ID_NULABLE != null">  factura_proveedor_id = null, </if>
+            </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
