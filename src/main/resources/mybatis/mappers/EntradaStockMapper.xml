@@ -296,7 +296,13 @@
             <if test="ORDEN_COMPRA_ID != null"> AND e.orden_compra_id = #{ORDEN_COMPRA_ID}</if>
             <if test="FACTURADO != null"> AND e.facturado = #{FACTURADO}</if>
             <if test="ACTUALIZADO != null"> AND e.actualizado = #{ACTUALIZADO}</if>
-            <if test="ESTADO != null"> AND e.estado = #{ESTADO}</if>
+
+            <if test="NO_ESTADO_PAGO != null"> AND e.estado != #{NO_ESTADO_PAGO}</if>
+
+            <if test="NO_ESTADO_PAGO == null">
+                <if test="ESTADO != null"> AND e.estado = #{ESTADO}</if>
+            </if>
+
             <if test="TOTAL_MONTO != null"> AND e.total_monto = #{TOTAL_MONTO}</if>
             <if test="FACTURA_PROVEEDOR_ID != null"> AND e.factura_proveedor_id = #{FACTURA_PROVEEDOR_ID}</if>
             <if test="EMPRESA_ID != null"> AND e.empresa_id = #{EMPRESA_ID}</if>
@@ -389,7 +395,13 @@
             <if test="ORDEN_COMPRA_ID != null"> AND e.orden_compra_id = #{ORDEN_COMPRA_ID}</if>
             <if test="FACTURADO != null"> AND e.facturado = #{FACTURADO}</if>
             <if test="ACTUALIZADO != null"> AND e.actualizado = #{ACTUALIZADO}</if>
-            <if test="ESTADO != null"> AND e.estado = #{ESTADO}</if>
+
+            <if test="NO_ESTADO_PAGO != null"> AND e.estado != #{NO_ESTADO_PAGO}</if>
+
+            <if test="NO_ESTADO_PAGO == null">
+                <if test="ESTADO != null"> AND e.estado = #{ESTADO}</if>
+            </if>
+
             <if test="TOTAL_MONTO != null"> AND e.total_monto = #{TOTAL_MONTO}</if>
             <if test="FACTURA_PROVEEDOR_ID != null"> AND e.factura_proveedor_id = #{FACTURA_PROVEEDOR_ID}</if>
             <if test="EMPRESA_ID != null"> AND e.empresa_id = #{EMPRESA_ID}</if>

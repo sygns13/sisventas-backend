@@ -176,7 +176,7 @@ public class EntradaStockController {
         return new ResponseEntity<PagoProveedor>(obj, HttpStatus.OK);
     }
 
-    @PostMapping("/get-entrada-stocks-cobrar")
+    @PostMapping("/get-entrada-stocks-pagar")
     public ResponseEntity<Page<EntradaStock>> listarEntradaStocksCobrar(@RequestParam(name = "page", defaultValue = "0") int page,
                                                           @RequestParam(name = "size", defaultValue = "5") int size,
                                                           @RequestBody FiltroEntradaStock filtros) throws Exception{

@@ -532,8 +532,18 @@ public class EntradaStockServiceImpl implements EntradaStockService {
             params.put("FECHA_FIN", filtros.getFechaFinal());
         }
 
-        if(filtros.getEstado() != null)
-            params.put("ESTADO", filtros.getEstado());
+        if(filtros.getEstadoPago() != null){
+
+            if(filtros.getEstadoPago().compareTo(Constantes.CANTIDAD_ZERO) == 0)
+                params.put("NO_ESTADO_PAGO", Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
+
+            if(filtros.getEstadoPago().compareTo(Constantes.CANTIDAD_UNIDAD_INTEGER) == 0)
+                params.put("ESTADO", Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
+
+        } else {
+            if(filtros.getEstado() != null)
+                params.put("ESTADO", filtros.getEstado());
+        }
 
         if(filtros.getActualizado() != null)
             params.put("ACTUALIZADO", filtros.getActualizado());

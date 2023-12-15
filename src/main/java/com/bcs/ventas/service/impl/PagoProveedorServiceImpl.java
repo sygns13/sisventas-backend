@@ -296,7 +296,10 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public PagoProveedor grabarRegistro(PagoProveedor pagoProveedor) throws Exception {
-        pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_NO_FACTURADO);
+
+        //FIXME: Temporal hasta incluir currencys
+        pagoProveedor.setMontoReal(pagoProveedor.getMontoPago());
+        pagoProveedor.setTipoPago(Constantes.TIPO_PAGO_SOLES);
 
         if(pagoProveedor.getMontoReal().compareTo(new BigDecimal(0)) <= 0)
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_NO_COBRADA);
@@ -306,7 +309,6 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
         if(pagoProveedor.getMontoReal().compareTo(new BigDecimal(0)) > 0 && pagoProveedor.getMontoReal().compareTo(pagoProveedor.getEntradaStock().getMontoPorPagar()) >= 0){
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
-            pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_SI_FACTURADO);
             pagoProveedor.setMontoReal(pagoProveedor.getEntradaStock().getMontoPorPagar());
             pagoProveedor.setMontoPago(pagoProveedor.getEntradaStock().getMontoPorPagar());
         }
@@ -316,10 +318,8 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
-        params.put("FACTURADO", pagoProveedor.getEntradaStock().getFacturado());
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
         entradaStockMapper.updateByPrimaryKeySelective(params);
-
 
         return pagoProveedorReg;
     }
@@ -329,7 +329,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
     public int grabarRectificar(PagoProveedor pagoProveedor) throws Exception {
         PagoProveedor pagoProveedorBD = this.listarPorId(pagoProveedor.getId());
 
-        pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_NO_FACTURADO);
+        //FIXME: Temporal hasta incluir currencys
+        pagoProveedor.setMontoReal(pagoProveedor.getMontoPago());
+        pagoProveedor.setTipoPago(Constantes.TIPO_PAGO_SOLES);
 
         if(pagoProveedor.getMontoReal().subtract(pagoProveedorBD.getMontoReal()).compareTo(new BigDecimal(0)) <= 0)
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_NO_COBRADA);
@@ -339,7 +341,6 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
         if(pagoProveedor.getMontoReal().subtract(pagoProveedorBD.getMontoReal()).compareTo(new BigDecimal(0)) > 0 && pagoProveedor.getMontoReal().subtract(pagoProveedorBD.getMontoReal()).compareTo(pagoProveedor.getEntradaStock().getMontoPorPagar()) >= 0){
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
-            pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_SI_FACTURADO);
             pagoProveedor.setMontoReal(pagoProveedor.getEntradaStock().getMontoPorPagar().add(pagoProveedorBD.getMontoReal()));
             pagoProveedor.setMontoPago(pagoProveedor.getEntradaStock().getMontoPorPagar().add(pagoProveedorBD.getMontoReal()));
         }
@@ -368,7 +369,6 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.clear();
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
-        params.put("FACTURADO", pagoProveedor.getEntradaStock().getFacturado());
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
@@ -409,10 +409,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         int res= pagoProveedorMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
-            throw new RuntimeException("No se pudo eliminar el Banco indicado, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+            throw new RuntimeException("No se pudo eliminar el Registro indicado, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
 
-        pagoProveedor.getEntradaStock().setFacturado(Constantes.COMPRA_NO_FACTURADO);
 
         if(pagoProveedor.getMontoReal().compareTo(pagoProveedor.getEntradaStock().getMontoPagado()) >= 0)
             pagoProveedor.getEntradaStock().setEstado(Constantes.COMPRA_ESTADO_COMPRA_NO_COBRADA);
@@ -423,7 +422,6 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.clear();
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
-        params.put("FACTURADO", pagoProveedor.getEntradaStock().getFacturado());
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
@@ -468,7 +466,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
         if(pagoProveedor.getEntradaStock().getEstado().intValue() == Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL){
             resultado = false;
-            error = "La Compra remitida se encuentra cobrada en su totalidad";
+            error = "La Compra remitida se encuentra pagada en su totalidad";
             errors.add(error);
 
             resultValidacion.put("errors",errors);
@@ -509,7 +507,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
             if(pagoProveedor.getNumeroCuenta().trim().isEmpty()){
                 resultado = false;
-                error = "Debe de Seleccionar una Cuenta Bancaria Válida";
+                error = "Debe de Ingresar una Cuenta Bancaria Válida";
                 errors.add(error);
             }
 
@@ -539,7 +537,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
             if(pagoProveedor.getNumeroCelular().trim().isEmpty()){
                 resultado = false;
-                error = "Debe de Seleccionar un Número de Celular Válido";
+                error = "Debe de Ingresar un Número de Celular Válido";
                 errors.add(error);
             }
 
@@ -565,7 +563,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
             }
         }
 
-        if(pagoProveedor.getMontoReal() == null || pagoProveedor.getMontoReal().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
+        if(pagoProveedor.getMontoPago() == null || pagoProveedor.getMontoPago().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
             resultado = false;
             error = "Debe de remitir un Monto de Pago Válido";
             errors.add(error);
@@ -646,7 +644,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
             if(pagoProveedor.getNumeroCuenta().trim().isEmpty()){
                 resultado = false;
-                error = "Debe de Seleccionar una Cuenta Bancaria Válida";
+                error = "Debe de Ingresar una Cuenta Bancaria Válida";
                 errors.add(error);
             }
 
@@ -676,7 +674,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
             if(pagoProveedor.getNumeroCelular().trim().isEmpty()){
                 resultado = false;
-                error = "Debe de Seleccionar un Número de Celular Válido";
+                error = "Debe de Ingresar un Número de Celular Válido";
                 errors.add(error);
             }
 
@@ -702,9 +700,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
             }
         }
 
-        if(pagoProveedor.getMontoReal() == null || pagoProveedor.getMontoReal().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
+        if(pagoProveedor.getMontoPago() == null || pagoProveedor.getMontoPago().compareTo(new BigDecimal(Constantes.CANTIDAD_ZERO)) < 0){
             resultado = false;
-            error = "Debe de remitir un Monto de pago Válido";
+            error = "Debe de remitir un Monto de Pago Válido";
             errors.add(error);
         }
 

@@ -42,6 +42,8 @@ public class FiltroEntradaStock {
     //Buscar General
     private String buscarDatos;
 
+    private Integer estadoPago;
+
     public Long getAlmacenId() {
         return almacenId;
     }
@@ -240,5 +242,13 @@ public class FiltroEntradaStock {
 
     public void setBuscarDatos(String buscarDatos) {
         this.buscarDatos = buscarDatos;
+    }
+
+    public Integer getEstadoPago() {
+        return estadoPago;
+    }
+
+    public void setEstadoPago(Integer estadoPago) {
+        this.estadoPago = estadoPago;
     }
 }
