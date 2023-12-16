@@ -14,7 +14,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/detalleunidadproducto")
@@ -30,6 +35,26 @@ public class DetalleUnidadProductoController {
         List<Almacen> obj = detalleUnidadProductoService.getAlmacens(idEmpresa);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping("/almacens-date")
+    public ResponseEntity<Map<String, Object>> getAlmacensDate() throws Exception{
+
+        Map<String, Object> resultado = new HashMap<>();
+        Long idEmpresa=1L;
+        List<Almacen> obj = detalleUnidadProductoService.getAlmacens(idEmpresa);
+
+        LocalDateTime fechaActual = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+        String fecha = fechaActual.format(formatter);
+        String hora = fechaActual.format(formatter2);
+
+        resultado.put("almacens", obj);
+        resultado.put("fecha", fecha);
+        resultado.put("hora", hora);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
 

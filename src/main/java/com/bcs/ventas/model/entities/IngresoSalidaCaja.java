@@ -1,12 +1,23 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
+@Schema(description = "Ingreso y Salidas de Caja Model")
 @Entity
 @Table(name = "ingreso_salida_cajas")
 public class IngresoSalidaCaja implements Serializable {
@@ -20,91 +31,80 @@ public class IngresoSalidaCaja implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(description = "Monto del Movimiento de Caja")
+    @NotNull( message = "{ingreso_salida_cajas.monto.notnull}")
+    @DecimalMin(value = "0.01", message = "{ingreso_salida_cajas.monto.min}")
+    @DecimalMax(value = "999999999", message = "{ingreso_salida_cajas.monto.max}")
     @Column(name="monto", nullable = true)
-    private Double monto;
+    private BigDecimal monto;
 
-    @Column(name="concepto", nullable = true, length= 45)
+    @Schema(description = "Concepto del Movimiento de Caja")
+    @NotNull( message = "{ingreso_salida_cajas.concepto.notnull}")
+    @Size(min = 1, max = 500, message = "{ingreso_salida_cajas.concepto.size}")
+    @Column(name="concepto", nullable = true, length= 500)
     private String concepto;
 
-    @Column(name="comprobante", nullable = true, length= 45)
+    @Schema(description = "Comprobante del Movimiento de Caja")
+    @Column(name="comprobante", nullable = true, length= 100)
     private String comprobante;
 
+    @Schema(description = "Fecha del Movimiento de Caja")
+    @NotNull( message = "{ingreso_salida_cajas.fecha.notnull}")
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="fecha", nullable = true)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date fecha;
+    private LocalDate fecha;
 
-    @Column(name="sede_id", nullable = true)
-    private Long sedeId;
+    @Schema(description = "Almacen donde se realizó el Movimiento de Caja")
+    @ManyToOne
+    @JoinColumn(name = "almacen_id", nullable = false, foreignKey = @ForeignKey(name = "FK_almacen_venta"))
+    private Almacen almacen;
 
-    @Column(name="tipo", nullable = true, length= 45)
-    private String tipo;
+    @Schema(description = "Tipo de Movimiento de Caja")
+    @NotNull( message = "{ingreso_salida_cajas.tipo.notnull}")
+    @Column(name="tipo", nullable = true)
+    private Integer tipo;
 
+    @Schema(description = "Tipo de Comprovante de Movimiento de Caja")
+    @NotNull( message = "{ingreso_salida_cajas.tipo_comprobante.notnull}")
     @Column(name="tipo_comprobante", nullable = true)
     private Integer tipoComprobante;
 
+    @Schema(description = "Hora del Movimiento de Caja")
+    @NotNull( message = "{ingreso_salida_cajas.hora.notnull}")
     @Column(name="hora", nullable = true)
+    @JsonFormat(pattern="HH:mm")
     //@Temporal(TemporalType.TIME)
-    @DateTimeFormat(pattern="HH:mm:ss")
-    private Time hora;
+    //@DateTimeFormat(pattern="HH:mm:ss")
+    private LocalTime hora;
 
-    @Column(name="user_id", nullable = true)
-    private Long userId;
+    @Schema(description = "User que se realizó la Venta")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_user_venta"))
+    private User user;
 
+    @Schema(description = "ID Empresa Padre")
+    //@NotNull( message = "{producto.empresa_id.notnull}")
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Estado de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
+    @Schema(description = "Borrado Lógico de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
-
+    private LocalDateTime updatedAd;
     public IngresoSalidaCaja() {
-    }
-
-    public IngresoSalidaCaja(Long id, Double monto, String concepto, String comprobante, Date fecha, Long sedeId, String tipo, Integer tipoComprobante, Time hora, Long userId, Long empresaId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.monto = monto;
-        this.concepto = concepto;
-        this.comprobante = comprobante;
-        this.fecha = fecha;
-        this.sedeId = sedeId;
-        this.tipo = tipo;
-        this.tipoComprobante = tipoComprobante;
-        this.hora = hora;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-    }
-
-    public IngresoSalidaCaja(Long id, Double monto, String concepto, String comprobante, Date fecha, Long sedeId, String tipo, Integer tipoComprobante, Time hora, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.monto = monto;
-        this.concepto = concepto;
-        this.comprobante = comprobante;
-        this.fecha = fecha;
-        this.sedeId = sedeId;
-        this.tipo = tipo;
-        this.tipoComprobante = tipoComprobante;
-        this.hora = hora;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
     }
 
     public Long getId() {
@@ -115,11 +115,11 @@ public class IngresoSalidaCaja implements Serializable {
         this.id = id;
     }
 
-    public Double getMonto() {
+    public BigDecimal getMonto() {
         return monto;
     }
 
-    public void setMonto(Double monto) {
+    public void setMonto(BigDecimal monto) {
         this.monto = monto;
     }
 
@@ -139,27 +139,27 @@ public class IngresoSalidaCaja implements Serializable {
         this.comprobante = comprobante;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
-    public Long getSedeId() {
-        return sedeId;
+    public Almacen getAlmacen() {
+        return almacen;
     }
 
-    public void setSedeId(Long sedeId) {
-        this.sedeId = sedeId;
+    public void setAlmacen(Almacen almacen) {
+        this.almacen = almacen;
     }
 
-    public String getTipo() {
+    public Integer getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(Integer tipo) {
         this.tipo = tipo;
     }
 
@@ -171,20 +171,20 @@ public class IngresoSalidaCaja implements Serializable {
         this.tipoComprobante = tipoComprobante;
     }
 
-    public Time getHora() {
+    public LocalTime getHora() {
         return hora;
     }
 
-    public void setHora(Time hora) {
+    public void setHora(LocalTime hora) {
         this.hora = hora;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getEmpresaId() {
@@ -211,19 +211,19 @@ public class IngresoSalidaCaja implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }
