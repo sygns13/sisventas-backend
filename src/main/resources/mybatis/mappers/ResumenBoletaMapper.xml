@@ -70,14 +70,14 @@
             <if test="DOCU_LINK_PDF != null"> docu_link_pdf = #{DOCU_LINK_PDF}, </if>
             <if test="DOCU_LINK_CDR != null"> docu_link_cdr = #{DOCU_LINK_CDR}, </if>
             <if test="DOCU_LINK_XML != null"> docu_link_xml = #{DOCU_LINK_XML}, </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
-        where id=#{ID}
+        where id=#{ID} and empresa_id=#{EMPRESA_ID}
     </update>
 
 </mapper>

@@ -166,14 +166,14 @@
             <if test="ALMACEN_ID != null"> almacen_id = #{ALMACEN_ID}, </if>
             <if test="PRODUCTO_ID != null"> producto_id = #{PRODUCTO_ID}, </if>
             <if test="CANTIDAD != null"> cantidad = #{CANTIDAD} </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
-        where id=#{ID}
+        where id=#{ID} and empresa_id=#{EMPRESA_ID}
     </update>
 
 </mapper>

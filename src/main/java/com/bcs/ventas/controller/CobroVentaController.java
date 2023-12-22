@@ -3,10 +3,14 @@ package com.bcs.ventas.controller;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.CobroVenta;
 import com.bcs.ventas.service.CobroVentaService;
+import com.bcs.ventas.utils.JwtUtils;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +27,33 @@ public class CobroVentaController {
     @Autowired
     private CobroVentaService cobroVentaService;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
+    private void SetClaims(String Authorization) throws Exception {
+        String[] bearerAuth = Authorization.split(" ");
+        Claims claims = jwtUtils.verify(bearerAuth[1]);
+
+        claimsAuthorization.setClaims(claims);
+        claimsAuthorization.setAuthorization(Authorization);
+        claimsAuthorization.setUsername(claims.get("user_email").toString());
+
+        if(claims.get("auth_level_3") != null)
+            claimsAuthorization.setUserId(Long.parseLong(claims.get("auth_level_3").toString()));
+        if(claims.get("auth_level_2") != null)
+            claimsAuthorization.setEmpresaId(Long.parseLong(claims.get("auth_level_2").toString()));
+    }
+
     @GetMapping
-    public ResponseEntity<Page<CobroVenta>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
-                                              @RequestParam(name = "size", defaultValue = "5") int size,
-                                              @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+    public ResponseEntity<Page<CobroVenta>> listar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                                   @RequestParam(name = "size", defaultValue = "5") int size,
+                                                   @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+
+        this.SetClaims(Authorization);
 
         Pageable pageable = PageRequest.of(page,size);
         Page<CobroVenta> resultado = cobroVentaService.listar(pageable, buscar);
@@ -35,7 +62,11 @@ public class CobroVentaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CobroVenta> listarPorId(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<CobroVenta> listarPorId(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                  @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         CobroVenta obj = cobroVentaService.listarPorId(id);
 
         if(obj == null) {
@@ -46,7 +77,11 @@ public class CobroVentaController {
     }
 
     @PostMapping
-    public ResponseEntity<CobroVenta> registrar(@Valid @RequestBody CobroVenta a) throws Exception{
+    public ResponseEntity<CobroVenta> registrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                @Valid @RequestBody CobroVenta a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         a.setId(null);
         CobroVenta obj = cobroVentaService.registrar(a);
 
@@ -56,7 +91,11 @@ public class CobroVentaController {
     }
 
     @PutMapping
-    public ResponseEntity<Integer> modificar(@Valid @RequestBody CobroVenta a) throws Exception{
+    public ResponseEntity<Integer> modificar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                             @Valid @RequestBody CobroVenta a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -73,7 +112,11 @@ public class CobroVentaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         CobroVenta obj = cobroVentaService.listarPorId(id);
 
         if(obj == null) {
@@ -85,7 +128,11 @@ public class CobroVentaController {
     }
 
     @GetMapping("/altabaja/{id}/{valor}")
-    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+    public ResponseEntity<Void> altabaja(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+
+        this.SetClaims(Authorization);
+
         CobroVenta obj = cobroVentaService.listarPorId(id);
 
         if(obj == null) {
@@ -97,7 +144,10 @@ public class CobroVentaController {
     }
 
     @GetMapping("/listar-all")
-    public ResponseEntity<List<CobroVenta>> listarAll() throws Exception{
+    public ResponseEntity<List<CobroVenta>> listarAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
+
         List<CobroVenta> resultado = cobroVentaService.listar();
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);

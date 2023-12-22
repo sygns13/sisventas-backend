@@ -7,6 +7,7 @@ import com.bcs.ventas.model.entities.Almacen;
 import com.bcs.ventas.model.entities.Banco;
 import com.bcs.ventas.service.BancoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +33,9 @@ public class BancoServiceImpl implements BancoService {
     @Autowired
     private BancoMapper bancoMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Banco registrar(Banco a) throws Exception {
         //Date fechaActual = new Date();
@@ -39,10 +43,10 @@ public class BancoServiceImpl implements BancoService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -105,9 +109,9 @@ public class BancoServiceImpl implements BancoService {
     public List<Banco> listar() throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -119,9 +123,9 @@ public class BancoServiceImpl implements BancoService {
     public Page<Banco> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -181,7 +185,7 @@ public class BancoServiceImpl implements BancoService {
 
     }
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -194,7 +198,10 @@ public class BancoServiceImpl implements BancoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= bancoMapper.updateByPrimaryKeySelective(params);
 
@@ -217,8 +224,10 @@ public class BancoServiceImpl implements BancoService {
         params.put("ID", b.getId());
         params.put("NOMBRE", b.getNombre());
         params.put("DIR", b.getDir());
-        params.put("USER_ID", b.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", b.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         return bancoMapper.updateByPrimaryKeySelective(params);
     }
@@ -234,7 +243,10 @@ public class BancoServiceImpl implements BancoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= bancoMapper.updateByPrimaryKeySelective(params);
 
@@ -247,7 +259,7 @@ public class BancoServiceImpl implements BancoService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Banco a, Map<String, Object> resultValidacion){

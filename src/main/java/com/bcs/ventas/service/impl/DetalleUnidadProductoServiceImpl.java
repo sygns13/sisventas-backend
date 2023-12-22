@@ -15,6 +15,7 @@ import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Unidad;
 import com.bcs.ventas.service.DetalleUnidadProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +53,9 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
     @Autowired
     private ProductoMapper productoMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
 
     @Override
     public List<Almacen> getAlmacens(Long idEmpresa) throws Exception {
@@ -84,10 +88,10 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
         detalleUnidadProducto.setCreatedAt(fechaActual);
         detalleUnidadProducto.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        detalleUnidadProducto.setEmpresaId(1L);
-        detalleUnidadProducto.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        detalleUnidadProducto.setEmpresaId(claimsAuthorization.getEmpresaId());
+        detalleUnidadProducto.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         detalleUnidadProducto.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         detalleUnidadProducto.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -127,9 +131,9 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
     @Override
     public DetalleUnidadProducto listarPorId(Long id) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
@@ -185,6 +189,7 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
             params.put("USER_ID", detalleUnidadProducto.getUserId());
             params.put("UPDATED_AT", detalleUnidadProducto.getUpdatedAd());
 
+            params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
             int resultado = detalleUnidadProductoMapper.updateByPrimaryKeySelective(params);
 
         }else{
@@ -203,6 +208,7 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
             params.put("PRECIO_COMPRA", detalleUnidadProducto.getCostoCompra());
             params.put("UPDATED_AT", detalleUnidadProducto.getUpdatedAd());
 
+            params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
             int resultado = productoMapper.updateByPrimaryKeySelective(params);
         }
 
@@ -227,8 +233,10 @@ public class DetalleUnidadProductoServiceImpl implements DetalleUnidadProductoSe
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= detalleUnidadProductoMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){

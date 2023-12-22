@@ -6,6 +6,7 @@ import com.bcs.ventas.model.entities.TipoDocumento;
 import com.bcs.ventas.model.entities.TipoProducto;
 import com.bcs.ventas.service.TipoDocumentoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +27,9 @@ public class TipoDocumentoServiceimpl implements TipoDocumentoService {
 
     @Autowired
     private TipoDocumentoMapper tipoDocumentoMapper;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
 
     @Override
     public TipoDocumento registrar(TipoDocumento tipoDocumento) throws Exception {

@@ -11,6 +11,7 @@ import com.bcs.ventas.service.InitComprobanteService;
 import com.bcs.ventas.service.VentaService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroVenta;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,9 @@ public class VentaServiceImpl implements VentaService {
     @Autowired
     private ClienteMapper clienteMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Venta registrar(Venta v) throws Exception {
 
@@ -115,12 +119,12 @@ public class VentaServiceImpl implements VentaService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        v.setEmpresaId(1L);
-        user.setId(2L);
+        //Oauth inicio
+        v.setEmpresaId(claimsAuthorization.getEmpresaId());
+        user.setId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         v.setUser(user);
         v.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -179,9 +183,9 @@ public class VentaServiceImpl implements VentaService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         v.setUser(user);
 
@@ -217,9 +221,9 @@ public class VentaServiceImpl implements VentaService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setId(claimsAuthorization.getUserId());
+        //Oauth final
 
         v.setUser(user);
 
@@ -250,9 +254,9 @@ public class VentaServiceImpl implements VentaService {
 
     public Venta modificarVentaClienteFirst(Venta v) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -427,6 +431,8 @@ public class VentaServiceImpl implements VentaService {
         params.put("PAGADO", c.getVenta().getPagado());
         params.put("COMPROBANTE_ID", comprobante.getId());
         params.put("UPDATED_AT", c.getVenta().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         ventaMapper.updateByPrimaryKeySelective(params);
 
 
@@ -447,9 +453,9 @@ public class VentaServiceImpl implements VentaService {
         comprobante.setCantidadDigitos(initComprobante.getCantidadDigitos());
         comprobante.setInitComprobante(initComprobante);
         comprobante.setEstado(Constantes.COMPROBANTE_ESTADO_CREADO);
-        //TODO: Temporal hasta incluir Oauth inicio
-        comprobante.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        comprobante.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         comprobante.setAlmacenId(venta.getAlmacen().getId());
         comprobante.setEmpresaId(venta.getEmpresaId());
         comprobante.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -467,6 +473,8 @@ public class VentaServiceImpl implements VentaService {
         //params.put("ESTADO", venta.getEstado());
         params.put("COMPROBANTE_ID", comprobante.getId());
         params.put("UPDATED_AT", venta.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         ventaMapper.updateByPrimaryKeySelective(params);
 
 
@@ -532,8 +540,10 @@ public class VentaServiceImpl implements VentaService {
             params.put("MONTO_ICBPER", v.getMontoIcbper());
 
 
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", v.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return ventaMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -543,9 +553,10 @@ public class VentaServiceImpl implements VentaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID", v.getId());
         params.put("CLIENTE_ID", v.getCliente().getId());
-        params.put("USER_ID", v.getUser().getId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", v.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return ventaMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -563,9 +574,10 @@ public class VentaServiceImpl implements VentaService {
         params.put("ESTADO", v.getEstado());
         params.put("PAGADO", v.getPagado());
         params.put("HORA", v.getHora());
-        params.put("USER_ID", v.getUser().getId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", v.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int resultado = ventaMapper.updateByPrimaryKeySelective(params);
 
         return v;
@@ -574,9 +586,9 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public Venta agregarProducto(AgregarProductoBean addProductoVenta) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
@@ -696,12 +708,12 @@ public class VentaServiceImpl implements VentaService {
         detalleVenta.setCreatedAt(fechaActualTime);
         detalleVenta.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        detalleVenta.setEmpresaId(1L);
-        detalleVenta.setUserId(2L);
+        //Oauth inicio
+        detalleVenta.setEmpresaId(claimsAuthorization.getEmpresaId());
+        detalleVenta.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         detalleVenta.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         detalleVenta.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -851,21 +863,21 @@ public class VentaServiceImpl implements VentaService {
         v.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         v.setUser(user);
 
         cobroVenta.setVenta(v);
         cobroVenta.setCreatedAt(fechaActualTime);
         cobroVenta.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        cobroVenta.setEmpresaId(1L);
-        cobroVenta.setUserId(2L);
+        //Oauth inicio
+        cobroVenta.setEmpresaId(claimsAuthorization.getEmpresaId());
+        cobroVenta.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         cobroVenta.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         cobroVenta.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -959,9 +971,9 @@ public class VentaServiceImpl implements VentaService {
         String error;
         String warning;
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
         BigDecimal cantidadTotal = BigDecimal.valueOf(detalleVenta.getCantidad() * detalleVenta.getCantidadReal());
 
         if(detalleVenta.getProducto().getActivoLotes().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
@@ -1033,9 +1045,9 @@ public class VentaServiceImpl implements VentaService {
         String error;
         String warning;
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
         BigDecimal cantidadTotal = BigDecimal.valueOf(detalleVenta.getCantidad() * detalleVenta.getCantidadReal());
 
         DetalleVenta detalleVentaBD = detalleVentaDAO.listarPorId(detalleVenta.getId());
@@ -1099,9 +1111,9 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarRegistroDetalle(Venta venta, DetalleVenta detalleVenta) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         detalleVenta = detalleVentaDAO.registrar(detalleVenta);
 
@@ -1125,9 +1137,9 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarModificarDetalleAdd(Venta venta, DetalleVenta detalleVenta, DetalleVenta detalleVentaBD) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         BigDecimal precioTotal = detalleVenta.getPrecioVenta().multiply(BigDecimal.valueOf(detalleVenta.getCantidad() + detalleVentaBD.getCantidad()));
 
@@ -1145,6 +1157,7 @@ public class VentaServiceImpl implements VentaService {
         params.put("PRECIO_TOTAL", precioTotal);
         params.put("CANTIDAD_REAL", detalleVenta.getCantidadReal());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res = detalleVentaMapper.updateByPrimaryKeySelective(params);
 
         //DetalleVenta d = detalleVentaDAO.registrar(detalleVenta);
@@ -1169,9 +1182,9 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarModificarDetalle(Venta venta, DetalleVenta detalleVenta, DetalleVenta detalleVentaBD) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Lote loteBD1 = null;
         Lote loteBD2 = null;
@@ -1200,6 +1213,7 @@ public class VentaServiceImpl implements VentaService {
         if(detalleVenta.getLote() != null)
             params.put("LOTE_ID", detalleVenta.getLote().getId());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res = detalleVentaMapper.updateByPrimaryKeySelective(params);
 
         //this.recalcularVenta(venta);
@@ -1212,9 +1226,9 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarResetVenta(Venta venta) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("VENTA_ID",venta.getId());
@@ -1244,9 +1258,9 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public void devolverStockVenta(Long ventaId) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("VENTA_ID", ventaId);
@@ -1274,9 +1288,9 @@ public class VentaServiceImpl implements VentaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public Venta grabarDeleteDetalle(Venta venta, DetalleVenta detalleVenta) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("PRODUCTO_ID", detalleVenta.getProducto().getId());
@@ -1417,6 +1431,7 @@ public class VentaServiceImpl implements VentaService {
         params.put("USER_ID", venta.getUser().getId());
         params.put("UPDATED_AT", venta.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int resultado = ventaMapper.updateByPrimaryKeySelective(params);
 
         return venta;
@@ -1484,6 +1499,7 @@ public class VentaServiceImpl implements VentaService {
         params.put("CANTIDAD_ICBPER", venta.getCantidadIcbper());
         params.put("MONTO_ICBPER", venta.getMontoIcbper());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int resultado = ventaMapper.updateByPrimaryKeySelective(params);
 
         return venta;
@@ -1540,6 +1556,7 @@ public class VentaServiceImpl implements VentaService {
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= ventaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -1562,6 +1579,7 @@ public class VentaServiceImpl implements VentaService {
         params.put("ESTADO",Constantes.VENTA_ESTADO_ANULADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= ventaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -1771,9 +1789,9 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public Page<Venta> listar(Pageable page, FiltroVenta filtros) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -1902,9 +1920,9 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public Page<Venta> listarCobrado(Pageable page, FiltroVenta filtros) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -2311,9 +2329,9 @@ public class VentaServiceImpl implements VentaService {
 
     private Long GetSequence(FiltroVenta filtros) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -2331,9 +2349,9 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public Page<CobroVenta> listarPagos(Pageable page, Long id) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);

@@ -7,13 +7,17 @@ import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Venta;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.service.VentaService;
+import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroVenta;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +33,34 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
+    private void SetClaims(String Authorization) throws Exception {
+        String[] bearerAuth = Authorization.split(" ");
+        Claims claims = jwtUtils.verify(bearerAuth[1]);
+
+        claimsAuthorization.setClaims(claims);
+        claimsAuthorization.setAuthorization(Authorization);
+        claimsAuthorization.setUsername(claims.get("user_email").toString());
+
+        if(claims.get("auth_level_3") != null)
+            claimsAuthorization.setUserId(Long.parseLong(claims.get("auth_level_3").toString()));
+        if(claims.get("auth_level_2") != null)
+            claimsAuthorization.setEmpresaId(Long.parseLong(claims.get("auth_level_2").toString()));
+    }
+
     @PostMapping("/get-ventas")
-    public ResponseEntity<Page<Venta>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                 @RequestParam(name = "size", defaultValue = "5") int size,
-                                                 @RequestBody FiltroVenta filtros) throws Exception{
+    public ResponseEntity<Page<Venta>> listar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                              @RequestParam(name = "page", defaultValue = "0") int page,
+                                              @RequestParam(name = "size", defaultValue = "5") int size,
+                                              @RequestBody FiltroVenta filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Pageable pageable = PageRequest.of(page,size);
         Page<Venta> obj = ventaService.listar(pageable, filtros);
 
@@ -40,7 +68,11 @@ public class VentaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Venta> listarPorId(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Venta> listarPorId(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                             @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Venta obj = ventaService.listarPorId(id);
 
         if(obj == null) {
@@ -51,7 +83,11 @@ public class VentaController {
     }
 
     @PostMapping
-    public ResponseEntity<Venta> registrarVentaInicial(@Valid @RequestBody Venta a) throws Exception{
+    public ResponseEntity<Venta> registrarVentaInicial(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                       @Valid @RequestBody Venta a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         a.setId(null);
         Venta obj = ventaService.registrar(a);
         obj = ventaService.listarPorId(obj.getId());
@@ -65,7 +101,11 @@ public class VentaController {
     }
 
     @PutMapping
-    public ResponseEntity<Venta> modificar(@Valid @RequestBody Venta v) throws Exception{
+    public ResponseEntity<Venta> modificar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                           @Valid @RequestBody Venta v) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(v.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -80,7 +120,11 @@ public class VentaController {
     }
 
     @PutMapping("/updateclient")
-    public ResponseEntity<Venta> modificarCliente(@Valid @RequestBody Venta v) throws Exception{
+    public ResponseEntity<Venta> modificarCliente(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                  @Valid @RequestBody Venta v) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(v.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -96,7 +140,11 @@ public class VentaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Venta obj = ventaService.listarPorId(id);
 
         if(obj == null) {
@@ -108,7 +156,11 @@ public class VentaController {
     }
 
     @PatchMapping("/anular/{id}")
-    public ResponseEntity<Void> anular(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Void> anular(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                       @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Venta obj = ventaService.listarPorId(id);
 
         if(obj == null) {
@@ -120,7 +172,11 @@ public class VentaController {
     }
 
     @PostMapping("/add-detalle-venta")
-    public ResponseEntity<Venta> registrarDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
+    public ResponseEntity<Venta> registrarDetalleVenta(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                       @Valid @RequestBody DetalleVenta d) throws Exception{
+
+        this.SetClaims(Authorization);
+
         d.setId(null);
         Venta obj = ventaService.registrarDetalle(d);
         Venta res = ventaService.recalcularVentaPublic(obj);
@@ -132,26 +188,42 @@ public class VentaController {
     }
 
     @PostMapping("/add-producto-venta")
-    public ResponseEntity<Venta> agregarProductoVenta(@RequestBody AgregarProductoBean addProductoVenta) throws Exception{
+    public ResponseEntity<Venta> agregarProductoVenta(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                      @RequestBody AgregarProductoBean addProductoVenta) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Venta obj = ventaService.agregarProducto(addProductoVenta);
         Venta res = ventaService.recalcularVentaPublic(obj);
         return new ResponseEntity<Venta>(res, HttpStatus.OK);
     }
 
     @PostMapping("/delete-detalle-venta")
-    public ResponseEntity<Venta> deleteDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
+    public ResponseEntity<Venta> deleteDetalleVenta(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                    @Valid @RequestBody DetalleVenta d) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Venta obj = ventaService.eliminarDetalle(d);
         return new ResponseEntity<Venta>(obj, HttpStatus.OK);
     }
 
     @PostMapping("/modificar-detalle-venta")
-    public ResponseEntity<Venta> modificarDetalleVenta(@Valid @RequestBody DetalleVenta d) throws Exception{
+    public ResponseEntity<Venta> modificarDetalleVenta(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                       @Valid @RequestBody DetalleVenta d) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Venta obj = ventaService.modificarDetalle(d);
         return new ResponseEntity<Venta>(obj, HttpStatus.OK);
     }
 
     @PutMapping("/resetventa")
-    public ResponseEntity<Venta> resetVenta(@RequestBody Venta v) throws Exception{
+    public ResponseEntity<Venta> resetVenta(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                            @RequestBody Venta v) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(v.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -166,7 +238,11 @@ public class VentaController {
     }
 
     @PostMapping("/cobrarventa")
-    public ResponseEntity<CobroVenta> cobrarVenta(@Valid @RequestBody CobroVenta a) throws Exception{
+    public ResponseEntity<CobroVenta> cobrarVenta(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                  @Valid @RequestBody CobroVenta a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(a.getVenta() == null || a.getVenta().getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -175,7 +251,11 @@ public class VentaController {
     }
 
     @PutMapping("/generarcomprobante")
-    public ResponseEntity<Venta> generarComprobante(@RequestBody Venta v) throws Exception{
+    public ResponseEntity<Venta> generarComprobante(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                    @RequestBody Venta v) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(v.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -190,9 +270,13 @@ public class VentaController {
     }
 
     @PostMapping("/get-ventas-cobrar")
-    public ResponseEntity<Page<Venta>> listarVentasCobrar(@RequestParam(name = "page", defaultValue = "0") int page,
-                                              @RequestParam(name = "size", defaultValue = "5") int size,
-                                              @RequestBody FiltroVenta filtros) throws Exception{
+    public ResponseEntity<Page<Venta>> listarVentasCobrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @RequestParam(name = "page", defaultValue = "0") int page,
+                                                          @RequestParam(name = "size", defaultValue = "5") int size,
+                                                          @RequestBody FiltroVenta filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Pageable pageable = PageRequest.of(page,size);
         Page<Venta> obj = ventaService.listarCobrado(pageable, filtros);
 
@@ -200,9 +284,13 @@ public class VentaController {
     }
 
     @PostMapping("/get-pagos/{id}")
-    public ResponseEntity<Page<CobroVenta>> listarPagos(@RequestParam(name = "page", defaultValue = "0") int page,
-                                              @RequestParam(name = "size", defaultValue = "5") int size,
-                                              @PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Page<CobroVenta>> listarPagos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                        @RequestParam(name = "page", defaultValue = "0") int page,
+                                                        @RequestParam(name = "size", defaultValue = "5") int size,
+                                                        @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Pageable pageable = PageRequest.of(page,size);
         Page<CobroVenta> obj = ventaService.listarPagos(pageable, id);
 

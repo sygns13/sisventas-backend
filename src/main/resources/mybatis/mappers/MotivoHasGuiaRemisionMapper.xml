@@ -43,14 +43,14 @@
         <set>
             <if test="MOTIVO_ID != null"> motivo_id = #{MOTIVO_ID}, </if>
             <if test="GUIA_REMISION_ID != null"> guia_remision_id = #{GUIA_REMISION_ID}, </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
-        where id=#{ID}
+        where id=#{ID} and empresa_id=#{EMPRESA_ID}
     </update>
 
 </mapper>

@@ -8,6 +8,7 @@ import com.bcs.ventas.model.entities.IngresoSalidaCaja;
 import com.bcs.ventas.model.entities.User;
 import com.bcs.ventas.service.IngresoSalidaCajaService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,6 +35,9 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
     @Autowired
     private IngresoSalidaCajaMapper ingresoSalidaCajaMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public IngresoSalidaCaja registrar(IngresoSalidaCaja a) throws Exception {
         //Date fechaActual = new Date();
@@ -41,12 +45,12 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
         User user = new User();
-        user.setId(2L);
+        user.setId(claimsAuthorization.getUserId());
         a.setUser(user);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -109,9 +113,9 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
     public List<IngresoSalidaCaja> listar() throws Exception {
         //return ingresoSalidaCajaDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -126,9 +130,9 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
     public Page<IngresoSalidaCaja> listar(Pageable page, String buscar, Long almacenId) throws Exception {
         //return ingresoSalidaCajaDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -192,7 +196,7 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
 
     }
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
     public IngresoSalidaCaja grabarRegistro(IngresoSalidaCaja a) throws Exception {
@@ -214,8 +218,10 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
         params.put("TIPO_COMPROBANTE", b.getTipoComprobante());
         params.put("HORA", b.getHora());
 
-        params.put("USER_ID", b.getUser().getId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", b.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         return ingresoSalidaCajaMapper.updateByPrimaryKeySelective(params);
     }
@@ -231,8 +237,10 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= ingresoSalidaCajaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -244,7 +252,7 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(IngresoSalidaCaja a, Map<String, Object> resultValidacion){

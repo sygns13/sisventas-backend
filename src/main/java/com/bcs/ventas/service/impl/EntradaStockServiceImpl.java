@@ -11,6 +11,7 @@ import com.bcs.ventas.service.LoteService;
 import com.bcs.ventas.service.TipoDocumentoService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroEntradaStock;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     private ProveedorMapper proveedorMapper;
 
     @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
+    @Autowired
     private LoteService loteService;
     @Override
     public EntradaStock registrar(EntradaStock entradaStock) throws Exception {
@@ -117,12 +121,12 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        entradaStock.setEmpresaId(1L);
-        user.setId(2L);
+        //Oauth inicio
+        entradaStock.setEmpresaId(claimsAuthorization.getEmpresaId());
+        user.setId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         entradaStock.setUser(user);
         entradaStock.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -177,9 +181,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         entradaStock.setUser(user);
 
@@ -217,9 +221,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setId(claimsAuthorization.getUserId());
+        //Oauth final
 
         entradaStock.setUser(user);
 
@@ -250,9 +254,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
     @Override
     public EntradaStock modificarEntradaStockProveedorFirst(EntradaStock entradaStock) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -376,9 +380,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     }
     @Override
     public Page<EntradaStock> listar(Pageable page, FiltroEntradaStock filtros) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
@@ -505,9 +509,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
     @Override
     public Page<EntradaStock> listarPagado(Pageable page, FiltroEntradaStock filtros) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -654,12 +658,12 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         detalleEntradaStock.setCreatedAt(fechaActualTime);
         detalleEntradaStock.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        detalleEntradaStock.setEmpresaId(1L);
-        detalleEntradaStock.setUserId(2L);
+        //Oauth inicio
+        detalleEntradaStock.setEmpresaId(claimsAuthorization.getEmpresaId());
+        detalleEntradaStock.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         detalleEntradaStock.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         detalleEntradaStock.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -724,9 +728,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public EntradaStock grabarRegistroDetalle(EntradaStock entradaStock, DetalleEntradaStock detalleEntradaStock) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Lote loteBD = null;
         if(detalleEntradaStock.getLote() != null){
@@ -761,9 +765,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public EntradaStock grabarModificarDetalleAdd(EntradaStock entradaStock, DetalleEntradaStock detalleEntradaStock, DetalleEntradaStock detalleEntradaStockBD) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         BigDecimal costoTotal = detalleEntradaStock.getCosto().multiply(BigDecimal.valueOf(detalleEntradaStock.getCantidad() + detalleEntradaStockBD.getCantidad()));
 
@@ -773,6 +777,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("COSTO_TOTAL", costoTotal);
         params.put("CANTREAL", detalleEntradaStock.getCantreal());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res = detalleEntradaStockMapper.updateByPrimaryKeySelective(params);
 
         //DetalleVenta d = detalleVentaDAO.registrar(detalleVenta);
@@ -797,9 +802,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public EntradaStock grabarModificarDetalle(EntradaStock entradaStock, DetalleEntradaStock detalleEntradaStock, DetalleEntradaStock detalleEntradaStockBD) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Lote loteBD = null;
 
@@ -825,6 +830,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         if(detalleEntradaStock.getLote() != null)
             params.put("LOTE_ID", detalleEntradaStock.getLote().getId());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res = detalleEntradaStockMapper.updateByPrimaryKeySelective(params);
 
         //this.recalcularVenta(venta);
@@ -857,9 +863,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         String error;
         String warning;
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
         //BigDecimal cantidadTotal = BigDecimal.valueOf(detalleEntradaStock.getCantidad() * detalleEntradaStock.getCantreal());
 
         if(detalleEntradaStock.getCantidad() == null || new BigDecimal(detalleEntradaStock.getCantidad()).compareTo(new BigDecimal(0)) <= 0){
@@ -919,9 +925,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
     @Override
     public EntradaStock agregarProducto(AgregarProductoBean addProductoEntradaStock) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
@@ -1085,9 +1091,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         String error;
         String warning;
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
         DetalleEntradaStock detalleEntradaStockBD = detalleEntradaStockDAO.listarPorId(detalleEntradaStock.getId());
 
         if(detalleEntradaStock.getCantidad() == null || new BigDecimal(detalleEntradaStock.getCantidad()).compareTo(new BigDecimal(0)) <= 0){
@@ -1155,9 +1161,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public EntradaStock grabarResetCompra(EntradaStock entradaStock) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ENTRADA_STOCK_ID",entradaStock.getId());
@@ -1193,21 +1199,21 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         entradaStockBD.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         entradaStockBD.setUser(user);
 
         //pagoProveedor.setEntradaStock(entradaStock);
         pagoProveedor.setCreatedAt(fechaActualTime);
         pagoProveedor.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        pagoProveedor.setEmpresaId(1L);
-        pagoProveedor.setUserId(2L);
+        //Oauth inicio
+        pagoProveedor.setEmpresaId(claimsAuthorization.getEmpresaId());
+        pagoProveedor.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         pagoProveedor.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         pagoProveedor.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -1302,9 +1308,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
     @Override
     public Page<PagoProveedor> listarPagos(Pageable page, Long id) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -1393,6 +1399,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ACTUALIZADO", pagoProveedor.getEntradaStock().getActualizado());
 
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         if(pagoProveedor.getEntradaStock().getActualizado().compareTo(Constantes.COMPRA_SI_ACTUALIZADO) == 0){
@@ -1462,6 +1470,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return entradaStockMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -1484,6 +1493,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= entradaStockMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -1505,6 +1515,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ESTADO",Constantes.COMPRA_ESTADO_ANULADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= entradaStockMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -1515,9 +1526,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public void devolverStockCompra(Long compraId, EntradaStock entradaStock) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ENTRADA_STOCK_ID", compraId);
@@ -1547,9 +1558,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     public EntradaStock grabarDeleteDetalle(EntradaStock entradaStock, DetalleEntradaStock detalleEntradaStock) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("PRODUCTO_ID", detalleEntradaStock.getProducto().getId());
@@ -1967,6 +1978,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("USER_ID", entradaStock.getUser().getId());
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return entradaStockMapper.updateByPrimaryKeySelective(params);
     }
     private boolean validacionModificadoProveedor(EntradaStock entradaStock, Map<String, Object> resultValidacion) throws Exception {
@@ -2029,6 +2041,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("USER_ID", entradaStock.getUser().getId());
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int resultado = entradaStockMapper.updateByPrimaryKeySelective(params);
 
         return entradaStock;
@@ -2054,6 +2067,7 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
         params.put("PROVEEDOR_ID_NULLABLE", Constantes.CANTIDAD_UNIDAD);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int resultado = entradaStockMapper.updateByPrimaryKeySelective(params);
 
         return entradaStock;
@@ -2062,9 +2076,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
     private Long GetSequence(FiltroEntradaStock filtros) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -2339,9 +2353,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         entradaStockBD.setUser(user);
 
@@ -2498,6 +2512,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ID", entradaStock.getId());
         params.put("FACTURADO", entradaStock.getFacturado());
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         return entradaStock;
@@ -2513,9 +2529,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         entradaStockBD.setUser(user);
 
@@ -2617,6 +2633,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ID", entradaStock.getId());
         params.put("ACTUALIZADO", entradaStock.getActualizado());
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         //Ingresar Cantidades a Stock
@@ -2652,9 +2670,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         entradaStockBD.setUser(user);
 
@@ -2759,6 +2777,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ID", entradaStock.getId());
         params.put("FACTURADO", entradaStock.getFacturado());
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         return entradaStock;
@@ -2774,9 +2794,9 @@ public class EntradaStockServiceImpl implements EntradaStockService {
 
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         entradaStockBD.setUser(user);
 
@@ -2911,6 +2931,8 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         params.put("ID", entradaStock.getId());
         params.put("ACTUALIZADO", entradaStock.getActualizado());
         params.put("UPDATED_AT", entradaStock.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         //Revertir Cantidades a Stock

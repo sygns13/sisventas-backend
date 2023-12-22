@@ -68,7 +68,7 @@
         <set>
             <if test="NOMBRE != null"> nombre = #{NOMBRE}, </if>
             <if test="DIR != null"> dir = #{DIR}, </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>

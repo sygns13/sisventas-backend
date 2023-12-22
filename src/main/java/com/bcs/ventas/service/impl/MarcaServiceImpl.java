@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.service.MarcaService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,9 @@ public class MarcaServiceImpl implements MarcaService {
     @Autowired
     private MarcaMapper marcaMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Marca registrar(Marca a) throws Exception {
         //Date fechaActual = new Date();
@@ -38,10 +42,10 @@ public class MarcaServiceImpl implements MarcaService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -101,9 +105,9 @@ public class MarcaServiceImpl implements MarcaService {
         //return marcaMapper.getAllEntities();
         //return marcaDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -116,9 +120,9 @@ public class MarcaServiceImpl implements MarcaService {
     public Page<Marca> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -190,8 +194,10 @@ public class MarcaServiceImpl implements MarcaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= marcaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -201,7 +207,7 @@ public class MarcaServiceImpl implements MarcaService {
 
 
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -217,9 +223,10 @@ public class MarcaServiceImpl implements MarcaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID", m.getId());
         params.put("NOMBRE", m.getNombre());
-        params.put("USER_ID", m.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", m.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return marcaMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -234,8 +241,10 @@ public class MarcaServiceImpl implements MarcaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= marcaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -247,7 +256,7 @@ public class MarcaServiceImpl implements MarcaService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Marca a, Map<String, Object> resultValidacion){

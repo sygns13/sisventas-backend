@@ -4,7 +4,11 @@ import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.dto.LotesChangeOrdenDTO;
 import com.bcs.ventas.model.entities.Lote;
 import com.bcs.ventas.service.LoteService;
+import com.bcs.ventas.utils.JwtUtils;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +24,32 @@ public class LoteController {
     @Autowired
     private LoteService loteService;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
+    private void SetClaims(String Authorization) throws Exception {
+        String[] bearerAuth = Authorization.split(" ");
+        Claims claims = jwtUtils.verify(bearerAuth[1]);
+
+        claimsAuthorization.setClaims(claims);
+        claimsAuthorization.setAuthorization(Authorization);
+        claimsAuthorization.setUsername(claims.get("user_email").toString());
+
+        if(claims.get("auth_level_3") != null)
+            claimsAuthorization.setUserId(Long.parseLong(claims.get("auth_level_3").toString()));
+        if(claims.get("auth_level_2") != null)
+            claimsAuthorization.setEmpresaId(Long.parseLong(claims.get("auth_level_2").toString()));
+    }
+
     @PostMapping
-    public ResponseEntity<Lote> registrar(@Valid @RequestBody Lote a) throws Exception{
+    public ResponseEntity<Lote> registrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                          @Valid @RequestBody Lote a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         a.setId(null);
         Lote obj = loteService.registrar(a);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -30,7 +58,11 @@ public class LoteController {
     }
 
     @PutMapping
-    public ResponseEntity<Integer> modificar(@Valid @RequestBody Lote a) throws Exception{
+    public ResponseEntity<Integer> modificar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                             @Valid @RequestBody Lote a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -47,7 +79,11 @@ public class LoteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Lote obj = loteService.listarPorId(id);
 
         if(obj == null) {
@@ -60,7 +96,11 @@ public class LoteController {
 
     //Otros endpoints
     @PostMapping("/ingresolote")
-    public ResponseEntity<Lote> registrarEntradaNuevoLote(@Valid @RequestBody Lote a) throws Exception{
+    public ResponseEntity<Lote> registrarEntradaNuevoLote(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @Valid @RequestBody Lote a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         a.setId(null);
         Lote obj = loteService.registrarNuevoLote(a);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();

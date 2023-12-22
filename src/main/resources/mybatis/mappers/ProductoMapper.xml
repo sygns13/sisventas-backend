@@ -1307,14 +1307,14 @@
               <if test="TIPO_TASA_ISC != null"> tipo_tasa_isc = #{TIPO_TASA_ISC}, </if>
               <if test="TASA_ISC != null"> tasa_isc = #{TASA_ISC}, </if>
               <if test="AFECTO_IGV != null"> afecto_igv = #{AFECTO_IGV}, </if>
-              <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--              <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
               <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
               <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
               <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 
               <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
           </set>
-          where id=#{ID}
+          where id=#{ID} and empresa_id=#{EMPRESA_ID}
       </update>
 
   </mapper>

@@ -52,14 +52,14 @@
             <if test="MONTO != null">  monto = #{MONTO}, </if>
             <if test="PAGO_PROVEEDOR_ID != null">  pago_proveedor_id = #{PAGO_PROVEEDOR_ID}, </if>
             <if test="CUENTAPROVEEDORID != null">  cuentaProveedorId = #{CUENTAPROVEEDORID}, </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
-        where id=#{ID}
+        where id=#{ID} and empresa_id=#{EMPRESA_ID}
     </update>
 
 </mapper>

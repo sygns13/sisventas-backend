@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.InitComprobante;
 import com.bcs.ventas.service.InitComprobanteService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,9 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
     @Autowired
     InitComprobanteMapper initComprobanteMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
 
     @Override
     public InitComprobante registrar(InitComprobante a) throws Exception {
@@ -39,10 +43,10 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -97,9 +101,9 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
     public List<InitComprobante> listar() throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -122,9 +126,9 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
     public List<InitComprobante> listar(Long tipoComprobante , Long almacenId) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -155,9 +159,9 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
     public Page<InitComprobante> listar(Pageable page, String buscar, Long tipoComprobante , Long almacenId) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -262,9 +266,10 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         params.put("CANTIDAD_DIGITOS", b.getCantidadDigitos());
         params.put("ALMACEN_ID", b.getAlmacenId());
 
-        params.put("USER_ID", b.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", b.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return initComprobanteMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -278,8 +283,10 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= initComprobanteMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -433,6 +440,7 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         params.put("USER_ID", userId);
         params.put("UPDATED_AT", fechaActual);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         initComprobanteMapper.updateByPrimaryKeySelective(params);
     }
 

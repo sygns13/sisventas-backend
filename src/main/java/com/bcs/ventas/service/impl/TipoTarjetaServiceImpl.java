@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.TipoTarjeta;
 import com.bcs.ventas.service.TipoTarjetaService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,9 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
     @Autowired
     private TipoTarjetaMapper tipoTarjetaMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public TipoTarjeta registrar(TipoTarjeta a) throws Exception {
         //Date fechaActual = new Date();
@@ -38,10 +42,10 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -104,9 +108,9 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
     public List<TipoTarjeta> listar() throws Exception {
         //return tipoTarjetaMapper.getAllEntities();
         //return tipoTarjetaDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -119,9 +123,9 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
 
     public Page<TipoTarjeta> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -148,6 +152,7 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
         //return tipoTarjetaDAO.listarPorId(id);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
+        params.put("EMPRESA_ID", claimsAuthorization.getEmpresaId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<TipoTarjeta> tipoTarjetas = tipoTarjetaMapper.listByParameterMap(params);
@@ -192,8 +197,10 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= tipoTarjetaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -203,7 +210,7 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
 
 
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -220,9 +227,10 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
         params.put("ID", t.getId());
         params.put("NOMBRE", t.getNombre());
         params.put("SIGLA", t.getSigla());
-        params.put("USER_ID", t.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", t.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return tipoTarjetaMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -237,8 +245,10 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= tipoTarjetaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -250,7 +260,7 @@ public class TipoTarjetaServiceImpl implements TipoTarjetaService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(TipoTarjeta a, Map<String, Object> resultValidacion){

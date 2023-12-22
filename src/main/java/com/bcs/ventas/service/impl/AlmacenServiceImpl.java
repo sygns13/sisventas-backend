@@ -13,6 +13,7 @@ import com.bcs.ventas.model.entities.Distrito;
 import com.bcs.ventas.model.entities.Provincia;
 import com.bcs.ventas.service.AlmacenService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,6 +45,9 @@ public class AlmacenServiceImpl implements AlmacenService {
     @Autowired
     private DistritoMapper distritoMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Almacen registrar(Almacen a) throws Exception {
         //Date fechaActual = new Date();
@@ -51,10 +55,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
 
@@ -95,9 +99,9 @@ public class AlmacenServiceImpl implements AlmacenService {
         LocalDateTime fechaActual = LocalDateTime.now();
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         if(a.getNombre() == null)    a.setNombre("");
         if(a.getDireccion() == null) a.setDireccion("");
@@ -129,9 +133,9 @@ public class AlmacenServiceImpl implements AlmacenService {
         //return almacenMapper.getAllEntities();
         //return almacenDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -144,9 +148,9 @@ public class AlmacenServiceImpl implements AlmacenService {
         //return almacenMapper.getAllEntities();
         //return almacenDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -205,7 +209,7 @@ public class AlmacenServiceImpl implements AlmacenService {
         }
     }
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -218,7 +222,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= almacenMapper.updateByPrimaryKeySelective(params);
 
@@ -247,6 +254,8 @@ public class AlmacenServiceImpl implements AlmacenService {
         params.put("USER_ID", a.getUserId());
         params.put("UPDATED_AT", a.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
+
         return almacenMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -261,7 +270,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= almacenMapper.updateByPrimaryKeySelective(params);
 
@@ -274,7 +286,7 @@ public class AlmacenServiceImpl implements AlmacenService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Almacen a, Map<String, Object> resultValidacion){

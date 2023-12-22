@@ -15,6 +15,7 @@ import com.bcs.ventas.model.entities.Stock;
 import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.service.StockService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,9 @@ public class StockServiceImpl implements StockService {
     @Autowired
     private RetiroEntradaProductoDAO retiroEntradaProductoDAO;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     private Logger log = org.slf4j.LoggerFactory.getLogger(StockServiceImpl.class);
 
 
@@ -62,10 +66,10 @@ public class StockServiceImpl implements StockService {
         stock.setCreatedAt(fechaActual);
         stock.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        stock.setEmpresaId(1L);
-        stock.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        stock.setEmpresaId(claimsAuthorization.getEmpresaId());
+        stock.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         stock.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         stock.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -172,6 +176,7 @@ public class StockServiceImpl implements StockService {
                 params.put("ID", stock.getId());
                 params.put("CANTIDAD", stock.getCantidad());
 
+                params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
                 stockMapper.updateByPrimaryKeySelective(params);
 
                 return stock;

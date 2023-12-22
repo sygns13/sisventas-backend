@@ -12,6 +12,7 @@ import com.bcs.ventas.model.dto.SalidasIngresosProductosDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.RetiroEntradaProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroGeneral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -60,6 +61,9 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
     @Autowired
     private UnidadMapper unidadMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
 
     @Override
     public Page<RetiroEntradaProductoDTO> listar(Pageable pageable, String buscar) throws Exception {
@@ -79,9 +83,9 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
@@ -145,10 +149,10 @@ public class RetiroEntradaProductoServiceImpl implements RetiroEntradaProductoSe
         retiroEntradaProducto.setCreatedAt(fechaActual);
         retiroEntradaProducto.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        retiroEntradaProducto.setEmpresaId(1L);
-        retiroEntradaProducto.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        retiroEntradaProducto.setEmpresaId(claimsAuthorization.getEmpresaId());
+        retiroEntradaProducto.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         retiroEntradaProducto.setActivo(Constantes.REGISTRO_ACTIVO);
         retiroEntradaProducto.setBorrado(Constantes.REGISTRO_NO_BORRADO);

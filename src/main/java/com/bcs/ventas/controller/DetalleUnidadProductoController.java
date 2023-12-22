@@ -6,7 +6,11 @@ import com.bcs.ventas.model.entities.Departamento;
 import com.bcs.ventas.model.entities.DetalleUnidadProducto;
 import com.bcs.ventas.model.entities.Distrito;
 import com.bcs.ventas.service.DetalleUnidadProductoService;
+import com.bcs.ventas.utils.JwtUtils;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,20 +32,44 @@ public class DetalleUnidadProductoController {
     @Autowired
     private DetalleUnidadProductoService detalleUnidadProductoService;
 
-    @GetMapping("/almacens")
-    public ResponseEntity<List<Almacen>> getAlmacens() throws Exception{
+    @Autowired
+    private JwtUtils jwtUtils;
 
-        Long idEmpresa=1L;
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
+    private void SetClaims(String Authorization) throws Exception {
+        String[] bearerAuth = Authorization.split(" ");
+        Claims claims = jwtUtils.verify(bearerAuth[1]);
+
+        claimsAuthorization.setClaims(claims);
+        claimsAuthorization.setAuthorization(Authorization);
+        claimsAuthorization.setUsername(claims.get("user_email").toString());
+
+        if(claims.get("auth_level_3") != null)
+            claimsAuthorization.setUserId(Long.parseLong(claims.get("auth_level_3").toString()));
+        if(claims.get("auth_level_2") != null)
+            claimsAuthorization.setEmpresaId(Long.parseLong(claims.get("auth_level_2").toString()));
+    }
+
+    @GetMapping("/almacens")
+    public ResponseEntity<List<Almacen>> getAlmacens(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Long idEmpresa = claimsAuthorization.getEmpresaId();
         List<Almacen> obj = detalleUnidadProductoService.getAlmacens(idEmpresa);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
     @GetMapping("/almacens-date")
-    public ResponseEntity<Map<String, Object>> getAlmacensDate() throws Exception{
+    public ResponseEntity<Map<String, Object>> getAlmacensDate(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
 
         Map<String, Object> resultado = new HashMap<>();
-        Long idEmpresa=1L;
+        Long idEmpresa = claimsAuthorization.getEmpresaId();
         List<Almacen> obj = detalleUnidadProductoService.getAlmacens(idEmpresa);
 
         LocalDateTime fechaActual = LocalDateTime.now();
@@ -59,17 +87,23 @@ public class DetalleUnidadProductoController {
 
 
     @GetMapping("/{idAlmacen}/{idProducto}")
-    public ResponseEntity<List<DetalleUnidadProducto>> listar(@PathVariable("idAlmacen") Long idAlmacen,
+    public ResponseEntity<List<DetalleUnidadProducto>> listar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                              @PathVariable("idAlmacen") Long idAlmacen,
                                                               @PathVariable("idProducto") Long idProducto) throws Exception{
 
-        Long idEmpresa=1L;
+        this.SetClaims(Authorization);
+
+        Long idEmpresa = claimsAuthorization.getEmpresaId();
         List<DetalleUnidadProducto> obj = detalleUnidadProductoService.listar(idAlmacen, idProducto, idEmpresa);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<DetalleUnidadProducto> registrar(@Valid @RequestBody DetalleUnidadProducto a) throws Exception{
+    public ResponseEntity<DetalleUnidadProducto> registrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                           @Valid @RequestBody DetalleUnidadProducto a) throws Exception{
+
+        this.SetClaims(Authorization);
 
         DetalleUnidadProducto obj = detalleUnidadProductoService.registrar(a);
 
@@ -80,7 +114,11 @@ public class DetalleUnidadProductoController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         DetalleUnidadProducto obj = detalleUnidadProductoService.listarPorId(id);
 
         if(obj == null) {

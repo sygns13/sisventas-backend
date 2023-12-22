@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ServicioService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,6 +34,9 @@ public class ServicioServiceImpl implements ServicioService {
     @Autowired
     private ServicioMapper servicioMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
 
     @Override
     public Servicio registrar(Servicio a) throws Exception {
@@ -41,10 +45,10 @@ public class ServicioServiceImpl implements ServicioService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -125,9 +129,9 @@ public class ServicioServiceImpl implements ServicioService {
     public List<Servicio> listar() throws Exception {
         //return servicioDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -141,6 +145,7 @@ public class ServicioServiceImpl implements ServicioService {
     public Servicio listarPorId(Long id) throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<Servicio> servicios = servicioMapper.listByParameterMap(params);
@@ -177,7 +182,7 @@ public class ServicioServiceImpl implements ServicioService {
 
     }
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -202,9 +207,10 @@ public class ServicioServiceImpl implements ServicioService {
         params.put("TIPO_TASA_ISC", b.getTipoTasaIsc());
         params.put("TASA_ISC", b.getTasaIsc());
         params.put("AFECTO_IGV", b.getAfectoIgv());
-        params.put("USER_ID", b.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", b.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return servicioMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -219,9 +225,10 @@ public class ServicioServiceImpl implements ServicioService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
-
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= servicioMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -230,7 +237,7 @@ public class ServicioServiceImpl implements ServicioService {
 
     }
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Servicio p, Map<String, Object> resultValidacion){
@@ -394,9 +401,9 @@ public class ServicioServiceImpl implements ServicioService {
     public Page<Servicio> listar(Pageable page, String buscar) throws Exception {
         //return servicioDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);

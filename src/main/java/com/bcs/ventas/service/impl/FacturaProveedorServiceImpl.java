@@ -2,6 +2,8 @@ package com.bcs.ventas.service.impl;
 
 import com.bcs.ventas.model.entities.FacturaProveedor;
 import com.bcs.ventas.service.FacturaProveedorService;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,10 @@ import java.util.Map;
 @Transactional
 @Service
 public class FacturaProveedorServiceImpl implements FacturaProveedorService {
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public void altabaja(Long id, Integer valor) throws Exception {
 

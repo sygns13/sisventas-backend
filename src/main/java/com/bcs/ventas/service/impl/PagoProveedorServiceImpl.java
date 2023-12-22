@@ -8,6 +8,7 @@ import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.EntradaStockService;
 import com.bcs.ventas.service.PagoProveedorService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,6 +41,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
     @Autowired
     private EntradaStockMapper entradaStockMapper;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
     @Override
     public PagoProveedor registrar(PagoProveedor pagoProveedor) throws Exception {
         LocalDateTime fechaActualTime = LocalDateTime.now();
@@ -49,21 +53,21 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         entradaStock.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         entradaStock.setUser(user);
 
         pagoProveedor.setEntradaStock(entradaStock);
         pagoProveedor.setCreatedAt(fechaActualTime);
         pagoProveedor.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        pagoProveedor.setEmpresaId(1L);
-        pagoProveedor.setUserId(2L);
+        //Oauth inicio
+        pagoProveedor.setEmpresaId(claimsAuthorization.getEmpresaId());
+        pagoProveedor.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         pagoProveedor.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         pagoProveedor.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -146,17 +150,17 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         entradaStock.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         entradaStock.setUser(user);
 
         pagoProveedor.setEntradaStock(entradaStock);
         pagoProveedor.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        pagoProveedor.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        pagoProveedor.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
@@ -230,9 +234,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
     @Override
     public List<PagoProveedor> listar() throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO", Constantes.REGISTRO_NO_BORRADO);
@@ -265,9 +269,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         entradaStock.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         entradaStock.setUser(user);
 
         pagoProveedor.setEntradaStock(entradaStock);
@@ -319,6 +323,8 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         return pagoProveedorReg;
@@ -364,12 +370,15 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.put("USER_ID", pagoProveedor.getUserId());
         params.put("UPDATED_AT", pagoProveedor.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res = pagoProveedorMapper.updateByPrimaryKeySelective(params);
 
         params.clear();
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
         return res;
@@ -387,6 +396,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= pagoProveedorMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -406,6 +416,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= pagoProveedorMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -423,6 +434,8 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.put("ID", pagoProveedor.getEntradaStock().getId());
         params.put("ESTADO", pagoProveedor.getEntradaStock().getEstado());
         params.put("UPDATED_AT", pagoProveedor.getEntradaStock().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         entradaStockMapper.updateByPrimaryKeySelective(params);
 
     }
@@ -739,6 +752,7 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
         params.put("ACTIVO", valor);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= pagoProveedorMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -748,9 +762,9 @@ public class PagoProveedorServiceImpl implements PagoProveedorService {
 
     @Override
     public Page<PagoProveedor> listar(Pageable page, String buscar) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);

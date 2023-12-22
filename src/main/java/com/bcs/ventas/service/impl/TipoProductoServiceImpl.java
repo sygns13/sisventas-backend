@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.TipoProducto;
 import com.bcs.ventas.service.TipoProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,9 @@ public class TipoProductoServiceImpl implements TipoProductoService {
     @Autowired
     private TipoProductoMapper tipoProductoMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public TipoProducto registrar(TipoProducto a) throws Exception {
         //Date fechaActual = new Date();
@@ -38,10 +42,10 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -100,9 +104,9 @@ public class TipoProductoServiceImpl implements TipoProductoService {
     public List<TipoProducto> listar() throws Exception {
         //return tipoProductoMapper.getAllEntities();
         //return tipoProductoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -115,9 +119,9 @@ public class TipoProductoServiceImpl implements TipoProductoService {
 
     public Page<TipoProducto> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -188,8 +192,10 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= tipoProductoMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -199,7 +205,7 @@ public class TipoProductoServiceImpl implements TipoProductoService {
 
 
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -216,7 +222,7 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         params.put("ID", t.getId());
         params.put("TIPO", t.getTipo());
         params.put("TIPO_PRODUCTO_ID", t.getTipoProductoId());
-        params.put("USER_ID", t.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", t.getUpdatedAd());
 
         return tipoProductoMapper.updateByPrimaryKeySelective(params);
@@ -233,6 +239,7 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
         int res= tipoProductoMapper.updateByPrimaryKeySelective(params);
@@ -246,7 +253,7 @@ public class TipoProductoServiceImpl implements TipoProductoService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(TipoProducto a, Map<String, Object> resultValidacion){

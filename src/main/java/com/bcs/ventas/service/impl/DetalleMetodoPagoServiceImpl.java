@@ -10,6 +10,7 @@ import com.bcs.ventas.service.BancoService;
 import com.bcs.ventas.service.DetalleMetodoPagoService;
 import com.bcs.ventas.service.TipoTarjetaService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,9 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
     @Autowired
     private TipoTarjetaService tipoTarjetaService;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
 
     @Override
     public DetalleMetodoPago registrar(DetalleMetodoPago a) throws Exception {
@@ -49,10 +53,10 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -117,9 +121,9 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
     public List<DetalleMetodoPago> listar() throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -157,9 +161,9 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
     public List<DetalleMetodoPago> listar(Long metodoPagoId , Long bancoId) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -204,9 +208,9 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
     public Page<DetalleMetodoPago> listar(Pageable page, String buscar, Long metodoPagoId , Long bancoId) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -335,9 +339,10 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         params.put("NUMERO_CUENTA", b.getNumeroCuenta());
         params.put("NUMERO_CELULAR", b.getNumeroCelular());
 
-        params.put("USER_ID", b.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", b.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return detalleMetodoPagoMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -351,8 +356,10 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= detalleMetodoPagoMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -463,6 +470,7 @@ public class DetalleMetodoPagoServiceImpl implements DetalleMetodoPagoService {
         params.put("USER_ID", userId);
         params.put("UPDATED_AT", fechaActual);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         detalleMetodoPagoMapper.updateByPrimaryKeySelective(params);
     }
 

@@ -257,4 +257,12 @@ public class User implements Serializable {
     public void setDatos(DatosUser datos) {
         this.datos = datos;
     }
+
+    public Long getAlmacenId() {
+        return almacenId;
+    }
+
+    public void setAlmacenId(Long almacenId) {
+        this.almacenId = almacenId;
+    }
 }

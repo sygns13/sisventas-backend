@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.Unidad;
 import com.bcs.ventas.service.UnidadService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,9 @@ public class UnidadServiceImpl implements UnidadService {
     @Autowired
     private UnidadMapper unidadMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Unidad registrar(Unidad a) throws Exception {
         //Date fechaActual = new Date();
@@ -38,10 +42,10 @@ public class UnidadServiceImpl implements UnidadService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -104,9 +108,9 @@ public class UnidadServiceImpl implements UnidadService {
     public List<Unidad> listar() throws Exception {
         //return unidadMapper.getAllEntities();
         //return unidadDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -118,9 +122,9 @@ public class UnidadServiceImpl implements UnidadService {
 
     public Page<Unidad> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -181,7 +185,7 @@ public class UnidadServiceImpl implements UnidadService {
         }
     }
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -194,8 +198,10 @@ public class UnidadServiceImpl implements UnidadService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= unidadMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -223,9 +229,10 @@ public class UnidadServiceImpl implements UnidadService {
         params.put("NOMBRE", u.getNombre());
         params.put("CANTIDAD", u.getCantidad());
         params.put("ABREVIATURA", u.getAbreviatura());
-        params.put("USER_ID", u.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", u.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return unidadMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -240,8 +247,10 @@ public class UnidadServiceImpl implements UnidadService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= unidadMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -253,7 +262,7 @@ public class UnidadServiceImpl implements UnidadService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Unidad a, Map<String, Object> resultValidacion){

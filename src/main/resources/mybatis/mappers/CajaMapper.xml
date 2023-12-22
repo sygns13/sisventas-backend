@@ -49,14 +49,14 @@
             <if test="FECHA != null">  fecha = #{FECHA}, </if>
             <if test="CAJA_ACCION_LAST_ID != null">  caja_accion_last_id = #{CAJA_ACCION_LAST_ID}, </if>
             <if test="SEDE_ID != null"> sede_id = #{SEDE_ID}, </if>
-            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
-        where id=#{ID}
+        where id=#{ID} and empresa_id=#{EMPRESA_ID}
     </update>
 
 </mapper>

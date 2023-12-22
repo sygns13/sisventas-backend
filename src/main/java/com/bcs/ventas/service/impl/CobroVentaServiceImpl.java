@@ -8,6 +8,7 @@ import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.CobroVentaService;
 import com.bcs.ventas.service.VentaService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,6 +41,9 @@ public class CobroVentaServiceImpl implements CobroVentaService {
 
     @Autowired
     private VentaMapper ventaMapper;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
     @Override
     public void altabaja(Long id, Integer valor) throws Exception {
         LocalDateTime fechaActualDateTime = LocalDateTime.now();
@@ -49,7 +53,10 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= cobroVentaMapper.updateByPrimaryKeySelective(params);
 
@@ -60,9 +67,9 @@ public class CobroVentaServiceImpl implements CobroVentaService {
 
     @Override
     public Page<CobroVenta> listar(Pageable page, String buscar) throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -91,9 +98,9 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         v.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         v.setUser(user);
 
         cobroVenta.setVenta(v);
@@ -101,8 +108,8 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         cobroVenta.setUpdatedAd(fechaActualTime);
 
         //TODO: Temporal hasta incluir Oauth inicio
-        cobroVenta.setEmpresaId(1L);
-        cobroVenta.setUserId(2L);
+        cobroVenta.setEmpresaId(claimsAuthorization.getEmpresaId());
+        cobroVenta.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
         //Todo: Temporal hasta incluir Oauth final
@@ -188,17 +195,17 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         v.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         v.setUser(user);
 
         cobroVenta.setVenta(v);
         cobroVenta.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        cobroVenta.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        cobroVenta.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
 
@@ -273,7 +280,7 @@ public class CobroVentaServiceImpl implements CobroVentaService {
     @Override
     public List<CobroVenta> listar() throws Exception {
         //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
         //Todo: Temporal hasta incluir Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -308,9 +315,9 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         v.setUpdatedAd(fechaActualTime);
         User user = new User();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        user.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        user.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
         v.setUser(user);
 
         cobroVenta.setVenta(v);
@@ -363,6 +370,8 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         params.put("ESTADO", c.getVenta().getEstado());
         params.put("PAGADO", c.getVenta().getPagado());
         params.put("UPDATED_AT", c.getVenta().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         ventaMapper.updateByPrimaryKeySelective(params);
 
 
@@ -404,8 +413,10 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         params.put("NUMERO_CHEQUE", cobroVenta.getNumeroCheque());
         params.put("CODIGO_OPERACION", cobroVenta.getCodigoOperacion());
 
-        params.put("USER_ID", cobroVenta.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", cobroVenta.getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res = cobroVentaMapper.updateByPrimaryKeySelective(params);
 
@@ -414,6 +425,8 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         params.put("ESTADO", cobroVenta.getVenta().getEstado());
         params.put("PAGADO", cobroVenta.getVenta().getPagado());
         params.put("UPDATED_AT", cobroVenta.getVenta().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         ventaMapper.updateByPrimaryKeySelective(params);
 
         return res;
@@ -430,8 +443,10 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= cobroVentaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -452,6 +467,7 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= cobroVentaMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -471,6 +487,8 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         params.put("ESTADO", cobroVenta.getVenta().getEstado());
         params.put("PAGADO", cobroVenta.getVenta().getPagado());
         params.put("UPDATED_AT", cobroVenta.getVenta().getUpdatedAd());
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         ventaMapper.updateByPrimaryKeySelective(params);
 
     }

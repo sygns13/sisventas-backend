@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.TipoComprobante;
 import com.bcs.ventas.service.TipoComprobanteService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,7 +32,8 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
     @Autowired
     private TipoComprobanteMapper tipoComprobanteMapper;
 
-
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
 
     @Override
     public TipoComprobante registrar(TipoComprobante a) throws Exception {
@@ -40,10 +42,10 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -102,9 +104,9 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
     public List<TipoComprobante> listar() throws Exception {
         //return tipoComprobanteMapper.getAllEntities();
         //return tipoComprobanteDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -117,9 +119,9 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
 
     public Page<TipoComprobante> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -190,8 +192,10 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= tipoComprobanteMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -201,7 +205,7 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
 
 
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -218,9 +222,10 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
         params.put("ID", t.getId());
         params.put("NOMBRE", t.getNombre());
         params.put("PARA_VENTA", t.getParaVenta());
-        params.put("USER_ID", t.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", t.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return tipoComprobanteMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -235,8 +240,10 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= tipoComprobanteMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -248,7 +255,7 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(TipoComprobante a, Map<String, Object> resultValidacion){

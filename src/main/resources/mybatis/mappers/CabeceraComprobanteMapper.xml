@@ -177,14 +177,14 @@
             <if test="CLIE_CORREO_CPE1 != null">  clie_correo_cpe1 = #{CLIE_CORREO_CPE1}, </if>
             <if test="CLIE_CORREO_CPE2 != null">  clie_correo_cpe2 = #{CLIE_CORREO_CPE2}, </if>
             <if test="VENTA_ID != null">  venta_id = #{VENTA_ID}, </if>
-            <if test="EMPRESA_ID != null">  empresa_id = #{EMPRESA_ID}, </if>
+<!--            <if test="EMPRESA_ID != null">  empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="USER_ID != null">  user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null">  activo = #{ACTIVO}, </if>
             <if test="BORRADO != null">  borrado = #{BORRADO}, </if>
 
             <if test="UPDATED_AT != null"> updated_at=#{UPDATED_AT}, </if>
         </set>
-        where id=#{ID}
+        where id=#{ID} and empresa_id=#{EMPRESA_ID}
     </update>
 
 </mapper>

@@ -10,6 +10,7 @@ import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroInventario;
 import com.bcs.ventas.utils.beans.FiltroProductosVenta;
@@ -76,7 +77,8 @@ public class ProductoServiceImpl implements ProductoService {
     private UnidadDAO unidadDAO;
 
 
-
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
 
 
     @Override
@@ -88,10 +90,10 @@ public class ProductoServiceImpl implements ProductoService {
         p.setUpdatedAd(fechaActualTime);
         p.setFecha(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        p.setEmpresaId(1L);
-        p.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        p.setEmpresaId(claimsAuthorization.getEmpresaId());
+        p.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         p.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         p.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -172,10 +174,10 @@ public class ProductoServiceImpl implements ProductoService {
         LocalDateTime fechaActual = LocalDateTime.now();
         p.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        p.setEmpresaId(1L);
-        p.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        p.setEmpresaId(claimsAuthorization.getEmpresaId());
+        p.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -248,9 +250,9 @@ public class ProductoServiceImpl implements ProductoService {
     public List<Producto> listar() throws Exception {
         //return productoMapper.getAllEntities();
         //return productoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -262,9 +264,9 @@ public class ProductoServiceImpl implements ProductoService {
     public Page<Producto> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -288,9 +290,9 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
@@ -365,9 +367,9 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
@@ -412,9 +414,9 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
@@ -459,9 +461,9 @@ public class ProductoServiceImpl implements ProductoService {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
@@ -521,9 +523,9 @@ public class ProductoServiceImpl implements ProductoService {
     public Page<ProductosVentaDTO> getProductosVentas(Pageable page, FiltroProductosVenta filtros) throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         // params.put("BUSCAR","%"+buscar+"%");
 
@@ -585,6 +587,7 @@ public class ProductoServiceImpl implements ProductoService {
         //return productoDAO.listarPorId(id);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
 
         List<Producto> productos = productoMapper.listByParameterMap(params);
@@ -620,7 +623,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -694,9 +697,10 @@ public class ProductoServiceImpl implements ProductoService {
         params.put("TIPO_TASA_ISC", p.getTipoTasaIsc());
         params.put("TASA_ISC", p.getTasaIsc());
         params.put("AFECTO_IGV", p.getAfectoIgv());
-        params.put("USER_ID", p.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", p.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int resultado = productoMapper.updateByPrimaryKeySelective(params);
 
         //Grabar Unidades
@@ -728,9 +732,10 @@ public class ProductoServiceImpl implements ProductoService {
             params.put("CODIGO_UNIDAD", p.getCodigoUnidad());
             params.put("PRECIO", p.getPrecioUnidad());
             params.put("COSTO_COMPRA", p.getPrecioCompra());
-            params.put("USER_ID", p.getUserId());
+            params.put("USER_ID", claimsAuthorization.getUserId());
             params.put("UPDATED_AT", p.getUpdatedAd());
 
+            params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
             int resultado2 = detalleUnidadProductoMapper.updateByPrimaryKeySelective(params);
         }
 
@@ -740,7 +745,7 @@ public class ProductoServiceImpl implements ProductoService {
             detalleUnidad.setCodigoUnidad(p.getCodigoUnidad());
             detalleUnidad.setPrecio(p.getPrecioUnidad());
             detalleUnidad.setCostoCompra(p.getPrecioCompra());
-            detalleUnidad.setUserId(p.getUserId());
+            detalleUnidad.setUserId(claimsAuthorization.getUserId());
             detalleUnidad.setEmpresaId(p.getEmpresaId());
             detalleUnidad.setCreatedAt(p.getCreatedAt());
             detalleUnidad.setUpdatedAd(p.getUpdatedAd());
@@ -767,9 +772,10 @@ public class ProductoServiceImpl implements ProductoService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
-
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= productoMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -781,7 +787,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Producto p,  Map<String, Object> resultValidacion){
@@ -1009,6 +1015,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("NO_ACTIVO",Constantes.REGISTRO_INACTIVO);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         return productoMapper.getTipoProducto(params);
     }
@@ -1019,6 +1026,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("NO_ACTIVO",Constantes.REGISTRO_INACTIVO);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         return productoMapper.getMarca(params);
     }
@@ -1029,6 +1037,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("NO_ACTIVO",Constantes.REGISTRO_INACTIVO);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         return productoMapper.getPresentacion(params);
     }

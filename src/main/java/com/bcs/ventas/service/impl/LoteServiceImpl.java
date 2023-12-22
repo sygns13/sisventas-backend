@@ -9,6 +9,7 @@ import com.bcs.ventas.model.dto.LotesChangeOrdenDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.LoteService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,9 @@ public class LoteServiceImpl implements LoteService {
     @Autowired
     private ProductoDAO productoDAO;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
 
     @Override
     public Lote registrar(Lote lote) throws Exception {
@@ -58,10 +62,10 @@ public class LoteServiceImpl implements LoteService {
         lote.setCreatedAt(fechaActual);
         lote.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        lote.setEmpresaId(1L);
-        lote.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        lote.setEmpresaId(claimsAuthorization.getEmpresaId());
+        lote.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         lote.setActivo(Constantes.REGISTRO_ACTIVO);
         lote.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -104,10 +108,10 @@ public class LoteServiceImpl implements LoteService {
         lote.setCreatedAt(fechaActual);
         lote.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        lote.setEmpresaId(1L);
-        lote.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        lote.setEmpresaId(claimsAuthorization.getEmpresaId());
+        lote.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         lote.setActivo(Constantes.REGISTRO_ACTIVO);
         lote.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -150,10 +154,10 @@ public class LoteServiceImpl implements LoteService {
         lote.setCreatedAt(fechaActual);
         lote.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        lote.setEmpresaId(1L);
-        lote.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        lote.setEmpresaId(claimsAuthorization.getEmpresaId());
+        lote.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         lote.setActivo(Constantes.REGISTRO_ACTIVO_2);
         lote.setBorrado(Constantes.REGISTRO_NO_BORRADO);
@@ -222,10 +226,10 @@ public class LoteServiceImpl implements LoteService {
         LocalDateTime fechaActual = LocalDateTime.now();
         lote.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        lote.setEmpresaId(1L);
-        lote.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        lote.setEmpresaId(claimsAuthorization.getEmpresaId());
+        lote.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         if(lote.getNombre() == null)    lote.setNombre("");
         lote.setNombre(lote.getNombre());
@@ -257,9 +261,9 @@ public class LoteServiceImpl implements LoteService {
     @Override
     public Lote listarPorId(Long id) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);

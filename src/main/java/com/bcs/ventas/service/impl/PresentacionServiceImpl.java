@@ -6,6 +6,7 @@ import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.Presentacion;
 import com.bcs.ventas.service.PresentacionService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,9 @@ public class PresentacionServiceImpl implements PresentacionService {
     @Autowired
     private PresentacionMapper presentacionMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Presentacion registrar(Presentacion a) throws Exception {
         //Date fechaActual = new Date();
@@ -38,10 +42,10 @@ public class PresentacionServiceImpl implements PresentacionService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -100,9 +104,9 @@ public class PresentacionServiceImpl implements PresentacionService {
     public List<Presentacion> listar() throws Exception {
        // return presentacionMapper.getAllEntities();
         //return presentacionDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
@@ -114,9 +118,9 @@ public class PresentacionServiceImpl implements PresentacionService {
 
     public Page<Presentacion> listar(Pageable page, String buscar) throws Exception {
         //return bancoDAO.listar();
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
@@ -178,7 +182,7 @@ public class PresentacionServiceImpl implements PresentacionService {
 
 
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
@@ -194,9 +198,10 @@ public class PresentacionServiceImpl implements PresentacionService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID", p.getId());
         params.put("PRESENTACION", p.getPresentacion());
-        params.put("USER_ID", p.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", p.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return presentacionMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -211,8 +216,10 @@ public class PresentacionServiceImpl implements PresentacionService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= presentacionMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -232,8 +239,10 @@ public class PresentacionServiceImpl implements PresentacionService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("ACTIVO", valor);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= presentacionMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
@@ -244,7 +253,7 @@ public class PresentacionServiceImpl implements PresentacionService {
 
 
 
-    //TODO: Métodos de Validación
+    //Métodos de Validación
 
     @Override
     public boolean validacionRegistro(Presentacion a, Map<String, Object> resultValidacion){

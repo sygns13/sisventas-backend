@@ -3,10 +3,14 @@ package com.bcs.ventas.controller;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.MetodoPago;
 import com.bcs.ventas.service.MetodoPagoService;
+import com.bcs.ventas.utils.JwtUtils;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +27,34 @@ public class MetodoPagoController {
     @Autowired
     private MetodoPagoService metodoPagoService;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
+    private void SetClaims(String Authorization) throws Exception {
+        String[] bearerAuth = Authorization.split(" ");
+        Claims claims = jwtUtils.verify(bearerAuth[1]);
+
+        claimsAuthorization.setClaims(claims);
+        claimsAuthorization.setAuthorization(Authorization);
+        claimsAuthorization.setUsername(claims.get("user_email").toString());
+
+        if(claims.get("auth_level_3") != null)
+            claimsAuthorization.setUserId(Long.parseLong(claims.get("auth_level_3").toString()));
+        if(claims.get("auth_level_2") != null)
+            claimsAuthorization.setEmpresaId(Long.parseLong(claims.get("auth_level_2").toString()));
+    }
+
     @GetMapping
-    public ResponseEntity<Page<MetodoPago>> listar(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                    @RequestParam(name = "size", defaultValue = "5") int size,
-                                                    @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+    public ResponseEntity<Page<MetodoPago>> listar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                                   @RequestParam(name = "size", defaultValue = "5") int size,
+                                                   @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+
+        this.SetClaims(Authorization);
+
         Pageable pageable = PageRequest.of(page,size);
         Page<MetodoPago> resultado = metodoPagoService.listar(pageable, buscar);
 
@@ -34,14 +62,21 @@ public class MetodoPagoController {
     }
 
     @GetMapping("/listar-all")
-    public ResponseEntity<List<MetodoPago>> listarAll() throws Exception{
+    public ResponseEntity<List<MetodoPago>> listarAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
+
         List<MetodoPago> resultado = metodoPagoService.listar();
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MetodoPago> listarPorId(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<MetodoPago> listarPorId(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                  @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         MetodoPago obj = metodoPagoService.listarPorId(id);
 
         if(obj == null) {
@@ -52,7 +87,11 @@ public class MetodoPagoController {
     }
 
     @PostMapping
-    public ResponseEntity<MetodoPago> registrar(@Valid @RequestBody MetodoPago a) throws Exception{
+    public ResponseEntity<MetodoPago> registrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                @Valid @RequestBody MetodoPago a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         a.setId(null);
         MetodoPago obj = metodoPagoService.registrar(a);
 
@@ -62,7 +101,11 @@ public class MetodoPagoController {
     }
 
     @PutMapping
-    public ResponseEntity<Integer> modificar(@Valid @RequestBody MetodoPago a) throws Exception{
+    public ResponseEntity<Integer> modificar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                             @Valid @RequestBody MetodoPago a) throws Exception{
+
+        this.SetClaims(Authorization);
+
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -79,7 +122,11 @@ public class MetodoPagoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) throws Exception{
+    public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
+
         MetodoPago obj = metodoPagoService.listarPorId(id);
 
         if(obj == null) {
@@ -91,7 +138,11 @@ public class MetodoPagoController {
     }
 
     @PatchMapping("/altabaja/{id}/{valor}")
-    public ResponseEntity<Void> altabaja(@PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+    public ResponseEntity<Void> altabaja(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                         @PathVariable("id") Long id, @PathVariable("valor") Integer valor) throws Exception{
+
+        this.SetClaims(Authorization);
+
         MetodoPago obj = metodoPagoService.listarPorId(id);
 
         if(obj == null) {

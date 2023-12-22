@@ -11,6 +11,7 @@ import com.bcs.ventas.model.entities.Proveedor;
 import com.bcs.ventas.model.entities.TipoDocumento;
 import com.bcs.ventas.service.ProveedorService;
 import com.bcs.ventas.utils.Constantes;
+import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,12 +45,15 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Autowired
     private EntradaStockMapper entradaStockMapper;
 
+    @Autowired
+    private ClaimsAuthorization claimsAuthorization;
+
     @Override
     public Page<Proveedor> listar(Pageable page, String buscar) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
@@ -76,10 +80,10 @@ public class ProveedorServiceImpl implements ProveedorService {
         a.setCreatedAt(fechaActual);
         a.setUpdatedAd(fechaActual);
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        a.setEmpresaId(1L);
-        a.setUserId(2L);
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
 
         a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         a.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -161,9 +165,9 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Override
     public List<Proveedor> listar() throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO", Constantes.REGISTRO_NO_BORRADO);
@@ -176,9 +180,9 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Override
     public Proveedor listarPorId(Long id) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
@@ -196,9 +200,9 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     public Proveedor getByDocument(String document) throws Exception {
 
-        //TODO: Temporal hasta incluir Oauth inicio
-        Long EmpresaId = 1L;
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("DOCUMENTO",document.trim());
@@ -255,9 +259,10 @@ public class ProveedorServiceImpl implements ProveedorService {
         params.put("ANEXO", b.getAnexo());
         params.put("CELULAR", b.getCelular());
         params.put("RESPONSABLE", b.getResponsable());
-        params.put("USER_ID", b.getUserId());
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", b.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         return proveedorMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -271,8 +276,10 @@ public class ProveedorServiceImpl implements ProveedorService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID",id);
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         int res= proveedorMapper.updateByPrimaryKeySelective(params);
 
         if(res == 0){
