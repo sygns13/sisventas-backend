@@ -8,7 +8,9 @@
     <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Config">
         <result property="id" column="id" />
         <result property="nombre" column="nombre" />
+        <result property="nivel" column="nivel" />
         <result property="valor" column="valor" />
+        <result property="empresaId" column="empresa_id" />
         <result property="userId" column="user_id" />
         <result property="activo" column="activo" />
         <result property="borrado" column="borrado" />
@@ -20,21 +22,48 @@
         select * from configs
     </select>
 
-    <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from configs
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from configs
         <where>
             <if test="ID != null"> AND id = #{ID}</if>
             <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="NIVEL != null"> AND nivel = #{NIVEL}</if>
             <if test="VALOR != null"> AND valor = #{VALOR}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
             <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
             <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
             <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
 
             <if test="NO_ID != null"> AND id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND nombre like #{BUSCAR}</if>
         </where>
+        order by id
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select * from configs
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="NOMBRE != null"> AND nombre = #{NOMBRE}</if>
+            <if test="NIVEL != null"> AND nivel = #{NIVEL}</if>
+            <if test="VALOR != null"> AND valor = #{VALOR}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND nombre like #{BUSCAR}</if>
+        </where>
+        order by id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">
@@ -43,6 +72,7 @@
             <if test="NOMBRE != null">  nombre = #{NOMBRE}, </if>
             <if test="VALOR != null">  valor = #{VALOR}, </if>
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+            <if test="NIVEL != null"> nivel = #{NIVEL}, </if>
 <!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>

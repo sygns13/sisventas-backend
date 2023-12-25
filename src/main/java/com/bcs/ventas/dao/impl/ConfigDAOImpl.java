@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public class ConfigDAOImpl extends CRUDDAOImpl<Config, Long> implements ConfigDAO {
+public class ConfigDAOImpl extends CRUDDAOImpl<Config, String> implements ConfigDAO {
 
     @Autowired
     private ConfigRepo repo;
 
     @Override
-    protected GenericRepo<Config, Long> getRepo() {
+    protected GenericRepo<Config, String> getRepo() {
         return repo;
     }
 

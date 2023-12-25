@@ -160,6 +160,15 @@ public  class Constantes {
     public static final Integer TIPO_PAGO_SOLES = 0;
     public static final Integer TIPO_PAGO_DOLARES = 1;
 
-
+    //Configs
+    public static final String CONFIG_CAJAS_ENABLED = "cajas_enabled";
+    public static final String CONFIG_CANTIDAD_COPIAS_COMPROBANTES = "cant_copias_comp";
+    public static final String CONFIG_TASA_CAMBIO_PEN_USD = "change_pen_usd";
+    public static final String CONFIG_IGV_PERU = "igv_peru";
+    public static final String CONFIG_IMPRESORA_REPORTES = "impresora_reportes";
+    public static final String CONFIG_IMPRESORA_TIKETS_VENTAS = "impresora_tikets";
+    public static final String CONFIG_IMPRESORA_NORMAL_VENTAS = "impresora_ventas";
+    public static final String CONFIG_TIPO_IMPRESORA_VENTAS = "type_impresora_vtas";
+    public static final String CONFIG_VISTA_PREVIA_COMPROBANTE_ENABLED = "vista_previa_comp";
 
 }

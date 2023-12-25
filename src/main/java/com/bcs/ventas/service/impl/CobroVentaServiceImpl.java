@@ -107,12 +107,12 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         cobroVenta.setCreatedAt(fechaActualTime);
         cobroVenta.setUpdatedAd(fechaActualTime);
 
-        //TODO: Temporal hasta incluir Oauth inicio
+        //Oauth inicio
         cobroVenta.setEmpresaId(claimsAuthorization.getEmpresaId());
         cobroVenta.setUserId(claimsAuthorization.getUserId());
         //user.setEmpresaId(1L);
         //user = userDAO.listarPorId(user.getId());
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         cobroVenta.setBorrado(Constantes.REGISTRO_NO_BORRADO);
         cobroVenta.setActivo(Constantes.REGISTRO_ACTIVO);
@@ -279,9 +279,9 @@ public class CobroVentaServiceImpl implements CobroVentaService {
 
     @Override
     public List<CobroVenta> listar() throws Exception {
-        //TODO: Temporal hasta incluir Oauth inicio
+        //Oauth inicio
         Long EmpresaId = claimsAuthorization.getEmpresaId();
-        //Todo: Temporal hasta incluir Oauth final
+        //Oauth final
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BORRADO", Constantes.REGISTRO_NO_BORRADO);
@@ -343,7 +343,7 @@ public class CobroVentaServiceImpl implements CobroVentaService {
         }
     }
 
-    //TODO: Métodos de Grabado
+    //Métodos de Grabado
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     @Override
