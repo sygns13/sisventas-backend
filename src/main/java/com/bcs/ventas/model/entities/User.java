@@ -41,8 +41,8 @@ public class User implements Serializable {
     private String email;
 
     @Schema(description = "Password del Usuario")
-    @NotNull( message = "{users.password.notnull}")
-    @Size(min = 1, max = 500, message = "{users.password.size}")
+    //@NotNull( message = "{users.password.notnull}")
+    //@Size(min = 1, max = 500, message = "{users.password.size}")
     @Column(name="password", nullable = true, length = 500)
     private String password;
 
@@ -95,6 +95,14 @@ public class User implements Serializable {
     @Schema(description = "Datos del Usuario")
     @Transient
     private DatosUser datos;
+
+    @Schema(description = "Sucursal del Usuario")
+    @Transient
+    private String almacen;
+
+    @Schema(description = "Flag Change Password")
+    @Transient
+    private Integer modificarPassword;
 
     public User() {
     }
@@ -264,5 +272,21 @@ public class User implements Serializable {
 
     public void setAlmacenId(Long almacenId) {
         this.almacenId = almacenId;
+    }
+
+    public String getAlmacen() {
+        return almacen;
+    }
+
+    public void setAlmacen(String almacen) {
+        this.almacen = almacen;
+    }
+
+    public Integer getModificarPassword() {
+        return modificarPassword;
+    }
+
+    public void setModificarPassword(Integer modificarPassword) {
+        this.modificarPassword = modificarPassword;
     }
 }

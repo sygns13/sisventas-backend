@@ -12,7 +12,16 @@
         <result property="apellidoMaterno" column="apellido_materno" />
         <result property="direccion" column="direccion" />
         <result property="telefono" column="telefono" />
-        <result property="tipoDocumentoId" column="tipo_documento_id" />
+
+        <!-- <result property="tipoDocumentoId" column="tipo_documento_id" /> -->
+
+        <result property="tipoDocumento.id" column="td_id" />
+        <result property="tipoDocumento.tipo" column="td_tipo" />
+        <result property="tipoDocumento.key" column="td_key" />
+        <result property="tipoDocumento.descripcion" column="td_descripcion" />
+        <result property="tipoDocumento.activo" column="td_activo" />
+        <result property="tipoDocumento.borrado" column="td_borrado" />
+
         <result property="documento" column="documento" />
         <result property="email" column="email" />
         <result property="userId" column="user_id" />
@@ -25,32 +34,122 @@
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from datos_users
+        select
+
+        du.id,
+        du.nombres,
+        du.apellido_paterno,
+        du.apellido_materno,
+        du.direccion,
+        du.telefono,
+        du.tipo_documento_id,
+        du.documento,
+        du.email,
+        du.user_id,
+        du.user_gestiona_id,
+        du.empresa_id,
+        du.activo,
+        du.borrado,
+
+        t.id as td_id,
+        t.tipo as td_tipo,
+        t.key as td_key,
+        t.descripcion as td_descripcion,
+        t.activo as td_activo,
+        t.borrado as td_borrado,
+        t.created_at as td_created_at,
+        t.updated_at as td_updated_at,
+        t.user_id as td_user_id
+
+        from datos_users du
+        inner join tipo_documentos t on du.tipo_documento_id=t.id
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from datos_users du
+        inner join tipo_documentos t on du.tipo_documento_id=t.id
+        <where>
+            <if test="ID != null"> AND du.id = #{ID}</if>
+            <if test="NOMBRES != null"> AND du.nombres = #{NOMBRES}</if>
+            <if test="APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{APELLIDO_PATERNO}</if>
+            <if test="APELLIDO_MATERNO != null"> AND du.apellido_materno = #{APELLIDO_MATERNO}</if>
+            <if test="DIRECCION != null"> AND du.direccion = #{DIRECCION}</if>
+            <if test="TELEFONO != null"> AND du.telefono = #{TELEFONO}</if>
+            <if test="TIPO_DOCUMENTO_ID != null"> AND du.tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
+            <if test="DOCUMENTO != null"> AND du.documento = #{DOCUMENTO}</if>
+            <if test="EMAIL != null"> AND du.email = #{EMAIL}</if>
+            <if test="USER_GESTIONA_ID != null"> AND du.user_gestiona_id = #{USER_GESTIONA_ID}</if>
+            <if test="USER_ID != null"> AND du.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND du.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND du.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND du.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND du.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND du.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND du.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND du.activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (du.documento like #{BUSCAR} or du.nombres like #{BUSCAR} )</if>
+        </where>
+        order by du.empresa_id, du.user_id, du.id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from datos_users
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="NOMBRES != null"> AND nombres = #{NOMBRES}</if>
-            <if test="APELLIDO_PATERNO != null"> AND apellido_paterno = #{APELLIDO_PATERNO}</if>
-            <if test="APELLIDO_MATERNO != null"> AND apellido_materno = #{APELLIDO_MATERNO}</if>
-            <if test="DIRECCION != null"> AND direccion = #{DIRECCION}</if>
-            <if test="TELEFONO != null"> AND telefono = #{TELEFONO}</if>
-            <if test="TIPO_DOCUMENTO_ID != null"> AND tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
-            <if test="DOCUMENTO != null"> AND documento = #{DOCUMENTO}</if>
-            <if test="EMAIL != null"> AND email = #{EMAIL}</if>
-            <if test="USER_GESTIONA_ID != null"> AND user_gestiona_id = #{USER_GESTIONA_ID}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+            select
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+            du.id,
+            du.nombres,
+            du.apellido_paterno,
+            du.apellido_materno,
+            du.direccion,
+            du.telefono,
+            du.tipo_documento_id,
+            du.documento,
+            du.email,
+            du.user_id,
+            du.user_gestiona_id,
+            du.empresa_id,
+            du.activo,
+            du.borrado,
+
+            t.id as td_id,
+            t.tipo as td_tipo,
+            t.key as td_key,
+            t.descripcion as td_descripcion,
+            t.activo as td_activo,
+            t.borrado as td_borrado,
+            t.created_at as td_created_at,
+            t.updated_at as td_updated_at,
+            t.user_id as td_user_id
+
+            from datos_users du
+            inner join tipo_documentos t on du.tipo_documento_id=t.id
+        <where>
+            <if test="ID != null"> AND du.id = #{ID}</if>
+            <if test="NOMBRES != null"> AND du.nombres = #{NOMBRES}</if>
+            <if test="APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{APELLIDO_PATERNO}</if>
+            <if test="APELLIDO_MATERNO != null"> AND du.apellido_materno = #{APELLIDO_MATERNO}</if>
+            <if test="DIRECCION != null"> AND du.direccion = #{DIRECCION}</if>
+            <if test="TELEFONO != null"> AND du.telefono = #{TELEFONO}</if>
+            <if test="TIPO_DOCUMENTO_ID != null"> AND du.tipo_documento_id = #{TIPO_DOCUMENTO_ID}</if>
+            <if test="DOCUMENTO != null"> AND du.documento = #{DOCUMENTO}</if>
+            <if test="EMAIL != null"> AND du.email = #{EMAIL}</if>
+            <if test="USER_GESTIONA_ID != null"> AND du.user_gestiona_id = #{USER_GESTIONA_ID}</if>
+            <if test="USER_ID != null"> AND du.user_id = #{USER_ID}</if>
+            <if test="EMPRESA_ID != null"> AND du.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND du.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND du.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND du.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND du.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND du.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND du.activo != #{NO_ACTIVO}</if>
+
+            <if test="BUSCAR != null"> AND (du.documento like #{BUSCAR} or du.nombres like #{BUSCAR} )</if>
         </where>
+        order by du.empresa_id, du.user_id, du.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">

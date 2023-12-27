@@ -196,6 +196,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
 
+    @Override
     public Cliente getByDocument(String document) throws Exception {
 
         //Oauth inicio
