@@ -273,6 +273,8 @@
             <if test="NO_BORRADO != null"> AND cov.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND cov.activo != #{NO_ACTIVO}</if>
 
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
+
             <if test="MAYOR_MIN_IMPORTE != null"> AND cov.importe <![CDATA[ > ]]> #{MAYOR_MIN_IMPORTE}</if>
 
             <!--<if test="BUSCAR != null"> AND cov.nombre like #{BUSCAR}</if>-->
@@ -425,6 +427,8 @@
             <if test="NO_ID != null"> AND cov.id != #{NO_ID}</if>
             <if test="NO_BORRADO != null"> AND cov.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND cov.activo != #{NO_ACTIVO}</if>
+
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
 
             <if test="MAYOR_MIN_IMPORTE != null"> AND cov.importe <![CDATA[ > ]]> #{MAYOR_MIN_IMPORTE}</if>
 

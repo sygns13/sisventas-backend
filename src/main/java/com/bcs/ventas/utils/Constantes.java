@@ -171,4 +171,8 @@ public  class Constantes {
     public static final String CONFIG_TIPO_IMPRESORA_VENTAS = "type_impresora_vtas";
     public static final String CONFIG_VISTA_PREVIA_COMPROBANTE_ENABLED = "vista_previa_comp";
 
+    //entradasalida
+    public static final Integer INGRESO_SALIDAS_CAJA_TIPO_INGRESO = 1;
+    public static final Integer INGRESO_SALIDAS_CAJA_TIPO_SALIDA = 0;
+
 }
