@@ -38,4 +38,6 @@ public interface ProductoService extends GeneralService<Producto, Long> {
 
     Page<ProductosVentaDTO> getProductosVentas(Pageable pageable, FiltroProductosVenta filtros) throws Exception;
 
+    Page<ProductosVentaDTO> ProductosPrecioReport(Pageable page, Long almacenId, Long unidadId) throws Exception;
+
 }

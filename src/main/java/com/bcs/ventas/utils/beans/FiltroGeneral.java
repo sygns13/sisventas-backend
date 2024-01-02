@@ -6,6 +6,8 @@ public class FiltroGeneral {
 
     private Long almacenId;
 
+    private Long unidadId;
+
     private String palabraClave;
 
     private Integer page;
@@ -19,16 +21,6 @@ public class FiltroGeneral {
      private LocalDate fechaFinal;
 
     public FiltroGeneral() {
-    }
-
-    public FiltroGeneral(Long almacenId, String palabraClave, Integer page, Integer size, Integer tipo, LocalDate fechaInicio, LocalDate fechaFinal) {
-        this.almacenId = almacenId;
-        this.palabraClave = palabraClave;
-        this.page = page;
-        this.size = size;
-        this.tipo = tipo;
-        this.fechaInicio = fechaInicio;
-        this.fechaFinal = fechaFinal;
     }
 
     public String getPalabraClave() {
@@ -85,5 +77,13 @@ public class FiltroGeneral {
 
     public void setFechaFinal(LocalDate fechaFinal) {
         this.fechaFinal = fechaFinal;
+    }
+
+    public Long getUnidadId() {
+        return unidadId;
+    }
+
+    public void setUnidadId(Long unidadId) {
+        this.unidadId = unidadId;
     }
 }

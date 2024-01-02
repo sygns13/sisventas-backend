@@ -363,6 +363,61 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
+    public Page<ProductosVentaDTO> ProductosPrecioReport(Pageable page, Long almacenId, Long unidadId) throws Exception {
+
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
+        params.put("EMPRESA_ID", EmpresaId);
+        //params.put("CANTIDAD", Constantes.CANTIDAD_UNIDAD_INTEGER);
+        params.put("UNIDAD_ID", unidadId);
+        params.put("ALMACEN_ID", almacenId);
+
+        Long total = productoMapper.getTotalElementsProductosVenta(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<ProductosVentaDTO> productosVenta = productoMapper.listByParameterMapProductosVenta(params);
+
+        productosVenta.forEach((p)-> {
+
+            Map<String, Object> params1 = new HashMap<String, Object>();
+
+            params1.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+            params1.put("EMPRESA_ID", EmpresaId);
+            params1.put("PRODUCTO_ID",p.getProducto().getId());
+            params1.put("PRODUCTO_PU",p.getProducto().getPrecioUnidad());
+            params1.put("PRODUCTO_PC",p.getProducto().getPrecioCompra());
+            params1.put("UNIDAD_ID", unidadId);
+            params1.put("ALMACEN_ID", almacenId);
+
+            List<DetalleUnidadProducto> detalleUnidadBD = detalleUnidadProductoMapper.listByParameterMapBaseUnidad(params1);
+
+            if(detalleUnidadBD != null && !detalleUnidadBD.isEmpty() && detalleUnidadBD.get(0).getId() != null && detalleUnidadBD.get(0).getId() > 0){
+                try {
+                    Unidad unidad = unidadDAO.listarPorId(detalleUnidadBD.get(0).getUnidad().getId());
+                    detalleUnidadBD.get(0).setUnidad(unidad);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                p.setDetalleUnidadProducto(detalleUnidadBD.get(0));
+            }
+        });
+
+
+        return new PageImpl<>(productosVenta, page, total);
+    }
+
+    @Override
     public Page<InventarioDTO> getProductosGestionLotes(Pageable page, FiltroGeneral filtros) throws Exception {
 
         Map<String, Object> params = new HashMap<String, Object>();

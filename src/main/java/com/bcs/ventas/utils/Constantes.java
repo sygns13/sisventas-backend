@@ -175,4 +175,9 @@ public  class Constantes {
     public static final Integer INGRESO_SALIDAS_CAJA_TIPO_INGRESO = 1;
     public static final Integer INGRESO_SALIDAS_CAJA_TIPO_SALIDA = 0;
 
+    public static final String PRIORIDAD_ALTA = "1";
+    public static final String PRIORIDAD_MEDIA = "2";
+    public static final String PRIORIDAD_BAJA = "3";
+
+
 }

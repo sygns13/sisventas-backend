@@ -149,6 +149,19 @@ public class ProductoController {
         return new ResponseEntity<>(inventario, HttpStatus.OK);
     }
 
+    @PostMapping("/productoprecio")
+    public ResponseEntity<Page<ProductosVentaDTO>> getProductoPrecio(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                     @RequestBody FiltroGeneral filtros) throws Exception{
+
+        if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
+        if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
+
+        Pageable pageable = PageRequest.of(filtros.getPage().intValue(), filtros.getSize().intValue());
+        Page<ProductosVentaDTO> inventario = productoService.ProductosPrecioReport(pageable, filtros.getAlmacenId(), filtros.getUnidadId());
+
+        return new ResponseEntity<>(inventario, HttpStatus.OK);
+    }
+
     //EndPoint GestionLotes
 
     @PostMapping("/productogestionlotes")
