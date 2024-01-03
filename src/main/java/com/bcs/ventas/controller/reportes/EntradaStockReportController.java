@@ -2,6 +2,7 @@ package com.bcs.ventas.controller.reportes;
 
 import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.service.EntradaStockService;
+import com.bcs.ventas.service.reportes.ComprasDetalladasReportService;
 import com.bcs.ventas.service.reportes.ComprasGeneralReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -26,6 +27,9 @@ public class EntradaStockReportController {
 
     @Autowired
     private ComprasGeneralReportService comprasGeneralReportService;
+
+    @Autowired
+    private ComprasDetalladasReportService comprasDetalladasReportService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -73,5 +77,33 @@ public class EntradaStockReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(comprasGeneralReportService.exportXls(filtros));
+    }
+
+    @PostMapping("/detallada/export-pdf")
+    public ResponseEntity<byte[]> exportPdfInventarioDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                      @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("ComprasDetalladasReporte", "ComprasDetalladasReporte.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(comprasDetalladasReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/detallada/export-xls")
+    public ResponseEntity<byte[]> exportXlsInventarioDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                      @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("ComprasDetalladasReporte" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(comprasDetalladasReportService.exportXls(filtros));
     }
 }

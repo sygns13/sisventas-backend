@@ -2,6 +2,7 @@ package com.bcs.ventas.controller;
 
 import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.ComprasDetallesDTO;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
 import com.bcs.ventas.model.entities.EntradaStock;
@@ -64,6 +65,20 @@ public class EntradaStockController {
 
         Pageable pageable = PageRequest.of(page,size);
         Page<EntradaStock> obj = entradaStockService.listar(pageable, filtros);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/get_entrada_stocks_details")
+    public ResponseEntity<Page<ComprasDetallesDTO>> listarDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                                     @RequestParam(name = "size", defaultValue = "5") int size,
+                                                     @RequestBody FiltroEntradaStock filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Pageable pageable = PageRequest.of(page,size);
+        Page<ComprasDetallesDTO> obj = entradaStockService.listarDetail(pageable, filtros);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }

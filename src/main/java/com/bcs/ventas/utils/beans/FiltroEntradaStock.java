@@ -44,6 +44,17 @@ public class FiltroEntradaStock {
 
     private Integer estadoPago;
 
+    //Filtro para Detalles
+    private Long idProducto;
+
+    public Long getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
+    }
+
     public Long getAlmacenId() {
         return almacenId;
     }

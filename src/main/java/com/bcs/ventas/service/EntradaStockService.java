@@ -1,5 +1,6 @@
 package com.bcs.ventas.service;
 
+import com.bcs.ventas.model.dto.ComprasDetallesDTO;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
 import com.bcs.ventas.model.entities.EntradaStock;
@@ -46,4 +47,7 @@ public interface EntradaStockService extends GeneralService<EntradaStock, Long>{
     EntradaStock revertirFacturaEntradaStock(EntradaStock compra) throws Exception;
 
     EntradaStock revertirActualizacionEntradaStock(EntradaStock compra) throws Exception;
+
+
+    Page<ComprasDetallesDTO> listarDetail(Pageable pageable, FiltroEntradaStock filtros) throws Exception;
 }
