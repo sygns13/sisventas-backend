@@ -67,6 +67,17 @@ public class UserController {
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
+    @GetMapping("/listar_all")
+    public ResponseEntity<List<User>> listarAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        //Pageable pageable = PageRequest.of(page,size);
+        List<User> resultado = userService.listar();
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<User> listarPorId(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                @PathVariable("id") Long id) throws Exception{

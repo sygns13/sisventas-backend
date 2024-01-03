@@ -3,6 +3,7 @@ package com.bcs.ventas.controller;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.Proveedor;
 import com.bcs.ventas.model.entities.TipoDocumento;
+import com.bcs.ventas.model.entities.User;
 import com.bcs.ventas.service.ProveedorService;
 import com.bcs.ventas.service.TipoDocumentoService;
 import com.bcs.ventas.utils.JwtUtils;
@@ -60,6 +61,17 @@ public class ProveedorController {
 
         Pageable pageable = PageRequest.of(page,size);
         Page<Proveedor> resultado = proveedorService.listar(pageable, buscar);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
+    @GetMapping("/listar_all")
+    public ResponseEntity<List<Proveedor>> listarAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        //Pageable pageable = PageRequest.of(page,size);
+        List<Proveedor> resultado = proveedorService.listar();
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
