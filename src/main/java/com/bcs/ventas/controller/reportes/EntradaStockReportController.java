@@ -4,6 +4,7 @@ import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.service.EntradaStockService;
 import com.bcs.ventas.service.reportes.ComprasDetalladasReportService;
 import com.bcs.ventas.service.reportes.ComprasGeneralReportService;
+import com.bcs.ventas.service.reportes.CuentasPagarGeneralReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroEntradaStock;
@@ -32,6 +33,9 @@ public class EntradaStockReportController {
     private ComprasDetalladasReportService comprasDetalladasReportService;
 
     @Autowired
+    private CuentasPagarGeneralReportService cuentasPagarGeneralReportService;
+
+    @Autowired
     private JwtUtils jwtUtils;
 
     @Autowired
@@ -52,7 +56,7 @@ public class EntradaStockReportController {
     }
 
     @PostMapping("/general/export-pdf")
-    public ResponseEntity<byte[]> exportPdfInventario(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+    public ResponseEntity<byte[]> exportPdfCompras(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                       @RequestBody FiltroEntradaStock filtros) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -64,7 +68,7 @@ public class EntradaStockReportController {
     }
 
     @PostMapping("/general/export-xls")
-    public ResponseEntity<byte[]> exportXlsInventario(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+    public ResponseEntity<byte[]> exportXlsCompras(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                       @RequestBody FiltroEntradaStock filtros) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
@@ -80,7 +84,7 @@ public class EntradaStockReportController {
     }
 
     @PostMapping("/detallada/export-pdf")
-    public ResponseEntity<byte[]> exportPdfInventarioDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+    public ResponseEntity<byte[]> exportPdfComprasDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                       @RequestBody FiltroEntradaStock filtros) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -92,7 +96,7 @@ public class EntradaStockReportController {
     }
 
     @PostMapping("/detallada/export-xls")
-    public ResponseEntity<byte[]> exportXlsInventarioDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+    public ResponseEntity<byte[]> exportXlsComprasDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                       @RequestBody FiltroEntradaStock filtros) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
@@ -105,5 +109,33 @@ public class EntradaStockReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(comprasDetalladasReportService.exportXls(filtros));
+    }
+
+    @PostMapping("/cuentas_pagar_general/export-pdf")
+    public ResponseEntity<byte[]> exportPdfCuentasPagarPDF(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                           @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("CuentasPagarGeneralReporte", "CuentasPagarGeneralReporte.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(cuentasPagarGeneralReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/cuentas_pagar_general/export-xls")
+    public ResponseEntity<byte[]> exportXlsCuentasPagarXLS(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                           @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("CuentasPagarGeneralReporte" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(cuentasPagarGeneralReportService.exportXls(filtros));
     }
 }

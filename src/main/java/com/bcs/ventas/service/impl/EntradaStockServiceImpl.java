@@ -734,6 +734,21 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         if(filtros.getBuscarDatos() != null && !filtros.getBuscarDatos().trim().isEmpty())
             params.put("BUSCAR_GENERAL", "%"+filtros.getBuscarDatos()+"%");
 
+        //Proveedor
+        if(filtros.getIdProveedor() != null && filtros.getIdProveedor().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0) {
+            params.put("PROVEEDOR_ID", filtros.getIdProveedor());
+        }
+
+        if(filtros.getNombreProveedor() != null && !filtros.getNombreProveedor().trim().isEmpty()) {
+            params.put("PRO_NOMBRE", "%" + filtros.getNombreProveedor() + "%");
+        }
+
+
+
+        if(filtros.getDocumentoProveedor() != null && !filtros.getDocumentoProveedor().trim().isEmpty()) {
+            params.put("PRO_DOCUMENTO", filtros.getDocumentoProveedor());
+        }
+
 
         Long total = entradaStockMapper.getTotalElements(params);
         Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
