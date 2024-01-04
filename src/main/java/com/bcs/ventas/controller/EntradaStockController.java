@@ -3,6 +3,7 @@ package com.bcs.ventas.controller;
 import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.dto.ComprasDetallesDTO;
+import com.bcs.ventas.model.dto.CuentasPagarDetallesDTO;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
 import com.bcs.ventas.model.entities.EntradaStock;
@@ -268,7 +269,7 @@ public class EntradaStockController {
     }
 
     @PostMapping("/get-entrada-stocks-pagar")
-    public ResponseEntity<Page<EntradaStock>> listarEntradaStocksCobrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+    public ResponseEntity<Page<EntradaStock>> listarEntradaStocksPagar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                         @RequestParam(name = "page", defaultValue = "0") int page,
                                                                         @RequestParam(name = "size", defaultValue = "5") int size,
                                                                         @RequestBody FiltroEntradaStock filtros) throws Exception{
@@ -277,6 +278,20 @@ public class EntradaStockController {
 
         Pageable pageable = PageRequest.of(page,size);
         Page<EntradaStock> obj = entradaStockService.listarPagado(pageable, filtros);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/get_entrada_stocks_pagar_detail")
+    public ResponseEntity<Page<PagoProveedor>> listarEntradaStocksPagosDetallados(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                                            @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                                            @RequestParam(name = "size", defaultValue = "5") int size,
+                                                                                            @RequestBody FiltroEntradaStock filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Pageable pageable = PageRequest.of(page,size);
+        Page<PagoProveedor> obj = entradaStockService.listarPagadoDetallado(pageable, filtros);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }

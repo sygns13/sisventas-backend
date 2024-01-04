@@ -4,6 +4,7 @@ import com.bcs.ventas.dao.*;
 import com.bcs.ventas.dao.mappers.*;
 import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.dto.ComprasDetallesDTO;
+import com.bcs.ventas.model.dto.CuentasPagarDetallesDTO;
 import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.AlmacenService;
@@ -797,6 +798,162 @@ public class EntradaStockServiceImpl implements EntradaStockService {
         //ventas = ventas.stream().sorted((Comparator.comparing(Venta::getId))).collect(Collectors.toList());
 
         return new PageImpl<>(entradaStocks, page, total);
+    }
+
+    @Override
+    public Page<PagoProveedor> listarPagadoDetallado(Pageable page, FiltroEntradaStock filtros) throws Exception {
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", EmpresaId);
+        params.put("ORDER_DESC", Constantes.CANTIDAD_UNIDAD);
+        params.put("ESTADO_MAYOR", Constantes.COMPRA_ESTADO_INICIADO);
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+
+        if(filtros.getNumeroEntradaStock() != null && !filtros.getNumeroEntradaStock().trim().isEmpty())
+            params.put("NUMERO", filtros.getNumeroEntradaStock());
+
+        if(filtros.getId() != null && filtros.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ID",filtros.getId());
+
+        if(filtros.getFecha() != null)
+            params.put("FECHA", filtros.getFecha());
+
+        if(filtros.getFechaInicio() != null && filtros.getFechaFinal() != null){
+            params.put("FECHA_INI", filtros.getFechaInicio());
+            params.put("FECHA_FIN", filtros.getFechaFinal());
+        }
+
+        if(filtros.getEstadoPago() != null){
+
+            if(filtros.getEstadoPago().compareTo(Constantes.CANTIDAD_ZERO) == 0)
+                params.put("NO_ESTADO_PAGO", Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
+
+            if(filtros.getEstadoPago().compareTo(Constantes.CANTIDAD_UNIDAD_INTEGER) == 0)
+                params.put("ESTADO", Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL);
+
+        } else {
+            if(filtros.getEstado() != null)
+                params.put("ESTADO", filtros.getEstado());
+        }
+
+        if(filtros.getActualizado() != null)
+            params.put("ACTUALIZADO", filtros.getActualizado());
+
+        if(filtros.getFacturado() != null)
+            params.put("FACTURADO", filtros.getFacturado());
+
+        if(filtros.getIdProveedor() != null && filtros.getIdProveedor().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("PROVEEDOR_ID", filtros.getIdProveedor());
+
+        if(filtros.getNombreProveedor() != null && !filtros.getNombreProveedor().trim().isEmpty())
+            params.put("PRO_NOMBRE", "%"+filtros.getNombreProveedor()+"%");
+
+        if(filtros.getDocumentoProveedor() != null && !filtros.getDocumentoProveedor().trim().isEmpty())
+            params.put("PRO_DOCUMENTO", filtros.getDocumentoProveedor());
+
+        if(filtros.getIdTipoDocumentoProveedor() != null)
+            params.put("PRO_TIPO_DOCUMENTO_ID", filtros.getIdTipoDocumentoProveedor());
+
+        if(filtros.getIdFacturaProveedor() != null && filtros.getIdFacturaProveedor().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("FACTURA_PROVEEDOR_ID", filtros.getIdFacturaProveedor());
+
+        if(filtros.getSerieFacturaProveedor() != null && !filtros.getSerieFacturaProveedor().trim().isEmpty())
+            params.put("CO_SERIE", filtros.getSerieFacturaProveedor());
+
+        if(filtros.getNumeroFacturaProveedor() != null && !filtros.getNumeroFacturaProveedor().trim().isEmpty())
+            params.put("CO_NUMERO", filtros.getNumeroFacturaProveedor());
+
+        if(filtros.getIdTipoComprobante() != null && filtros.getIdTipoComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("CO_TIPO_COMPROBANTE_ID", filtros.getIdTipoComprobante());
+
+        if(filtros.getIdUser() != null && filtros.getIdUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("USER_ID", filtros.getIdUser());
+
+        if(filtros.getNameUser() != null && !filtros.getNameUser().trim().isEmpty())
+            params.put("U_NAME", filtros.getNameUser());
+
+        if(filtros.getEmailUser() != null && !filtros.getEmailUser().trim().isEmpty())
+            params.put("U_EMAIL", filtros.getEmailUser());
+
+        if(filtros.getIdTipoUser() != null && filtros.getIdTipoUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("U_TIPO_USER_ID", filtros.getIdTipoUser());
+
+        if(filtros.getBuscarDatosUser() != null && !filtros.getBuscarDatosUser().trim().isEmpty())
+            params.put("U_BUSCAR", filtros.getBuscarDatosUser());
+
+        //Buscar General
+        if(filtros.getBuscarDatos() != null && !filtros.getBuscarDatos().trim().isEmpty())
+            params.put("BUSCAR_GENERAL", "%"+filtros.getBuscarDatos()+"%");
+
+        //Proveedor
+        if(filtros.getIdProveedor() != null && filtros.getIdProveedor().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0) {
+            params.put("PROVEEDOR_ID", filtros.getIdProveedor());
+        }
+
+        if(filtros.getNombreProveedor() != null && !filtros.getNombreProveedor().trim().isEmpty()) {
+            params.put("PRO_NOMBRE", "%" + filtros.getNombreProveedor() + "%");
+        }
+
+
+
+        if(filtros.getDocumentoProveedor() != null && !filtros.getDocumentoProveedor().trim().isEmpty()) {
+            params.put("PRO_DOCUMENTO", filtros.getDocumentoProveedor());
+        }
+
+
+        Long total = entradaStockMapper.getTotalElementsPagarDetail(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<PagoProveedor> pagoProveedors = entradaStockMapper.listComprasDetailByParameterMap(params);
+
+        pagoProveedors.forEach((pagoProveedor) -> {
+            if(pagoProveedor.getEntradaStock().getEstado().equals(Constantes.COMPRA_ESTADO_ANULADO))
+                pagoProveedor.getEntradaStock().setEstadoStr(Constantes.COMPRA_ESTADO_ANULADO_STR);
+
+            if(pagoProveedor.getEntradaStock().getEstado().equals(Constantes.COMPRA_ESTADO_INICIADO))
+                pagoProveedor.getEntradaStock().setEstadoStr(Constantes.COMPRA_ESTADO_INICIADO_STR);
+
+            if(pagoProveedor.getEntradaStock().getEstado().equals(Constantes.COMPRA_ESTADO_COMPRA_NO_COBRADA))
+                pagoProveedor.getEntradaStock().setEstadoStr(Constantes.COMPRA_ESTADO_COMPRA_NO_COBRADA_STR);
+
+            if(pagoProveedor.getEntradaStock().getEstado().equals(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_PARCIAL))
+                pagoProveedor.getEntradaStock().setEstadoStr(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_PARCIAL_STR);
+
+            if(pagoProveedor.getEntradaStock().getEstado().equals(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL))
+                pagoProveedor.getEntradaStock().setEstadoStr(Constantes.COMPRA_ESTADO_COMPRA_COBRADA_TOTAL_STR);
+
+            if(pagoProveedor.getEntradaStock().getProveedor() != null && pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento() != null){
+                try {
+                    TipoDocumento tipoDocumento = tipoDocumentoDAO.listarPorId(pagoProveedor.getEntradaStock().getProveedor().getTipoDocumento().getId());
+                    pagoProveedor.getEntradaStock().getProveedor().setTipoDocumento(tipoDocumento);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(pagoProveedor.getEntradaStock().getFacturaProveedor() != null && pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante() != null){
+                try {
+                    TipoComprobante tipoComprobante = tipoComprobanteDAO.listarPorId(pagoProveedor.getEntradaStock().getFacturaProveedor().getTipoComprobante().getId());
+                    pagoProveedor.getEntradaStock().getFacturaProveedor().setTipoComprobante(tipoComprobante);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        //ventas = ventas.stream().sorted((Comparator.comparing(Venta::getId))).collect(Collectors.toList());
+
+        return new PageImpl<>(pagoProveedors, page, total);
     }
 
 

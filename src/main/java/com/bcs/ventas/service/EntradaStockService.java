@@ -1,6 +1,7 @@
 package com.bcs.ventas.service;
 
 import com.bcs.ventas.model.dto.ComprasDetallesDTO;
+import com.bcs.ventas.model.dto.CuentasPagarDetallesDTO;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
 import com.bcs.ventas.model.entities.EntradaStock;
@@ -37,6 +38,8 @@ public interface EntradaStockService extends GeneralService<EntradaStock, Long>{
     void anular(Long id) throws Exception;
 
     Page<EntradaStock> listarPagado(Pageable pageable, FiltroEntradaStock filtros) throws Exception;
+
+    Page<PagoProveedor> listarPagadoDetallado(Pageable pageable, FiltroEntradaStock filtros) throws Exception;
 
     Page<PagoProveedor> listarPagos(Pageable pageable, Long id) throws Exception;
 

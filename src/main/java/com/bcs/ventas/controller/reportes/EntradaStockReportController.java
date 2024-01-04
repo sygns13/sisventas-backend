@@ -4,6 +4,7 @@ import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.service.EntradaStockService;
 import com.bcs.ventas.service.reportes.ComprasDetalladasReportService;
 import com.bcs.ventas.service.reportes.ComprasGeneralReportService;
+import com.bcs.ventas.service.reportes.CuentasPagarDetalladaService;
 import com.bcs.ventas.service.reportes.CuentasPagarGeneralReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -34,6 +35,9 @@ public class EntradaStockReportController {
 
     @Autowired
     private CuentasPagarGeneralReportService cuentasPagarGeneralReportService;
+
+    @Autowired
+    private CuentasPagarDetalladaService cuentasPagarDetalladaService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -137,5 +141,33 @@ public class EntradaStockReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(cuentasPagarGeneralReportService.exportXls(filtros));
+    }
+
+    @PostMapping("/cuentas_pagar_detallado/export-pdf")
+    public ResponseEntity<byte[]> exportPdfCuentasPagarDetailPDF(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                           @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("CuentasPagarDetalladaReporte", "CuentasPagarDetalladaReporte.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(cuentasPagarDetalladaService.exportPdf(filtros));
+    }
+
+    @PostMapping("/cuentas_pagar_detallado/export-xls")
+    public ResponseEntity<byte[]> exportXlsCuentasPagarDetailXLS(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                           @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("CuentasPagarDetalladaReporte" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(cuentasPagarDetalladaService.exportXls(filtros));
     }
 }
