@@ -41,7 +41,18 @@ public class FiltroVenta {
     //Buscar General
     private String buscarDatos;
 
+    //Filtro para Detalles
+    private Long idProducto;
+
     public FiltroVenta() {
+    }
+
+    public Long getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
     }
 
     public FiltroVenta(Long almacenId, Long id, LocalDate fecha, LocalTime hora, LocalDate fechaInicio, LocalDate fechaFinal, Integer estadoVenta, Integer pagado, Integer tipoVenta, String numeroVenta, Long idCliente, String nombreCliente, String documentoCliente, Long idTipoDocumentoCliente, Long idComprobante, String serieComprobante, String numeroComprobante, Long idTipoComprobante, Long idUser, String nameUser, String emailUser, Long idTipoUser, String buscarDatosUser, String buscarDatos) {

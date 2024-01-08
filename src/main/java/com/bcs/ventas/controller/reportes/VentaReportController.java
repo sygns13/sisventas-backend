@@ -1,5 +1,6 @@
 package com.bcs.ventas.controller.reportes;
 
+import com.bcs.ventas.service.reportes.VentasDetalladoReportService;
 import com.bcs.ventas.service.reportes.VentasGeneralReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -24,6 +25,9 @@ public class VentaReportController {
     
     @Autowired
     private VentasGeneralReportService ventasGeneralReportService;
+
+    @Autowired
+    private VentasDetalladoReportService ventasDetalladoReportService;
 
     private void SetClaims(String Authorization) throws Exception {
         String[] bearerAuth = Authorization.split(" ");
@@ -65,5 +69,32 @@ public class VentaReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(ventasGeneralReportService.exportXls(filtros));
+    }
+    @PostMapping("/detallada/export-pdf")
+    public ResponseEntity<byte[]> exportPdfComprasDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                   @RequestBody FiltroVenta filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("VentasDetalladasReporte", "VentasDetalladasReporte.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(ventasDetalladoReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/detallada/export-xls")
+    public ResponseEntity<byte[]> exportXlsComprasDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                   @RequestBody FiltroVenta filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("VentasDetalladasReporte" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(ventasDetalladoReportService.exportXls(filtros));
     }
 }

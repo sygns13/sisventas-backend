@@ -1,6 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.VentasDetallesDTO;
 import com.bcs.ventas.model.entities.CobroVenta;
 import com.bcs.ventas.model.entities.DetalleVenta;
 import com.bcs.ventas.model.entities.Producto;
@@ -63,6 +64,20 @@ public class VentaController {
 
         Pageable pageable = PageRequest.of(page,size);
         Page<Venta> obj = ventaService.listar(pageable, filtros);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/get_ventas_detallado")
+    public ResponseEntity<Page<VentasDetallesDTO>> listarDetallado(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @RequestParam(name = "page", defaultValue = "0") int page,
+                                                          @RequestParam(name = "size", defaultValue = "5") int size,
+                                                          @RequestBody FiltroVenta filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Pageable pageable = PageRequest.of(page,size);
+        Page<VentasDetallesDTO> obj = ventaService.listarDetallado(pageable, filtros);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }

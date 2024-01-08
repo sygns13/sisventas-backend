@@ -1,6 +1,7 @@
 package com.bcs.ventas.service;
 
 
+import com.bcs.ventas.model.dto.VentasDetallesDTO;
 import com.bcs.ventas.model.entities.CobroVenta;
 import com.bcs.ventas.model.entities.DetalleVenta;
 import com.bcs.ventas.model.entities.Producto;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 public interface VentaService extends GeneralService<Venta, Long> {
 
     Page<Venta> listar(Pageable pageable, FiltroVenta filtros) throws Exception;
+
+    Page<VentasDetallesDTO> listarDetallado(Pageable pageable, FiltroVenta filtros) throws Exception;
 
     Venta modificarVenta(Venta venta) throws Exception;
 
