@@ -44,6 +44,12 @@ public class FiltroVenta {
     //Filtro para Detalles
     private Long idProducto;
 
+    //Filtro Productos
+
+    private Long tipoProductoId;
+    private Long marcaId;
+    private Long presentacionId;
+
     public FiltroVenta() {
     }
 
@@ -53,6 +59,30 @@ public class FiltroVenta {
 
     public void setIdProducto(Long idProducto) {
         this.idProducto = idProducto;
+    }
+
+    public Long getTipoProductoId() {
+        return tipoProductoId;
+    }
+
+    public void setTipoProductoId(Long tipoProductoId) {
+        this.tipoProductoId = tipoProductoId;
+    }
+
+    public Long getMarcaId() {
+        return marcaId;
+    }
+
+    public void setMarcaId(Long marcaId) {
+        this.marcaId = marcaId;
+    }
+
+    public Long getPresentacionId() {
+        return presentacionId;
+    }
+
+    public void setPresentacionId(Long presentacionId) {
+        this.presentacionId = presentacionId;
     }
 
     public FiltroVenta(Long almacenId, Long id, LocalDate fecha, LocalTime hora, LocalDate fechaInicio, LocalDate fechaFinal, Integer estadoVenta, Integer pagado, Integer tipoVenta, String numeroVenta, Long idCliente, String nombreCliente, String documentoCliente, Long idTipoDocumentoCliente, Long idComprobante, String serieComprobante, String numeroComprobante, Long idTipoComprobante, Long idUser, String nameUser, String emailUser, Long idTipoUser, String buscarDatosUser, String buscarDatos) {

@@ -340,6 +340,50 @@
         <result property="detalleVenta.lote.productoId" column="l_producto_id" />
     </resultMap>
 
+
+    <resultMap id="topProductosResultMap" type="com.bcs.ventas.model.dto.TopProductosVendidosDTO">
+
+        <result property="producto.id" column="id" />
+        <result property="producto.nombre" column="nombre" />
+        <result property="producto.stockMinimo" column="stock_minimo" />
+        <result property="producto.precioUnidad" column="precio_unidad" />
+        <result property="producto.precioCompra" column="precio_compra" />
+        <result property="producto.fecha" column="fecha" />
+        <result property="producto.codigoUnidad" column="codigo_unidad" />
+        <result property="producto.codigoProducto" column="codigo_producto" />
+        <result property="producto.composicion" column="composicion" />
+        <result property="producto.prioridad" column="prioridad" />
+        <result property="producto.ubicacion" column="ubicacion" />
+        <result property="producto.activoLotes" column="activo_lotes" />
+        <result property="producto.afectoIsc" column="afecto_isc" />
+        <result property="producto.tipoTasaIsc" column="tipo_tasa_isc" />
+        <result property="producto.tasaIsc" column="tasa_isc" />
+        <result property="producto.afectoIgv" column="afecto_igv" />
+        <result property="producto.empresaId" column="empresa_id" />
+        <result property="producto.userId" column="user_id" />
+        <result property="producto.activo" column="activo" />
+        <result property="producto.borrado" column="borrado" />
+        <result property="producto.createdAt" column="created_at" />
+        <result property="producto.updatedAd" column="updated_at" />
+        <result property="producto.tipoProducto.id" column="tp_id" />
+        <result property="producto.tipoProducto.tipo" column="tp_tipo" />
+        <result property="producto.tipoProducto.tipoProductoId" column="tp_tipo_producto_id" />
+        <result property="producto.tipoProducto.activo" column="tp_activo" />
+        <result property="producto.tipoProducto.borrado" column="tp_borrado" />
+        <result property="producto.marca.id" column="m_id" />
+        <result property="producto.marca.nombre" column="m_nombre" />
+        <result property="producto.marca.activo" column="m_activo" />
+        <result property="producto.marca.borrado" column="m_borrado" />
+        <result property="producto.presentacion.id" column="pe_id" />
+        <result property="producto.presentacion.presentacion" column="pe_presentacion" />
+        <result property="producto.presentacion.activo" column="pe_activo" />
+        <result property="producto.presentacion.borrado" column="pe_borrado" />
+
+        <result property="cantidad" column="cantidad" />
+        <result property="ventas" column="ventas" />
+        <result property="importe" column="importe" />
+    </resultMap>
+
     <select id="getAllEntities" resultMap="principalResultMap">
         select
             v.id,
@@ -1451,6 +1495,305 @@
         <if test="ORDER_DESC != null"> order by v.id desc </if>
         <if test="ORDER_DESC == null"> order by v.fecha, v.hora, v.id </if>
         , d.venta_id, d.id
+    </select>
+
+
+
+
+
+    <select id="listTopProductosVendidosByParameterMap" resultMap="topProductosResultMap">
+        select p.id,
+        p.nombre,
+        p.stock_minimo,
+        p.precio_unidad,
+        p.precio_compra,
+        p.fecha,
+        p.codigo_unidad,
+        p.codigo_producto,
+        p.composicion,
+        p.prioridad,
+        p.ubicacion,
+        p.activo_lotes,
+        p.afecto_isc,
+        p.tipo_tasa_isc,
+        p.tasa_isc,
+        p.afecto_igv,
+        p.empresa_id,
+        p.user_id,
+        p.activo,
+        p.borrado,
+        p.created_at,
+        p.updated_at,
+        tp.id as tp_id,
+        tp.tipo as tp_tipo,
+        tp.tipo_producto_id as tp_tipo_producto_id,
+        tp.activo as tp_activo,
+        tp.borrado as tp_borrado,
+        m.id as m_id,
+        m.nombre as m_nombre,
+        m.activo as m_activo,
+        m.borrado as m_borrado,
+        pe.id as pe_id,
+        pe.presentacion as pe_presentacion,
+        pe.activo as pe_activo,
+        pe.borrado as pe_borrado,
+        sum(d.cantidad * d.cantidad_real) as cantidad,
+        count(v.id) as ventas,
+        sum(d.precio_total) as importe
+
+        from productos p
+        inner join tipo_productos tp on p.tipo_producto_id = tp.id
+        inner join marcas m on p.marca_id=m.id
+        inner join presentacions pe on p.presentacion_id=pe.id
+        inner join detalle_ventas d on d.producto_id = p.id
+        inner join ventas v on v.id = d.venta_id
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+        left join init_comprobantes ic on ic.id = co.init_comprobante_id
+        <where>
+            <if test="ID != null"> AND v.id = #{ID}</if>
+            <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND v.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND v.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
+            <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
+            <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
+            <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_EXONERADO != null"> AND v.subtotal_exonerado = #{SUBTOTAL_EXONERADO}</if>
+            <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
+            <if test="IGV != null"> AND v.igv = #{IGV}</if>
+            <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
+            <if test="PAGADO != null"> AND v.pagado = #{PAGADO}</if>
+            <if test="HORA != null"> AND v.hora = #{HORA}</if>
+            <if test="EMPRESA_ID != null"> AND v.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND v.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND v.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND v.borrado = #{BORRADO}</if>
+            <if test="TIPO != null"> AND v.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
+            <if test="NUMERO_VENTA != null"> AND v.numero_venta = #{NUMERO_VENTA}</if>
+
+            <if test="NO_ID != null"> AND v.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND v.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND v.activo != #{NO_ACTIVO}</if>
+
+            <if test="CLI_CLIENTE_ID != null"> AND c.id = #{CLI_CLIENTE_ID}</if>
+            <if test="CLI_NOMBRE != null"> AND c.nombre like #{CLI_NOMBRE}</if>
+            <if test="CLI_TIPO_DOCUMENTO_ID != null"> AND c.tipo_documento_id = #{CLI_TIPO_DOCUMENTO_ID}</if>
+            <if test="CLI_DOCUMENTO != null"> AND c.documento = #{CLI_DOCUMENTO}</if>
+            <if test="CLI_DIRECCION != null"> AND c.direccion = #{CLI_DIRECCION}</if>
+            <if test="CLI_TELEFONO != null"> AND c.telefono = #{CLI_TELEFONO}</if>
+            <if test="CLI_CORREO1 != null"> AND c.correo1 = #{CLI_CORREO1}</if>
+            <if test="CLI_CORREO2 != null"> AND c.correo2 = #{CLI_CORREO2}</if>
+            <if test="CLI_EMPRESA_ID != null"> AND c.empresa_id = #{CLI_EMPRESA_ID}</if>
+            <if test="CLI_USER_ID != null"> AND c.user_id = #{CLI_USER_ID}</if>
+            <if test="CLI_ACTIVO != null"> AND c.activo = #{CLI_ACTIVO}</if>
+            <if test="CLI_BORRADO != null"> AND c.borrado = #{CLI_BORRADO}</if>
+
+            <if test="CLI_NO_ID != null"> AND c.id != #{CLI_NO_ID}</if>
+            <if test="CLI_NO_BORRADO != null"> AND c.borrado != #{CLI_NO_BORRADO}</if>
+            <if test="CLI_NO_ACTIVO != null"> AND c.activo != #{CLI_NO_ACTIVO}</if>
+
+            <if test="CLI_BUSCAR != null"> AND (c.documento like #{CLI_BUSCAR} or c.nombre like #{CLI_BUSCAR} )</if>
+
+            <if test="CO_ID != null"> AND co.id = #{CO_ID}</if>
+            <if test="CO_SERIE != null"> AND co.serie = #{CO_SERIE}</if>
+            <if test="CO_NUMERO != null"> AND co.numero = #{CO_NUMERO}</if>
+            <if test="CO_TIPO_COMPROBANTE_ID != null"> AND ic.tipo_comprobante_id = #{CO_TIPO_COMPROBANTE_ID}</if>
+            <if test="CO_ESTADO != null"> AND co.estado = #{CO_ESTADO}</if>
+
+            <if test="U_ID != null"> AND u.id = #{U_ID}</if>
+            <if test="U_NAME != null"> AND u.name = #{U_NAME}</if>
+            <if test="U_EMAIL != null"> AND u.email = #{U_EMAIL}</if>
+            <if test="U_TIPO_USER_ID != null"> AND u.tipo_user_id = #{U_TIPO_USER_ID}</if>
+
+            <if test="U_BUSCAR != null"> AND (u.name like #{U_BUSCAR} or u.email like #{U_BUSCAR} )</if>
+
+            <if test="DU_ID != null"> AND du.id = #{DU_ID}</if>
+            <if test="DU_NOMBRES != null"> AND du.nombres = #{DU_NOMBRES}</if>
+            <if test="DU_APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{DU_APELLIDO_PATERNO}</if>
+            <if test="DU_APELLIDO_MATERNO != null"> AND du.apellido_materno = #{DU_APELLIDO_MATERNO}</if>
+            <if test="DU_DOCUMENTO != null"> AND du.documento = #{DU_DOCUMENTO}</if>
+
+            <if test="DU_BUSCAR != null"> AND (du.nombres like #{DU_BUSCAR} or du.apellido_paterno like #{DU_BUSCAR} or du.apellido_materno like #{DU_BUSCAR} or du.documento like #{DU_BUSCAR} )</if>
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="BUSCAR_GENERAL != null"> AND ( v.numero_venta like #{BUSCAR_GENERAL} OR
+                c.documento like #{BUSCAR_GENERAL} or c.nombre like #{BUSCAR_GENERAL} OR
+                CONCAT(co.serie,'-', co.numero) like #{BUSCAR_GENERAL} OR
+                u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
+                du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
+            </if>
+
+            <if test="ID != null"> AND d.id = #{ID}</if>
+            <if test="VENTA_ID != null"> AND d.venta_id = #{VENTA_ID}</if>
+            <if test="PRODUCTO_ID != null"> AND d.producto_id = #{PRODUCTO_ID}</if>
+            <if test="PRECIO_VENTA != null"> AND d.precio_venta = #{PRECIO_VENTA}</if>
+            <if test="PRECIO_COMPRA != null"> AND d.precio_compra = #{PRECIO_COMPRA}</if>
+            <if test="CANTIDAD != null"> AND d.cantidad = #{CANTIDAD}</if>
+            <if test="ALMACEN_ID != null"> AND d.almacen_id = #{ALMACEN_ID}</if>
+            <if test="ES_GRABADO != null"> AND d.es_grabado = #{ES_GRABADO}</if>
+            <if test="DESCUENTO != null"> AND d.descuento = #{DESCUENTO}</if>
+            <if test="TIPO_DESCUENTO != null"> AND d.tipo_descuento = #{TIPO_DESCUENTO}</if>
+            <if test="CANTIDAD_REAL != null"> AND d.cantidad_real = #{CANTIDAD_REAL}</if>
+            <if test="UNIDAD != null"> AND d.unidad = #{UNIDAD}</if>
+            <if test="LOTE_ID != null"> AND d.lote_id = #{LOTE_ID}</if>
+            <if test="EMPRESA_ID != null"> AND d.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND d.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND d.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND d.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND d.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND d.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND d.activo != #{NO_ACTIVO}</if>
+
+            <if test="TIPO_PRODUCTO_ID != null"> AND p.tipo_producto_id = #{TIPO_PRODUCTO_ID}</if>
+            <if test="MARCA_ID != null"> AND p.marca_id = #{MARCA_ID}</if>
+            <if test="PRESENTACION_ID != null"> AND p.presentacion_id = #{PRESENTACION_ID}</if>
+        </where>
+
+        group by p.id order by 27 desc, 28 desc
+
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+    </select>
+
+
+
+    <select id="getTotalElementsTopProductosVendidos" resultType="java.lang.Long">
+
+        select count(*) from
+        (
+        select p.id
+        from productos p
+        inner join tipo_productos tp on p.tipo_producto_id = tp.id
+        inner join marcas m on p.marca_id=m.id
+        inner join presentacions pe on p.presentacion_id=pe.id
+        inner join detalle_ventas d on d.producto_id = p.id
+        inner join ventas v on v.id = d.venta_id
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+        left join init_comprobantes ic on ic.id = co.init_comprobante_id
+        <where>
+            <if test="ID != null"> AND v.id = #{ID}</if>
+            <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND v.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND v.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
+            <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
+            <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
+            <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_EXONERADO != null"> AND v.subtotal_exonerado = #{SUBTOTAL_EXONERADO}</if>
+            <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
+            <if test="IGV != null"> AND v.igv = #{IGV}</if>
+            <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
+            <if test="PAGADO != null"> AND v.pagado = #{PAGADO}</if>
+            <if test="HORA != null"> AND v.hora = #{HORA}</if>
+            <if test="EMPRESA_ID != null"> AND v.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND v.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND v.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND v.borrado = #{BORRADO}</if>
+            <if test="TIPO != null"> AND v.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
+            <if test="NUMERO_VENTA != null"> AND v.numero_venta = #{NUMERO_VENTA}</if>
+
+            <if test="NO_ID != null"> AND v.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND v.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND v.activo != #{NO_ACTIVO}</if>
+
+            <if test="CLI_CLIENTE_ID != null"> AND c.id = #{CLI_CLIENTE_ID}</if>
+            <if test="CLI_NOMBRE != null"> AND c.nombre like #{CLI_NOMBRE}</if>
+            <if test="CLI_TIPO_DOCUMENTO_ID != null"> AND c.tipo_documento_id = #{CLI_TIPO_DOCUMENTO_ID}</if>
+            <if test="CLI_DOCUMENTO != null"> AND c.documento = #{CLI_DOCUMENTO}</if>
+            <if test="CLI_DIRECCION != null"> AND c.direccion = #{CLI_DIRECCION}</if>
+            <if test="CLI_TELEFONO != null"> AND c.telefono = #{CLI_TELEFONO}</if>
+            <if test="CLI_CORREO1 != null"> AND c.correo1 = #{CLI_CORREO1}</if>
+            <if test="CLI_CORREO2 != null"> AND c.correo2 = #{CLI_CORREO2}</if>
+            <if test="CLI_EMPRESA_ID != null"> AND c.empresa_id = #{CLI_EMPRESA_ID}</if>
+            <if test="CLI_USER_ID != null"> AND c.user_id = #{CLI_USER_ID}</if>
+            <if test="CLI_ACTIVO != null"> AND c.activo = #{CLI_ACTIVO}</if>
+            <if test="CLI_BORRADO != null"> AND c.borrado = #{CLI_BORRADO}</if>
+
+            <if test="CLI_NO_ID != null"> AND c.id != #{CLI_NO_ID}</if>
+            <if test="CLI_NO_BORRADO != null"> AND c.borrado != #{CLI_NO_BORRADO}</if>
+            <if test="CLI_NO_ACTIVO != null"> AND c.activo != #{CLI_NO_ACTIVO}</if>
+
+            <if test="CLI_BUSCAR != null"> AND (c.documento like #{CLI_BUSCAR} or c.nombre like #{CLI_BUSCAR} )</if>
+
+            <if test="CO_ID != null"> AND co.id = #{CO_ID}</if>
+            <if test="CO_SERIE != null"> AND co.serie = #{CO_SERIE}</if>
+            <if test="CO_NUMERO != null"> AND co.numero = #{CO_NUMERO}</if>
+            <if test="CO_TIPO_COMPROBANTE_ID != null"> AND ic.tipo_comprobante_id = #{CO_TIPO_COMPROBANTE_ID}</if>
+            <if test="CO_ESTADO != null"> AND co.estado = #{CO_ESTADO}</if>
+
+            <if test="U_ID != null"> AND u.id = #{U_ID}</if>
+            <if test="U_NAME != null"> AND u.name = #{U_NAME}</if>
+            <if test="U_EMAIL != null"> AND u.email = #{U_EMAIL}</if>
+            <if test="U_TIPO_USER_ID != null"> AND u.tipo_user_id = #{U_TIPO_USER_ID}</if>
+
+            <if test="U_BUSCAR != null"> AND (u.name like #{U_BUSCAR} or u.email like #{U_BUSCAR} )</if>
+
+            <if test="DU_ID != null"> AND du.id = #{DU_ID}</if>
+            <if test="DU_NOMBRES != null"> AND du.nombres = #{DU_NOMBRES}</if>
+            <if test="DU_APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{DU_APELLIDO_PATERNO}</if>
+            <if test="DU_APELLIDO_MATERNO != null"> AND du.apellido_materno = #{DU_APELLIDO_MATERNO}</if>
+            <if test="DU_DOCUMENTO != null"> AND du.documento = #{DU_DOCUMENTO}</if>
+
+            <if test="DU_BUSCAR != null"> AND (du.nombres like #{DU_BUSCAR} or du.apellido_paterno like #{DU_BUSCAR} or du.apellido_materno like #{DU_BUSCAR} or du.documento like #{DU_BUSCAR} )</if>
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="BUSCAR_GENERAL != null"> AND ( v.numero_venta like #{BUSCAR_GENERAL} OR
+                c.documento like #{BUSCAR_GENERAL} or c.nombre like #{BUSCAR_GENERAL} OR
+                CONCAT(co.serie,'-', co.numero) like #{BUSCAR_GENERAL} OR
+                u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
+                du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
+            </if>
+
+            <if test="ID != null"> AND d.id = #{ID}</if>
+            <if test="VENTA_ID != null"> AND d.venta_id = #{VENTA_ID}</if>
+            <if test="PRODUCTO_ID != null"> AND d.producto_id = #{PRODUCTO_ID}</if>
+            <if test="PRECIO_VENTA != null"> AND d.precio_venta = #{PRECIO_VENTA}</if>
+            <if test="PRECIO_COMPRA != null"> AND d.precio_compra = #{PRECIO_COMPRA}</if>
+            <if test="CANTIDAD != null"> AND d.cantidad = #{CANTIDAD}</if>
+            <if test="ALMACEN_ID != null"> AND d.almacen_id = #{ALMACEN_ID}</if>
+            <if test="ES_GRABADO != null"> AND d.es_grabado = #{ES_GRABADO}</if>
+            <if test="DESCUENTO != null"> AND d.descuento = #{DESCUENTO}</if>
+            <if test="TIPO_DESCUENTO != null"> AND d.tipo_descuento = #{TIPO_DESCUENTO}</if>
+            <if test="CANTIDAD_REAL != null"> AND d.cantidad_real = #{CANTIDAD_REAL}</if>
+            <if test="UNIDAD != null"> AND d.unidad = #{UNIDAD}</if>
+            <if test="LOTE_ID != null"> AND d.lote_id = #{LOTE_ID}</if>
+            <if test="EMPRESA_ID != null"> AND d.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND d.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND d.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND d.borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND d.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND d.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND d.activo != #{NO_ACTIVO}</if>
+
+            <if test="TIPO_PRODUCTO_ID != null"> AND p.tipo_producto_id = #{TIPO_PRODUCTO_ID}</if>
+            <if test="MARCA_ID != null"> AND p.marca_id = #{MARCA_ID}</if>
+            <if test="PRESENTACION_ID != null"> AND p.presentacion_id = #{PRESENTACION_ID}</if>
+        </where>
+        group by p.id order by p.id
+
+        ) as T
     </select>
 
 

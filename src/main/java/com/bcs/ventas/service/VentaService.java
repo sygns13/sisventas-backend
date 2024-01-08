@@ -1,6 +1,7 @@
 package com.bcs.ventas.service;
 
 
+import com.bcs.ventas.model.dto.TopProductosVendidosDTO;
 import com.bcs.ventas.model.dto.VentasDetallesDTO;
 import com.bcs.ventas.model.entities.CobroVenta;
 import com.bcs.ventas.model.entities.DetalleVenta;
@@ -16,6 +17,8 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Page<Venta> listar(Pageable pageable, FiltroVenta filtros) throws Exception;
 
     Page<VentasDetallesDTO> listarDetallado(Pageable pageable, FiltroVenta filtros) throws Exception;
+
+    Page<TopProductosVendidosDTO> listarTopProductosVendidos(Pageable pageable, FiltroVenta filtros) throws Exception;
 
     Venta modificarVenta(Venta venta) throws Exception;
 
