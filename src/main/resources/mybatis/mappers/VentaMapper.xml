@@ -2026,7 +2026,7 @@
         inner join metodos_pagos m on m.id = cov.metodos_pago_id
         inner join ventas v on v.id = cov.venta_id
         inner join almacens a on a.id = v.almacen_id
-        inner join users u on u.id = v.user_id
+        inner join users u on u.id = cov.user_id
         left join datos_users du on du.user_id = u.id
         left join clientes c on c.id = v.cliente_id
         left join comprobantes co on co.id = v.comprobante_id
@@ -2150,6 +2150,7 @@
 
 
     <select id="getTotalElementsCobrarVenta" resultType="java.lang.Long">
+        select COUNT(*)
         from cobro_ventas cov
         inner join metodos_pagos m on m.id = cov.metodos_pago_id
         inner join ventas v on v.id = cov.venta_id

@@ -46,4 +46,6 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Page<Venta> listarCobrado(Pageable pageable, FiltroVenta filtros) throws Exception;
 
     Page<CobroVenta> listarPagos(Pageable pageable, Long id) throws Exception;
+
+    Page<CobroVenta> listarCobradoDetalle(Pageable pageable, FiltroVenta filtros) throws Exception;
 }

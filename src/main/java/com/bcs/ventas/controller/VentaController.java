@@ -326,4 +326,19 @@ public class VentaController {
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
+
+
+    @PostMapping("/get_pagos_reporte")
+    public ResponseEntity<Page<CobroVenta>> listarPagos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                        @RequestParam(name = "page", defaultValue = "0") int page,
+                                                        @RequestParam(name = "size", defaultValue = "5") int size,
+                                                        @RequestBody FiltroVenta filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Pageable pageable = PageRequest.of(page,size);
+        Page<CobroVenta> obj = ventaService.listarCobradoDetalle(pageable, filtros);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
 }

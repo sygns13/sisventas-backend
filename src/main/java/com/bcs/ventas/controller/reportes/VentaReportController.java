@@ -1,9 +1,6 @@
 package com.bcs.ventas.controller.reportes;
 
-import com.bcs.ventas.service.reportes.CuentasCobrarGeneralReportService;
-import com.bcs.ventas.service.reportes.VentasDetalladoReportService;
-import com.bcs.ventas.service.reportes.VentasGeneralReportService;
-import com.bcs.ventas.service.reportes.VentasTopProductosReportService;
+import com.bcs.ventas.service.reportes.*;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroVenta;
@@ -35,6 +32,9 @@ public class VentaReportController {
 
     @Autowired
     private CuentasCobrarGeneralReportService cuentasCobrarGeneralReportService;
+
+    @Autowired
+    private CuentasCobrarDetalladoReportService cuentasCobrarDetalladoReportService;
 
     private void SetClaims(String Authorization) throws Exception {
         String[] bearerAuth = Authorization.split(" ");
@@ -159,5 +159,34 @@ public class VentaReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(cuentasCobrarGeneralReportService.exportXls(filtros));
+    }
+
+
+    @PostMapping("/cuentas_cobrar_detallado/export-pdf")
+    public ResponseEntity<byte[]> exportPdfCuentasCobrarDetallado(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                @RequestBody FiltroVenta filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("CuentasCobrarDetalladoReporte", "CuentasCobrarDetalladoReporte.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(cuentasCobrarDetalladoReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/cuentas_cobrar_detallado/export-xls")
+    public ResponseEntity<byte[]> exportXlsCuentasCobrarDetallado(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                @RequestBody FiltroVenta filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("CuentasCobrarDetalladoReporte" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(cuentasCobrarDetalladoReportService.exportXls(filtros));
     }
 }
