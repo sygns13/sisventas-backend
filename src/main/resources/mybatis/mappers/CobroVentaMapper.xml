@@ -409,6 +409,11 @@
             <if test="ID != null"> AND cov.id = #{ID}</if>
             <if test="VENTA_ID != null"> AND cov.venta_id = #{VENTA_ID}</if>
             <if test="FECHA != null"> AND cov.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND cov.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND cov.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
+
             <if test="METODOS_PAGO_ID != null"> AND cov.metodos_pago_id = #{METODOS_PAGO_ID}</if>
             <if test="IMPORTE != null"> AND cov.importe = #{IMPORTE}</if>
             <if test="TIPO_TARJETA != null"> AND cov.tipo_tarjeta = #{TIPO_TARJETA}</if>

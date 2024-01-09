@@ -20,7 +20,17 @@ public class FiltroGeneral {
 
      private LocalDate fechaFinal;
 
+    private LocalDate fecha;
+
     public FiltroGeneral() {
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
     }
 
     public String getPalabraClave() {

@@ -359,6 +359,11 @@
             <if test="ID != null"> AND pp.id = #{ID}</if>
             <if test="ENTRADA_STOCK_ID != null"> AND pp.entrada_stock_id = #{ENTRADA_STOCK_ID}</if>
             <if test="FECHA != null"> AND pp.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND pp.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND pp.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
+
             <if test="METODOS_PAGO_ID != null"> AND pp.metodos_pago_id = #{METODOS_PAGO_ID}</if>
             <if test="MONTO_PAGO != null"> AND pp.monto_pago = #{MONTO_PAGO}</if>
             <if test="MONTO_REAL != null"> AND pp.monto_real = #{MONTO_REAL}</if>
