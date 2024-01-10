@@ -6,6 +6,7 @@ import com.bcs.ventas.model.entities.CobroVenta;
 import com.bcs.ventas.model.entities.Venta;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -30,5 +31,8 @@ public interface VentaMapper extends GeneralMapper<Venta> {
     List<CobroVenta> listByParameterMapCobrarVenta(Map<String, Object> var1);
 
     Long getTotalElementsCobrarVenta(Map<String, Object> var1);
+
+
+    BigDecimal getTotalIngresosVentas(Map<String, Object> var1);
 
 }

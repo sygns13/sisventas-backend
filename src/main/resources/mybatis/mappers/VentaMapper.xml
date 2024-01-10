@@ -772,6 +772,10 @@
                                 u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
                                 du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
             </if>
+
+            <if test="ESTADO_NO_ANULADO != null"> AND v.estado != #{ESTADO_NO_ANULADO}</if>
+
+
         </where>
 
         <if test="ORDER_DESC != null"> order by v.id desc </if>
@@ -870,6 +874,107 @@
                 u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
                 du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
             </if>
+
+            <if test="ESTADO_NO_ANULADO != null"> AND v.estado != #{ESTADO_NO_ANULADO}</if>
+        </where>
+
+        <if test="ORDER_DESC != null"> order by v.id desc </if>
+        <if test="ORDER_DESC == null"> order by v.fecha, v.hora, v.id </if>
+    </select>
+
+
+    <select id="getTotalIngresosVentas" resultType="java.math.BigDecimal">
+        select sum(
+        TRUNCATE(@b:=(SELECT IFNULL(SUM(cv.`importe`),0.00) As montoCobrado FROM `cobro_ventas` cv WHERE cv.`venta_id`=v.`id` and cv.borrado !='1'),2))
+        from ventas v
+        inner join almacens a on a.id = v.almacen_id
+        inner join users u on u.id = v.user_id
+        left join datos_users du on du.user_id = u.id
+        left join clientes c on c.id = v.cliente_id
+        left join comprobantes co on co.id = v.comprobante_id
+        left join init_comprobantes ic on ic.id = co.init_comprobante_id
+        <where>
+            <if test="ESTADO_MAYOR != null"> AND v.estado <![CDATA[ > ]]> #{ESTADO_MAYOR}</if>
+            <if test="ID != null"> AND v.id = #{ID}</if>
+            <if test="FECHA != null"> AND v.fecha = #{FECHA}</if>
+
+            <if test="FECHA_INI != null"> AND v.fecha <![CDATA[ >= ]]>  #{FECHA_INI}</if>
+            <if test="FECHA_FIN != null"> AND v.fecha <![CDATA[ <= ]]>  #{FECHA_FIN}</if>
+
+            <if test="CLIENTE_ID != null"> AND v.cliente_id = #{CLIENTE_ID}</if>
+            <if test="COMPROBANTE_ID != null"> AND v.comprobante_id = #{COMPROBANTE_ID}</if>
+            <if test="SUBTOTAL_INAFECTO != null"> AND v.subtotal_inafecto = #{SUBTOTAL_INAFECTO}</if>
+            <if test="SUBTOTAL_EXONERADO != null"> AND v.subtotal_exonerado = #{SUBTOTAL_EXONERADO}</if>
+            <if test="SUBTOTAL_AFECTO != null"> AND v.subtotal_afecto = #{SUBTOTAL_AFECTO}</if>
+            <if test="IGV != null"> AND v.igv = #{IGV}</if>
+            <if test="ESTADO != null"> AND v.estado = #{ESTADO}</if>
+            <if test="PAGADO != null"> AND v.pagado = #{PAGADO}</if>
+            <if test="HORA != null"> AND v.hora = #{HORA}</if>
+            <if test="EMPRESA_ID != null"> AND v.empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND v.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND v.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND v.borrado = #{BORRADO}</if>
+            <if test="TIPO != null"> AND v.tipo = #{TIPO}</if>
+            <if test="ALMACEN_ID != null"> AND v.almacen_id = #{ALMACEN_ID}</if>
+            <if test="NUMERO_VENTA != null"> AND v.numero_venta = #{NUMERO_VENTA}</if>
+
+            <if test="NO_ID != null"> AND v.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND v.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND v.activo != #{NO_ACTIVO}</if>
+
+            <if test="CLI_CLIENTE_ID != null"> AND c.id = #{CLI_CLIENTE_ID}</if>
+            <if test="CLI_NOMBRE != null"> AND c.nombre = #{CLI_NOMBRE}</if>
+            <if test="CLI_TIPO_DOCUMENTO_ID != null"> AND c.tipo_documento_id = #{CLI_TIPO_DOCUMENTO_ID}</if>
+            <if test="CLI_DOCUMENTO != null"> AND c.documento = #{CLI_DOCUMENTO}</if>
+            <if test="CLI_DIRECCION != null"> AND c.direccion = #{CLI_DIRECCION}</if>
+            <if test="CLI_TELEFONO != null"> AND c.telefono = #{CLI_TELEFONO}</if>
+            <if test="CLI_CORREO1 != null"> AND c.correo1 = #{CLI_CORREO1}</if>
+            <if test="CLI_CORREO2 != null"> AND c.correo2 = #{CLI_CORREO2}</if>
+            <if test="CLI_EMPRESA_ID != null"> AND c.empresa_id = #{CLI_EMPRESA_ID}</if>
+            <if test="CLI_USER_ID != null"> AND c.user_id = #{CLI_USER_ID}</if>
+            <if test="CLI_ACTIVO != null"> AND c.activo = #{CLI_ACTIVO}</if>
+            <if test="CLI_BORRADO != null"> AND c.borrado = #{CLI_BORRADO}</if>
+
+            <if test="CLI_NO_ID != null"> AND c.id != #{CLI_NO_ID}</if>
+            <if test="CLI_NO_BORRADO != null"> AND c.borrado != #{CLI_NO_BORRADO}</if>
+            <if test="CLI_NO_ACTIVO != null"> AND c.activo != #{CLI_NO_ACTIVO}</if>
+
+            <if test="CLI_BUSCAR != null"> AND (c.documento like #{CLI_BUSCAR} or c.nombre like #{CLI_BUSCAR} )</if>
+
+            <if test="CO_ID != null"> AND co.id = #{CO_ID}</if>
+            <if test="CO_SERIE != null"> AND co.serie = #{CO_SERIE}</if>
+            <if test="CO_NUMERO != null"> AND co.numero = #{CO_NUMERO}</if>
+            <if test="CO_TIPO_COMPROBANTE_ID != null"> AND ic.tipo_comprobante_id = #{CO_TIPO_COMPROBANTE_ID}</if>
+            <if test="CO_ESTADO != null"> AND co.estado = #{CO_ESTADO}</if>
+
+            <if test="U_ID != null"> AND u.id = #{U_ID}</if>
+            <if test="U_NAME != null"> AND u.name = #{U_NAME}</if>
+            <if test="U_EMAIL != null"> AND u.email = #{U_EMAIL}</if>
+            <if test="U_TIPO_USER_ID != null"> AND u.tipo_user_id = #{U_TIPO_USER_ID}</if>
+
+            <if test="U_BUSCAR != null"> AND (u.name like #{U_BUSCAR} or u.email like #{U_BUSCAR} )</if>
+
+            <if test="DU_ID != null"> AND du.id = #{DU_ID}</if>
+            <if test="DU_NOMBRES != null"> AND du.nombres = #{DU_NOMBRES}</if>
+            <if test="DU_APELLIDO_PATERNO != null"> AND du.apellido_paterno = #{DU_APELLIDO_PATERNO}</if>
+            <if test="DU_APELLIDO_MATERNO != null"> AND du.apellido_materno = #{DU_APELLIDO_MATERNO}</if>
+            <if test="DU_DOCUMENTO != null"> AND du.documento = #{DU_DOCUMENTO}</if>
+
+            <if test="DU_BUSCAR != null"> AND (du.nombres like #{DU_BUSCAR} or du.apellido_paterno like #{DU_BUSCAR} or du.apellido_materno like #{DU_BUSCAR} or du.documento like #{DU_BUSCAR} )</if>
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="BUSCAR_GENERAL != null"> AND ( v.numero_venta = #{BUSCAR_GENERAL} OR
+                c.documento like #{BUSCAR_GENERAL} or c.nombre like #{BUSCAR_GENERAL} OR
+                CONCAT(co.serie, co.numero) like #{BUSCAR_GENERAL} OR
+                u.name like #{BUSCAR_GENERAL} or u.email like #{BUSCAR_GENERAL} OR
+                du.nombres like #{BUSCAR_GENERAL} or du.apellido_paterno like #{BUSCAR_GENERAL} or du.apellido_materno like #{BUSCAR_GENERAL} or du.documento like #{BUSCAR_GENERAL} )
+            </if>
+
+            <if test="ESTADO_NO_ANULADO != null"> AND v.estado != #{ESTADO_NO_ANULADO}</if>
         </where>
 
         <if test="ORDER_DESC != null"> order by v.id desc </if>

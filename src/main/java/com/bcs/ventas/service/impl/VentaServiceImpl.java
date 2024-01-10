@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.*;
 import com.bcs.ventas.dao.mappers.*;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.dto.IngresosVentasDTO;
 import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.dto.TopProductosVendidosDTO;
 import com.bcs.ventas.model.dto.VentasDetallesDTO;
@@ -1917,6 +1918,149 @@ public class VentaServiceImpl implements VentaService {
         //ventas = ventas.stream().sorted((Comparator.comparing(Venta::getId))).collect(Collectors.toList());
 
         return new PageImpl<>(ventas, page, total);
+    }
+    @Override
+    public IngresosVentasDTO listarIngresosVentas(Pageable page, FiltroVenta filtros) throws Exception {
+
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID", EmpresaId);
+        params.put("ESTADO_NO_ANULADO", Constantes.VENTA_ESTADO_ANULADO);
+        params.put("ORDER_DESC", Constantes.CANTIDAD_UNIDAD);
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+
+        if(filtros.getNumeroVenta() != null && !filtros.getNumeroVenta().trim().isEmpty())
+            params.put("NUMERO_VENTA", filtros.getNumeroVenta());
+
+        if(filtros.getId() != null && filtros.getId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ID",filtros.getId());
+
+        if(filtros.getFecha() != null)
+            params.put("FECHA", filtros.getFecha());
+
+        if(filtros.getFechaInicio() != null && filtros.getFechaFinal() != null){
+            params.put("FECHA_INI", filtros.getFechaInicio());
+            params.put("FECHA_FIN", filtros.getFechaFinal());
+        }
+
+        if(filtros.getEstadoVenta() != null)
+            params.put("ESTADO", filtros.getEstadoVenta());
+
+        if(filtros.getPagado() != null)
+            params.put("PAGADO", filtros.getPagado());
+
+        if(filtros.getTipoVenta() != null && filtros.getTipoVenta() > Constantes.CANTIDAD_ZERO)
+            params.put("TIPO", filtros.getTipoVenta());
+
+        if(filtros.getIdCliente() != null && filtros.getIdCliente().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("CLIENTE_ID", filtros.getIdCliente());
+
+        if(filtros.getNombreCliente() != null && !filtros.getNombreCliente().trim().isEmpty())
+            params.put("CLI_NOMBRE", "%"+filtros.getNombreCliente()+"%");
+
+        if(filtros.getDocumentoCliente() != null && !filtros.getDocumentoCliente().trim().isEmpty())
+            params.put("CLI_DOCUMENTO", filtros.getDocumentoCliente());
+
+        if(filtros.getIdTipoDocumentoCliente() != null)
+            params.put("CLI_TIPO_DOCUMENTO_ID", filtros.getIdTipoDocumentoCliente());
+
+        if(filtros.getIdComprobante() != null && filtros.getIdComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("COMPROBANTE_ID", filtros.getIdComprobante());
+
+        if(filtros.getSerieComprobante() != null && !filtros.getSerieComprobante().trim().isEmpty())
+            params.put("CO_SERIE", filtros.getSerieComprobante());
+
+        if(filtros.getNumeroComprobante() != null && !filtros.getNumeroComprobante().trim().isEmpty())
+            params.put("CO_NUMERO", filtros.getNumeroComprobante());
+
+        if(filtros.getIdTipoComprobante() != null && filtros.getIdTipoComprobante().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("CO_TIPO_COMPROBANTE_ID", filtros.getIdTipoComprobante());
+
+        if(filtros.getIdUser() != null && filtros.getIdUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("USER_ID", filtros.getIdUser());
+
+        if(filtros.getNameUser() != null && !filtros.getNameUser().trim().isEmpty())
+            params.put("U_NAME", filtros.getNameUser());
+
+        if(filtros.getEmailUser() != null && !filtros.getEmailUser().trim().isEmpty())
+            params.put("U_EMAIL", filtros.getEmailUser());
+
+        if(filtros.getIdTipoUser() != null && filtros.getIdTipoUser().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("U_TIPO_USER_ID", filtros.getIdTipoUser());
+
+        if(filtros.getBuscarDatosUser() != null && !filtros.getBuscarDatosUser().trim().isEmpty())
+            params.put("U_BUSCAR", filtros.getBuscarDatosUser());
+
+        //Buscar General
+        if(filtros.getBuscarDatos() != null && !filtros.getBuscarDatos().trim().isEmpty())
+            params.put("BUSCAR_GENERAL", "%"+filtros.getBuscarDatos()+"%");
+
+
+        Long total = ventaMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        BigDecimal montosTotal = ventaMapper.getTotalIngresosVentas(params);
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<Venta> ventas = ventaMapper.listByParameterMap(params);
+
+        //AtomicReference<BigDecimal> montoTotal = new AtomicReference<>(new BigDecimal(0));
+
+        ventas.forEach((venta) -> {
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_ANULADO))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_ANULADO_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_INICIADO))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_INICIADO_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_NO_COBRADA_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_PARCIAL_STR);
+
+            if(venta.getEstado().equals(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL))
+                venta.setEstadoStr(Constantes.VENTA_ESTADO_VENTA_COBRADA_TOTAL_STR);
+
+            if(venta.getCliente() != null && venta.getCliente().getTipoDocumento() != null){
+                try {
+                    TipoDocumento tipoDocumento = tipoDocumentoDAO.listarPorId(venta.getCliente().getTipoDocumento().getId());
+                    venta.getCliente().setTipoDocumento(tipoDocumento);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(venta.getComprobante() != null && venta.getComprobante().getInitComprobante() != null){
+                try {
+                    InitComprobante initComprobante = initComprobanteDAO.listarPorId(venta.getComprobante().getInitComprobante().getId());
+                    venta.getComprobante().setInitComprobante(initComprobante);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            //montoTotal.set(montoTotal.get().add(venta.getMontoCobrado()));
+        });
+
+        //BigDecimal montoTotalFinal = montoTotal.get();
+        IngresosVentasDTO ventasDTO = new IngresosVentasDTO();
+
+        ventasDTO.setVentas(new PageImpl<>(ventas, page, total));
+        ventasDTO.setMontoTotal(montosTotal);
+
+        //ventas = ventas.stream().sorted((Comparator.comparing(Venta::getId))).collect(Collectors.toList());
+
+        return ventasDTO;
     }
 
     @Override

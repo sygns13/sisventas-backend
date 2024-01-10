@@ -1,6 +1,7 @@
 package com.bcs.ventas.service;
 
 
+import com.bcs.ventas.model.dto.IngresosVentasDTO;
 import com.bcs.ventas.model.dto.TopProductosVendidosDTO;
 import com.bcs.ventas.model.dto.VentasDetallesDTO;
 import com.bcs.ventas.model.entities.CobroVenta;
@@ -48,4 +49,6 @@ public interface VentaService extends GeneralService<Venta, Long> {
     Page<CobroVenta> listarPagos(Pageable pageable, Long id) throws Exception;
 
     Page<CobroVenta> listarCobradoDetalle(Pageable pageable, FiltroVenta filtros) throws Exception;
+
+    IngresosVentasDTO listarIngresosVentas(Pageable pageable, FiltroVenta filtros) throws Exception;
 }
