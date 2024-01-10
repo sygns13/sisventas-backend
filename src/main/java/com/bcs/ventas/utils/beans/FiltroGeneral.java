@@ -22,7 +22,17 @@ public class FiltroGeneral {
 
     private LocalDate fecha;
 
+    private Integer tipoComprobanteOtros;
+
     public FiltroGeneral() {
+    }
+
+    public Integer getTipoComprobanteOtros() {
+        return tipoComprobanteOtros;
+    }
+
+    public void setTipoComprobanteOtros(Integer tipoComprobanteOtros) {
+        this.tipoComprobanteOtros = tipoComprobanteOtros;
     }
 
     public LocalDate getFecha() {

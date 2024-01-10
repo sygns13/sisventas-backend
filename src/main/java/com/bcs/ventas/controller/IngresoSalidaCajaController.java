@@ -1,10 +1,13 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.IngresosOtrosDTO;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
 import com.bcs.ventas.service.IngresoSalidaCajaService;
+import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import com.bcs.ventas.utils.beans.FiltroGeneral;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,6 +61,22 @@ public class IngresoSalidaCajaController {
 
         Pageable pageable = PageRequest.of(page,size);
         Page<IngresoSalidaCaja> resultado = ingresoSalidaCajaService.listar(pageable, buscar, almacen_id);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
+    @PostMapping("/ingresos_otros")
+    public ResponseEntity<IngresosOtrosDTO> listarReporteIngresos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                         @RequestBody FiltroGeneral filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
+        if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
+
+        Pageable pageable = PageRequest.of(filtros.getPage().intValue(), filtros.getSize().intValue());
+
+        IngresosOtrosDTO resultado = ingresoSalidaCajaService.listarIngresosReporte(pageable, filtros);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }

@@ -3,12 +3,14 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.IngresoSalidaCajaDAO;
 import com.bcs.ventas.dao.mappers.IngresoSalidaCajaMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.dto.IngresosOtrosDTO;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
 import com.bcs.ventas.model.entities.User;
 import com.bcs.ventas.service.IngresoSalidaCajaService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import com.bcs.ventas.utils.beans.FiltroGeneral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -154,6 +157,54 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
         //Page<Almacen> resultado = new PageImpl<>(almacenes, page, totalPages);
 
         return new PageImpl<>(ingresoSalidaCajas, page, total);
+    }
+
+
+    @Override
+    public IngresosOtrosDTO listarIngresosReporte(Pageable page, FiltroGeneral filtros) throws Exception {
+        //return ingresoSalidaCajaDAO.listar();
+
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
+        //params.put("BUSCAR","%"+buscar+"%");
+        params.put("ORDER_DESC", Constantes.CANTIDAD_UNIDAD);
+        params.put("TIPO", Constantes.TIPO_ENTRADA_PRODUCTOS);
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+
+        if(filtros.getFechaInicio() != null && filtros.getFechaFinal() != null){
+            params.put("FECHA_INI", filtros.getFechaInicio());
+            params.put("FECHA_FIN", filtros.getFechaFinal());
+        }
+
+        if(filtros.getTipoComprobanteOtros() != null && filtros.getTipoComprobanteOtros().compareTo(Constantes.CANTIDAD_UNIDAD_NEGATIVE_INTEGER) > 0)
+            params.put("TIPO_COMPROBANTE", filtros.getTipoComprobanteOtros());
+
+        Long total = ingresoSalidaCajaMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        BigDecimal totalMonto = ingresoSalidaCajaMapper.getTotalIngresosOtros(params);
+        if(totalMonto == null) totalMonto = Constantes.CANTIDAD_ZERO_BIG_DECIMAL;
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<IngresoSalidaCaja> ingresoSalidaCajas = ingresoSalidaCajaMapper.listByParameterMap(params);
+        //Page<Almacen> resultado = new PageImpl<>(almacenes, page, totalPages);
+
+        IngresosOtrosDTO ingresosOtrosDTO = new IngresosOtrosDTO();
+
+        ingresosOtrosDTO.setIngresos(new PageImpl<>(ingresoSalidaCajas, page, total));
+        ingresosOtrosDTO.setMontoTotal(totalMonto);
+
+        return ingresosOtrosDTO;
     }
 
     @Override
