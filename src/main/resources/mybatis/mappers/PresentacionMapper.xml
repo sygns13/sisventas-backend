@@ -36,7 +36,7 @@
 
             <if test="BUSCAR != null"> AND presentacion like #{BUSCAR}</if>
         </where>
-        order by presentacion, id
+        order by borrado desc, presentacion, id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
@@ -55,7 +55,7 @@
 
             <if test="BUSCAR != null"> AND presentacion like #{BUSCAR}</if>
         </where>
-        order by presentacion, id
+        order by borrado desc, presentacion, id
         <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>

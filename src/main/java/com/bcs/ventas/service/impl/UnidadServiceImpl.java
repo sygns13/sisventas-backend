@@ -302,6 +302,20 @@ public class UnidadServiceImpl implements UnidadService {
         }
         params.clear();
 
+
+        params.put("CANTIDAD",a.getCantidad());
+        params.put("EMPRESA_ID",a.getEmpresaId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Unidad> unidadsV3 = unidadMapper.listByParameterMap(params);
+
+        if(unidadsV3.size() > 0){
+            resultado = false;
+            error = "La Cantidad de la Unidad ingresada ya se encuentra registrada";
+            errors.add(error);
+        }
+        params.clear();
+
         resultValidacion.put("errors",errors);
         resultValidacion.put("warnings",warnings);
 
@@ -342,6 +356,20 @@ public class UnidadServiceImpl implements UnidadService {
         if(unidadsV2.size() > 0){
             resultado = false;
             error = "La Abreviatura de la Unidad ingresada ya se encuentra registrada";
+            errors.add(error);
+        }
+        params.clear();
+
+        params.put("NO_ID",a.getId());
+        params.put("CANTIDAD",a.getCantidad());
+        params.put("EMPRESA_ID",a.getEmpresaId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<Unidad> unidadsV3 = unidadMapper.listByParameterMap(params);
+
+        if(unidadsV3.size() > 0){
+            resultado = false;
+            error = "La Cantidad de la Unidad ingresada ya se encuentra registrada";
             errors.add(error);
         }
         params.clear();

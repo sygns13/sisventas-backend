@@ -36,7 +36,7 @@
 
             <if test="BUSCAR != null"> AND nombre like #{BUSCAR}</if>
         </where>
-        order by nombre, id
+        order by borrado desc, nombre, id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
@@ -55,7 +55,7 @@
 
             <if test="BUSCAR != null"> AND nombre like #{BUSCAR}</if>
         </where>
-        order by nombre, id
+        order by borrado desc, nombre, id
         <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>

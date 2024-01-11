@@ -38,7 +38,7 @@
 
             <if test="BUSCAR != null"> AND tipo like #{BUSCAR}</if>
         </where>
-        order by tipo, id
+        order by borrado desc, tipo, id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
@@ -58,7 +58,7 @@
 
             <if test="BUSCAR != null"> AND tipo like #{BUSCAR}</if>
         </where>
-        order by tipo, id
+        order by borrado desc, tipo, id
         <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>

@@ -35,7 +35,7 @@ public class Unidad implements Serializable {
 
     @Schema(description = "Cantidad Numérica de la Unidad")
     @NotNull( message = "{unidad.cantidad.notnull}")
-    @Min(value = 0, message = "{unidad.cantidad.min}")
+    @Min(value = 2, message = "{unidad.cantidad.min}")
     @Max(value = 99999999, message = "{unidad.cantidad.max}")
     @Column(name="cantidad", nullable = true)
     private Double cantidad;

@@ -716,14 +716,14 @@ public class UserServiceImpl implements UserService {
             resultado = false;
             error = "Debe de ingresar el teléfono del Usuario ";
             errors.add(error);
-        }
+        }*/
 
         if(a.getDatos().getDocumento() == null || a.getDatos().getDocumento().isEmpty()){
             resultado = false;
             error = "Debe de ingresar el documento del Usuario ";
             errors.add(error);
         }
-        */
+
 
         if(a.getDatos().getEmail() == null || a.getDatos().getEmail().isEmpty()){
             resultado = false;
