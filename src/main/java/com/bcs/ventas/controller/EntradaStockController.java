@@ -4,6 +4,8 @@ import com.bcs.ventas.dao.FacturaProveedorDAO;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.dto.ComprasDetallesDTO;
 import com.bcs.ventas.model.dto.CuentasPagarDetallesDTO;
+import com.bcs.ventas.model.dto.EgresosComprasDTO;
+import com.bcs.ventas.model.dto.IngresosVentasDTO;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
 import com.bcs.ventas.model.entities.EntradaStock;
@@ -12,6 +14,7 @@ import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroEntradaStock;
+import com.bcs.ventas.utils.beans.FiltroVenta;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -370,5 +373,19 @@ public class EntradaStockController {
 
         EntradaStock obj = entradaStockService.revertirActualizacionEntradaStock(v);
         return new ResponseEntity<EntradaStock>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/get_egresos_compras")
+    public ResponseEntity<EgresosComprasDTO> listarEgresosCompras(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                  @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                  @RequestParam(name = "size", defaultValue = "5") int size,
+                                                                  @RequestBody FiltroEntradaStock filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Pageable pageable = PageRequest.of(page,size);
+        EgresosComprasDTO obj = entradaStockService.listarIngresosVentas(pageable, filtros);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 }

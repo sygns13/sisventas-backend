@@ -6,6 +6,7 @@ import com.bcs.ventas.model.entities.EntradaStock;
 import com.bcs.ventas.model.entities.PagoProveedor;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -23,5 +24,7 @@ public interface EntradaStockMapper extends GeneralMapper<EntradaStock> {
     Long getTotalElementsPagarDetail(Map<String, Object> var1);
 
     List<PagoProveedor> listComprasDetailByParameterMap(Map<String, Object> var1);
+
+    BigDecimal getTotalEgresosCompras(Map<String, Object> var1);
 
 }

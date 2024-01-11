@@ -3,10 +3,7 @@ package com.bcs.ventas.controller.reportes;
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.dto.CajaSucursalDTO;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
-import com.bcs.ventas.service.reportes.CajaIngresoOtrosReportService;
-import com.bcs.ventas.service.reportes.CajaIngresoVentasReportService;
-import com.bcs.ventas.service.reportes.CajaReportService;
-import com.bcs.ventas.service.reportes.ResumenCajaReportService;
+import com.bcs.ventas.service.reportes.*;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
 import com.bcs.ventas.utils.beans.FiltroEntradaStock;
@@ -31,6 +28,9 @@ public class CajaReportController {
 
     @Autowired
     private CajaIngresoOtrosReportService cajaIngresoOtrosReportService;
+
+    @Autowired
+    private CajaEgresosComprasReportService cajaEgresosComprasReportService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -165,5 +165,33 @@ public class CajaReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(cajaIngresoOtrosReportService.exportXls(filtros));
+    }
+
+    @PostMapping("/egresos_compras/export-pdf")
+    public ResponseEntity<byte[]> exportPdfEgresosVentas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("EgresosCajaCompras", "EgresosCajaCompras.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(cajaEgresosComprasReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/egresos_compras/export-xls")
+    public ResponseEntity<byte[]> exportXlsEgresosVentas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @RequestBody FiltroEntradaStock filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("EgresosCajaCompras" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(cajaEgresosComprasReportService.exportXls(filtros));
     }
 }
