@@ -169,6 +169,16 @@
         <result property="producto.presentacion.borrado" column="pe_borrado" />
 
         <result property="stock.cantidad" column="s_cantidad" />
+
+        <result property="almacen.id" column="al_id" />
+        <result property="almacen.nombre" column="al_nombre" />
+        <result property="almacen.direccion" column="al_direccion" />
+        <result property="almacen.empresaId" column="al_empresa_id" />
+        <result property="almacen.userId" column="al_user_id" />
+        <result property="almacen.activo" column="al_activo" />
+        <result property="almacen.borrado" column="al_borrado" />
+        <result property="almacen.distritoId" column="al_distrito_id" />
+        <result property="almacen.codigo" column="al_codigo" />
     </resultMap>
 
     <resultMap id="principalResultMapProductosVencidos" type="com.bcs.ventas.model.dto.ProductoVencidoDTO">
@@ -675,11 +685,8 @@
         inner join marcas m on p.marca_id=m.id
         inner join presentacions pe on p.presentacion_id=pe.id
         inner join empresas e on e.id = p.empresa_id
-        left join stocks s on s.producto_id=p.id
-        <if test="ALMACEN_ID != null">
-            and s.almacen_id= #{ALMACEN_ID}
-        </if>
-        and s.activo=1 and s.borrado=0
+        inner join stocks s on s.producto_id=p.id and s.activo=1 and s.borrado=0
+        inner join almacens a on a.id = s.almacen_id
 
         <where>
             <if test="ID != null"> AND p.id = #{ID}</if>
@@ -715,7 +722,9 @@
             <if test="NO_BORRADO != null"> AND p.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND p.activo != #{NO_ACTIVO}</if>
 
-            <if test="1 == 1"> AND p.stock_minimo <![CDATA[ >= ]]> ifnull(s.cantidad,0)</if>
+            <if test="ALMACEN_ID != null"> AND a.id = #{ALMACEN_ID}</if>
+
+            AND p.stock_minimo <![CDATA[ >= ]]> ifnull(s.cantidad,0)
 
         </where>
         order by p.nombre, p.codigo_unidad, p.id
@@ -755,17 +764,27 @@
         pe.presentacion as pe_presentacion,
         pe.activo as pe_activo,
         pe.borrado as pe_borrado,
-        ifnull(s.cantidad,0) as s_cantidad
+        ifnull(s.cantidad,0) as s_cantidad,
+
+        a.id as al_id,
+        a.nombre as al_nombre,
+        a.direccion as al_direccion,
+        a.empresa_id as al_empresa_id,
+        a.user_id as al_user_id,
+        a.activo as al_activo,
+        a.borrado as al_borrado,
+        a.distrito_id as al_distrito_id,
+        a.codigo as al_codigo
+
         from productos p
         inner join tipo_productos tp on p.tipo_producto_id = tp.id
         inner join marcas m on p.marca_id=m.id
         inner join presentacions pe on p.presentacion_id=pe.id
         inner join empresas e on e.id = p.empresa_id
-        left join stocks s on s.producto_id=p.id
-        <if test="ALMACEN_ID != null">
-        and s.almacen_id= #{ALMACEN_ID}
-        </if>
-        and s.activo=1 and s.borrado=0
+        inner join stocks s on s.producto_id=p.id and s.activo=1 and s.borrado=0
+        inner join almacens a on a.id = s.almacen_id
+
+
 
         <where>
             <if test="ID != null"> AND p.id = #{ID}</if>
@@ -801,7 +820,9 @@
             <if test="NO_BORRADO != null"> AND p.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND p.activo != #{NO_ACTIVO}</if>
 
-            <if test="1 == 1"> AND p.stock_minimo <![CDATA[ >= ]]> ifnull(s.cantidad,0)</if>
+            <if test="ALMACEN_ID != null"> AND a.id = #{ALMACEN_ID}</if>
+
+            AND p.stock_minimo <![CDATA[ >= ]]> ifnull(s.cantidad,0)
 
         </where>
         group by p.id

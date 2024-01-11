@@ -1,10 +1,9 @@
 package com.bcs.ventas.controller.reportes;
 
-import com.bcs.ventas.service.reportes.ProductosInventarioReportService;
-import com.bcs.ventas.service.reportes.ProductosPrecioReportService;
-import com.bcs.ventas.service.reportes.ProductosSucursalReportService;
+import com.bcs.ventas.service.reportes.*;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
+import com.bcs.ventas.utils.beans.FiltroGeneral;
 import com.bcs.ventas.utils.beans.FiltroInventario;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,12 @@ public class ProductoReportController {
 
     @Autowired
     private ProductosPrecioReportService productosPrecioReportService;
+
+    @Autowired
+    private ProductosBajoStockReportService productosBajoStockReportService;
+
+    @Autowired
+    private ProductosVencidosReportService productosVencidosReportService;
 
     @Autowired
     private ClaimsAuthorization claimsAuthorization;
@@ -130,5 +135,61 @@ public class ProductoReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(productosPrecioReportService.exportXls(almacenId, unidadId));
+    }
+
+    @PostMapping("/bajo_stock/export-pdf")
+    public ResponseEntity<byte[]> exportPdfBajoStock(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                     @RequestBody FiltroGeneral filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("ProductosBajoStocks", "ProductosBajoStocks.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(productosBajoStockReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/bajo_stock/export-xls")
+    public ResponseEntity<byte[]> exportXlsBajoStock(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                     @RequestBody FiltroGeneral filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("ProductosBajoStocks" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(productosBajoStockReportService.exportXls(filtros));
+    }
+
+    @PostMapping("/vencidos/export-pdf")
+    public ResponseEntity<byte[]> exportPdfProdVencidos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                     @RequestBody FiltroGeneral filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("ProductosVencidos", "ProductosVencidos.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(productosVencidosReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/vencidos/export-xls")
+    public ResponseEntity<byte[]> exportXlsProdVencidos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                     @RequestBody FiltroGeneral filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("ProductosVencidos" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(productosVencidosReportService.exportXls(filtros));
     }
 }
