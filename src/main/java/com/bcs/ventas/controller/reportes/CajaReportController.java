@@ -33,6 +33,9 @@ public class CajaReportController {
     private CajaEgresosComprasReportService cajaEgresosComprasReportService;
 
     @Autowired
+    private CajaEgresosOtrosReportService cajaEgresosOtrosReportService;
+
+    @Autowired
     private JwtUtils jwtUtils;
 
     @Autowired
@@ -193,5 +196,34 @@ public class CajaReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(cajaEgresosComprasReportService.exportXls(filtros));
+    }
+
+
+    @PostMapping("/egresos_otros/export-pdf")
+    public ResponseEntity<byte[]> exportPdfEgresosOtros(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @RequestBody FiltroGeneral filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("EgresosCajaOtros", "EgresosCajaOtros.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(cajaEgresosOtrosReportService.exportPdf(filtros));
+    }
+
+    @PostMapping("/egresos_otros/export-xls")
+    public ResponseEntity<byte[]> exportXlsEgresosOtros(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                          @RequestBody FiltroGeneral filtros) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
+        var contentDisposition = ContentDisposition.builder("attachment")
+                .filename("EgresosCajaOtros" + ".xlsx").build();
+        headers.setContentDisposition(contentDisposition);
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(cajaEgresosOtrosReportService.exportXls(filtros));
     }
 }

@@ -1,6 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.EgresosOtrosDTO;
 import com.bcs.ventas.model.dto.IngresosOtrosDTO;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
 import com.bcs.ventas.service.IngresoSalidaCajaService;
@@ -77,6 +78,22 @@ public class IngresoSalidaCajaController {
         Pageable pageable = PageRequest.of(filtros.getPage().intValue(), filtros.getSize().intValue());
 
         IngresosOtrosDTO resultado = ingresoSalidaCajaService.listarIngresosReporte(pageable, filtros);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
+    @PostMapping("/egresos_otros")
+    public ResponseEntity<EgresosOtrosDTO> listarReporteEgresos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                @RequestBody FiltroGeneral filtros) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
+        if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
+
+        Pageable pageable = PageRequest.of(filtros.getPage().intValue(), filtros.getSize().intValue());
+
+        EgresosOtrosDTO resultado = ingresoSalidaCajaService.listarEgresosReporte(pageable, filtros);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }

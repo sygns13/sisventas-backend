@@ -3,6 +3,7 @@ package com.bcs.ventas.service.impl;
 import com.bcs.ventas.dao.IngresoSalidaCajaDAO;
 import com.bcs.ventas.dao.mappers.IngresoSalidaCajaMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
+import com.bcs.ventas.model.dto.EgresosOtrosDTO;
 import com.bcs.ventas.model.dto.IngresosOtrosDTO;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
 import com.bcs.ventas.model.entities.IngresoSalidaCaja;
@@ -205,6 +206,53 @@ public class IngresoSalidaCajaServiceImpl implements IngresoSalidaCajaService {
         ingresosOtrosDTO.setMontoTotal(totalMonto);
 
         return ingresosOtrosDTO;
+    }
+
+    @Override
+    public EgresosOtrosDTO listarEgresosReporte(Pageable page, FiltroGeneral filtros) throws Exception {
+        //return ingresoSalidaCajaDAO.listar();
+
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",EmpresaId);
+        //params.put("BUSCAR","%"+buscar+"%");
+        params.put("ORDER_DESC", Constantes.CANTIDAD_UNIDAD);
+        params.put("TIPO", Constantes.TIPO_RETIRO_PRODUCTOS);
+
+        if(filtros.getAlmacenId() != null && filtros.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0)
+            params.put("ALMACEN_ID",filtros.getAlmacenId());
+
+        if(filtros.getFechaInicio() != null && filtros.getFechaFinal() != null){
+            params.put("FECHA_INI", filtros.getFechaInicio());
+            params.put("FECHA_FIN", filtros.getFechaFinal());
+        }
+
+        if(filtros.getTipoComprobanteOtros() != null && filtros.getTipoComprobanteOtros().compareTo(Constantes.CANTIDAD_UNIDAD_NEGATIVE_INTEGER) > 0)
+            params.put("TIPO_COMPROBANTE", filtros.getTipoComprobanteOtros());
+
+        Long total = ingresoSalidaCajaMapper.getTotalElements(params);
+        Long totalPages = (long) Math.ceil( ((double)total) / page.getPageSize());
+        Long offset = (long) page.getPageSize() *(page.getPageNumber());
+
+        BigDecimal totalMonto = ingresoSalidaCajaMapper.getTotalIngresosOtros(params);
+        if(totalMonto == null) totalMonto = Constantes.CANTIDAD_ZERO_BIG_DECIMAL;
+
+        params.put("LIMIT", page.getPageSize());
+        params.put("OFFSET", offset);
+
+        List<IngresoSalidaCaja> ingresoSalidaCajas = ingresoSalidaCajaMapper.listByParameterMap(params);
+        //Page<Almacen> resultado = new PageImpl<>(almacenes, page, totalPages);
+
+        EgresosOtrosDTO egresosOtrosDTO = new EgresosOtrosDTO();
+
+        egresosOtrosDTO.setEgresos(new PageImpl<>(ingresoSalidaCajas, page, total));
+        egresosOtrosDTO.setMontoTotal(totalMonto);
+
+        return egresosOtrosDTO;
     }
 
     @Override

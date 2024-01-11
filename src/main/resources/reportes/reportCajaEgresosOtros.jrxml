@@ -47,7 +47,7 @@
 					<textElement textAlignment="Center">
 						<font size="15" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Reporte de Ingresos por Otros Movimientos realizados]]></text>
+					<text><![CDATA[Reporte de Egresos por Otros Movimientos realizados]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -232,7 +232,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[Importe de Ingreso (S/.)]]></text>
+								<text><![CDATA[Importe de Egreso (S/.)]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="14">
@@ -324,7 +324,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Ingreso por Otros Registros - Monto Total (S/.):]]></text>
+				<text><![CDATA[Egreso por Otros Registros - Monto Total (S/.):]]></text>
 			</staticText>
 			<textField pattern="#,##0.00#;(#,##0.00#-)">
 				<reportElement positionType="Float" x="710" y="60" width="102" height="14" uuid="fb9aefd1-8759-45da-b500-801a57bfeec4">
