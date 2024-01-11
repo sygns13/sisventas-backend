@@ -39,8 +39,8 @@ public class DatosUser implements Serializable {
     private String apellidoPaterno;
 
     @Schema(description = "Apellido Materno del Usuario")
-    @NotNull(message = "{datos_users.apellido_materno.notnull}")
-    @Size(min = 1, max = 250, message = "{datos_users.apellido_materno.size}")
+    //@NotNull(message = "{datos_users.apellido_materno.notnull}")
+    //@Size(min = 1, max = 250, message = "{datos_users.apellido_materno.size}")
     @Column(name = "apellido_materno", nullable = true, length = 250)
     private String apellidoMaterno;
 
