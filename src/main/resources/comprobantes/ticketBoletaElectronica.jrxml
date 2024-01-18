@@ -34,11 +34,12 @@
 	<parameter name="docu_otroscargos" class="java.lang.String"/>
 	<parameter name="hashcode" class="java.lang.String"/>
 	<parameter name="urlConsulta" class="java.lang.String"/>
+	<parameter name="clie_tipo_doc" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="171" splitType="Stretch">
+		<band height="166" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="79" y="105" width="78" height="12" uuid="300e302c-f48e-4765-ace4-88f8ae4c9a4e"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -93,7 +94,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="false"/>
 				</textElement>
-				<text><![CDATA[FACTURA ELECTRÓNICA]]></text>
+				<text><![CDATA[BOLETA DE VENTA ELECTRÓNICA]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="0" y="70" width="192" height="12" uuid="57f9b7fe-56e6-41ea-be49-a16c6f4d942a"/>
@@ -131,37 +132,30 @@
 				<text><![CDATA[FECHA DE IMPRESIÓN:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="56" y="151" width="136" height="11" uuid="e1397f7b-ef7c-4647-84eb-92886201392a"/>
+				<reportElement x="0" y="151" width="192" height="11" uuid="e1397f7b-ef7c-4647-84eb-92886201392a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{clie_nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="56" y="140" width="136" height="11" uuid="c78f34fc-b260-41db-bf35-aaa3cf7b055d"/>
+				<reportElement x="70" y="140" width="122" height="11" uuid="c78f34fc-b260-41db-bf35-aaa3cf7b055d"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{clie_numero}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="0" y="140" width="56" height="11" uuid="04edebf8-6402-4bcd-9821-d6ac4f87beee"/>
+			<textField>
+				<reportElement x="0" y="140" width="70" height="11" uuid="d071f5fe-1c11-4abc-99f6-67aa62831318"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="false"/>
 				</textElement>
-				<text><![CDATA[RUC:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="151" width="56" height="11" uuid="84a75990-c2b2-42bb-b780-0244aed502d8"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[RAZÓN SOCIAL:]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{clie_tipo_doc}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="2"/>
+		<band/>
 	</pageHeader>
 	<detail>
 		<band height="36" splitType="Stretch">
@@ -457,7 +451,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Representación Impresa de la Factura de Venta Electrónica]]></text>
+				<text><![CDATA[Representación Impresa de la Boleta de Venta Electrónica]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="221" width="192" height="11" uuid="4237f540-92e1-4517-b360-92c1c62d90a9"/>
@@ -491,7 +485,7 @@
 				<reportElement x="46" y="267" width="100" height="100" uuid="ddc66aa4-c379-4b94-a2ee-7fa16388481f"/>
 				<imageExpression><![CDATA[com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(
 	new com.google.zxing.qrcode.QRCodeWriter().encode(
-	$P{empr_nroruc}+" | FACTURA | "+$P{docu_numero}+" | "+$P{docu_igv}+" | "+$P{docu_total}+" | "+$P{docu_fecha}+" | RUC | "+$P{clie_numero}+" | "+$P{hashcode},
+	$P{empr_nroruc}+" | BOLETA DE VENTA | "+$P{docu_numero}+" | "+$P{docu_igv}+" | "+$P{docu_total}+" | "+$P{docu_fecha}+" | " +$P{clie_tipo_doc} +" | "+$P{clie_numero}+" | "+$P{hashcode},
 	com.google.zxing.BarcodeFormat.QR_CODE, 400,400))]]></imageExpression>
 			</image>
 			<staticText>

@@ -9,11 +9,11 @@ import com.bcs.ventas.dao.mappers.DetalleComprobanteMapper;
 import com.bcs.ventas.model.entities.CabeceraComprobante;
 import com.bcs.ventas.model.entities.Config;
 import com.bcs.ventas.model.entities.DetalleComprobante;
-import com.bcs.ventas.service.comprobantes.FacturaDetailReportService;
-import com.bcs.ventas.service.jasper.FacturaJasperService;
+import com.bcs.ventas.service.comprobantes.BoletaDetailReportService;
+import com.bcs.ventas.service.jasper.BoletaJasperService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
-import com.bcs.ventas.utils.comprobantesbeans.FacturaDetailReport;
+import com.bcs.ventas.utils.comprobantesbeans.BoletaDetailReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FacturaDetailReportServiceImpl implements FacturaDetailReportService {
+public class BoletaDetailReportServiceImpl implements BoletaDetailReportService {
 
     @Autowired
     private ClaimsAuthorization claimsAuthorization;
 
     @Autowired
-    private FacturaJasperService facturaJasperService;
+    private BoletaJasperService boletaJasperService;
 
     @Autowired
     private CabeceraComprobanteDAO cabeceraComprobanteDAO;
@@ -83,6 +83,7 @@ public class FacturaDetailReportServiceImpl implements FacturaDetailReportServic
         parametros.put("empr_nroruc", cabeceraComprobante.getEmpNroruc());
         parametros.put("docu_numero", cabeceraComprobante.getDocNumero());
         parametros.put("docu_fecha", cabeceraComprobante.getDocFecha().format(formato));
+        parametros.put("clie_tipo_doc", cabeceraComprobante.getCliTipodocLabel());
         parametros.put("clie_numero", cabeceraComprobante.getCliNumero());
         parametros.put("clie_nombre", cabeceraComprobante.getCliNombre());
         parametros.put("docu_grabada", cabeceraComprobante.getDocGravada());
@@ -106,24 +107,24 @@ public class FacturaDetailReportServiceImpl implements FacturaDetailReportServic
 
         List<DetalleComprobante> detalleComprobantes = detalleComprobanteMapper.listByParameterMap(params);
 
-        List<FacturaDetailReport> facturaDetailReports = new ArrayList<>();
+        List<BoletaDetailReport> boletaDetailReports = new ArrayList<>();
 
         detalleComprobantes.forEach((detalleComprobante) -> {
-            FacturaDetailReport facturaDetailReport = new FacturaDetailReport();
+            BoletaDetailReport boletaDetailReport = new BoletaDetailReport();
 
             BigDecimal subTotal = new BigDecimal(detalleComprobante.getItemToSubtotal());
             BigDecimal igv = new BigDecimal(detalleComprobante.getItemToIgv());
             BigDecimal total = subTotal.add(igv);
 
-            facturaDetailReport.setCantidad(detalleComprobante.getItemCantidad());
-            facturaDetailReport.setProducto(detalleComprobante.getItemDescripcion());
-            facturaDetailReport.setPrecioUnitario(detalleComprobante.getItemPreunitfin());
-            facturaDetailReport.setPrecioTotal(String.format("%.2f", total));
+            boletaDetailReport.setCantidad(detalleComprobante.getItemCantidad());
+            boletaDetailReport.setProducto(detalleComprobante.getItemDescripcion());
+            boletaDetailReport.setPrecioUnitario(detalleComprobante.getItemPreunitfin());
+            boletaDetailReport.setPrecioTotal(String.format("%.2f", total));
 
-            facturaDetailReports.add(facturaDetailReport);
+            boletaDetailReports.add(boletaDetailReport);
         });
 
 
-        return facturaJasperService.exportToPdf(facturaDetailReports,"data","ticketFacturaElectronica", parametros);
+        return boletaJasperService.exportToPdf(boletaDetailReports,"data","ticketBoletaElectronica", parametros);
     }
 }

@@ -65,6 +65,9 @@ public class CabeceraComprobante implements Serializable {
     @Column(name="clie_tipodoc", nullable = true, length= 45)
     private String cliTipodoc;
 
+    @Column(name="clie_tipo_doc_label", nullable = true, length= 50)
+    private String cliTipodocLabel;
+
     @Column(name="clie_nombre", nullable = true, length= 200)
     private String cliNombre;
 
@@ -204,6 +207,14 @@ public class CabeceraComprobante implements Serializable {
     private String icbper;
 
     public CabeceraComprobante() {
+    }
+
+    public String getCliTipodocLabel() {
+        return cliTipodocLabel;
+    }
+
+    public void setCliTipodocLabel(String cliTipodocLabel) {
+        this.cliTipodocLabel = cliTipodocLabel;
     }
 
     public String getIcbper() {

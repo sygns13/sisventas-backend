@@ -20,6 +20,7 @@
         <result property="empTipodoc" column="empr_tipodoc" />
         <result property="cliNumero" column="clie_numero" />
         <result property="cliTipodoc" column="clie_tipodoc" />
+        <result property="cliTipodocLabel" column="clie_tipo_doc_label" />
         <result property="cliNombre" column="clie_nombre" />
         <result property="docFecha" column="docu_fecha" />
         <result property="docTipodocumento" column="docu_tipodocumento" />
@@ -71,7 +72,7 @@
         empr_tipodoc, clie_numero, clie_tipodoc, clie_nombre, docu_fecha, docu_tipodocumento, docu_numero, docu_moneda, docu_gravada, docu_inafecta, docu_exonerada,
         docu_gratuita, docu_descuento, docu_subtotal, docu_total, docu_igv, tasa_igv, docu_isc, tasa_isc, docu_otrostributos, tasa_otrostributos, docu_otroscargos,
         docu_percepcion, hashcode, cdr, cdr_nota, cdr_observacion, docu_enviaws, docu_proce_status, docu_proce_fecha, docu_link_pdf, docu_link_cdr, docu_link_xml,
-        clie_correo_cpe1, clie_correo_cpe2, venta_id, user_id, empresa_id, activo, borrado, created_at, updated_at, activo_cpe, importe_letras, icbper
+        clie_correo_cpe1, clie_correo_cpe2, venta_id, user_id, empresa_id, activo, borrado, created_at, updated_at, activo_cpe, importe_letras, icbper, clie_tipo_doc_label
         from cabecera_comprobantes
     </select>
 
@@ -92,6 +93,7 @@
             <if test="EMPR_TIPODOC != null"> AND empr_tipodoc = #{EMPR_TIPODOC}</if>
             <if test="CLIE_NUMERO != null"> AND clie_numero = #{CLIE_NUMERO}</if>
             <if test="CLIE_TIPODOC != null"> AND clie_tipodoc = #{CLIE_TIPODOC}</if>
+            <if test="CLIE_TIPODOC_LABEL != null"> AND clie_tipo_doc_label = #{CLIE_TIPODOC_LABEL}</if>
             <if test="CLIE_NOMBRE != null"> AND clie_nombre = #{CLIE_NOMBRE}</if>
             <if test="DOCU_FECHA != null"> AND docu_fecha = #{DOCU_FECHA}</if>
             <if test="DOCU_TIPODOCUMENTO != null"> AND docu_tipodocumento = #{DOCU_TIPODOCUMENTO}</if>
@@ -148,7 +150,7 @@
         empr_tipodoc, clie_numero, clie_tipodoc, clie_nombre, docu_fecha, docu_tipodocumento, docu_numero, docu_moneda, docu_gravada, docu_inafecta, docu_exonerada,
         docu_gratuita, docu_descuento, docu_subtotal, docu_total, docu_igv, tasa_igv, docu_isc, tasa_isc, docu_otrostributos, tasa_otrostributos, docu_otroscargos,
         docu_percepcion, hashcode, cdr, cdr_nota, cdr_observacion, docu_enviaws, docu_proce_status, docu_proce_fecha, docu_link_pdf, docu_link_cdr, docu_link_xml,
-        clie_correo_cpe1, clie_correo_cpe2, venta_id, user_id, empresa_id, activo, borrado, created_at, updated_at, activo_cpe, importe_letras, icbper
+        clie_correo_cpe1, clie_correo_cpe2, venta_id, user_id, empresa_id, activo, borrado, created_at, updated_at, activo_cpe, importe_letras, icbper, clie_tipo_doc_label
         from cabecera_comprobantes
         <where>
             <if test="ID != null"> AND id = #{ID}</if>
@@ -164,6 +166,7 @@
             <if test="EMPR_NRORUC != null"> AND empr_nroruc = #{EMPR_NRORUC}</if>
             <if test="EMPR_TIPODOC != null"> AND empr_tipodoc = #{EMPR_TIPODOC}</if>
             <if test="CLIE_NUMERO != null"> AND clie_numero = #{CLIE_NUMERO}</if>
+            <if test="CLIE_TIPODOC_LABEL != null"> AND clie_tipo_doc_label = #{CLIE_TIPODOC_LABEL}</if>
             <if test="CLIE_TIPODOC != null"> AND clie_tipodoc = #{CLIE_TIPODOC}</if>
             <if test="CLIE_NOMBRE != null"> AND clie_nombre = #{CLIE_NOMBRE}</if>
             <if test="DOCU_FECHA != null"> AND docu_fecha = #{DOCU_FECHA}</if>
@@ -233,6 +236,7 @@
             <if test="EMPR_NRORUC != null">  empr_nroruc = #{EMPR_NRORUC}, </if>
             <if test="EMPR_TIPODOC != null">  empr_tipodoc = #{EMPR_TIPODOC}, </if>
             <if test="CLIE_NUMERO != null">  clie_numero = #{CLIE_NUMERO}, </if>
+            <if test="CLIE_TIPODOC_LABEL != null">  clie_tipo_doc_label = #{CLIE_TIPODOC_LABEL}, </if>
             <if test="CLIE_TIPODOC != null">  clie_tipodoc = #{CLIE_TIPODOC}, </if>
             <if test="CLIE_NOMBRE != null">  clie_nombre = #{CLIE_NOMBRE}, </if>
             <if test="DOCU_FECHA != null">  docu_fecha = #{DOCU_FECHA}, </if>

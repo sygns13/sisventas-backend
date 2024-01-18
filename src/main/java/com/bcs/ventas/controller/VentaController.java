@@ -10,6 +10,7 @@ import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Venta;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.service.VentaService;
+import com.bcs.ventas.service.comprobantes.BoletaDetailReportService;
 import com.bcs.ventas.service.comprobantes.FacturaDetailReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
@@ -40,6 +41,9 @@ public class VentaController {
 
     @Autowired
     private FacturaDetailReportService facturaDetailReportService;
+
+    @Autowired
+    private BoletaDetailReportService boletaDetailReportService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -363,7 +367,7 @@ public class VentaController {
     }
 
     @PostMapping("/comprobante/factura/{id}")
-    public ResponseEntity<byte[]> exportPdfCuentasCobrarDetallado(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+    public ResponseEntity<byte[]> exportPdfComprobantesFacturas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                   @PathVariable("id") Long id) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -372,5 +376,17 @@ public class VentaController {
         this.SetClaims(Authorization);
 
         return ResponseEntity.ok().headers(headers).body(facturaDetailReportService.exportPdf(id));
+    }
+
+    @PostMapping("/comprobante/boleta/{id}")
+    public ResponseEntity<byte[]> exportPdfComprobantesBoletas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                  @PathVariable("id") Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("BoletaVenta", "BoletaVenta.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(boletaDetailReportService.exportPdf(id));
     }
 }

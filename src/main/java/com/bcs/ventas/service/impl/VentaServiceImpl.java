@@ -520,6 +520,7 @@ public class VentaServiceImpl implements VentaService {
         cabeceraComprobante.setEmpTipodoc(Constantes.TIPO_DOCUMENTO_EMPRESA_RUC);
 
         cabeceraComprobante.setCliTipodoc(venta.getCliente().getTipoDocumento().getKey());
+        cabeceraComprobante.setCliTipodocLabel(venta.getCliente().getTipoDocumento().getTipo().toUpperCase());
         cabeceraComprobante.setCliNumero(venta.getCliente().getDocumento());
         cabeceraComprobante.setCliNombre(venta.getCliente().getNombre() != null ? venta.getCliente().getNombre().toUpperCase() : "");
         cabeceraComprobante.setCliCorreoCpe1(venta.getCliente().getCorreo1() != null ? venta.getCliente().getCorreo1().toUpperCase() : "");
