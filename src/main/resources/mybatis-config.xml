@@ -25,7 +25,7 @@
         <mapper resource="mybatis/mappers/DetalleCotizacionMapper.xml"/>
         <mapper resource="mybatis/mappers/DetalleEntradaStockMapper.xml"/>
         <mapper resource="mybatis/mappers/DetalleGuiaRemisionMapper.xml"/>
-        <mapper resource="mybatis/mappers/DetalleMapper.xml"/>
+        <mapper resource="mybatis/mappers/DetalleComprobanteMapper.xml"/>
         <mapper resource="mybatis/mappers/DetalleOrdenCompraMapper.xml"/>
         <mapper resource="mybatis/mappers/DetalleOrdenPedidoMapper.xml"/>
         <mapper resource="mybatis/mappers/DetalleUnidadProductoMapper.xml"/>

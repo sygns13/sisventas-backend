@@ -1,11 +1,16 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Empresa Model")
 @Entity
 @Table(name = "empresas")
 public class Empresa implements Serializable {
@@ -46,45 +51,94 @@ public class Empresa implements Serializable {
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
+
+    @Column(name="activo_cpe", nullable = true)
+    private Integer activoCpe;
+
+
+    @Column(name="nombre_comercial", nullable = true, length= 500)
+    private String nombreComercial;
+
+    @Column(name="ubigeo", nullable = true, length= 10)
+    private String ubigeo;
+
+    @Column(name="distrito_id", nullable = true)
+    private Long distritoId;
+
+    @Schema(description = "País del Almacén")
+    @Transient
+    private Pais pais;
+
+    @Schema(description = "Departamento del Almacén")
+    @Transient
+    private Departamento departamento;
+
+    @Schema(description = "Provincia del Almacén")
+    @Transient
+    private  Provincia provincia;
+
+    @Schema(description = "Distrito del Almacén")
+    @Transient
+    private Distrito distrito;
 
     public Empresa() {
     }
 
-    public Empresa(Long id, String ruc, String razonsocial, String descripcion, String telefono, String direccion, String email, Long userId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.ruc = ruc;
-        this.razonsocial = razonsocial;
-        this.descripcion = descripcion;
-        this.telefono = telefono;
-        this.direccion = direccion;
-        this.email = email;
-        this.userId = userId;
-        this.activo = activo;
-        this.borrado = borrado;
+    public Pais getPais() {
+        return pais;
     }
 
-    public Empresa(Long id, String ruc, String razonsocial, String descripcion, String telefono, String direccion, String email, Long userId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.ruc = ruc;
-        this.razonsocial = razonsocial;
-        this.descripcion = descripcion;
-        this.telefono = telefono;
-        this.direccion = direccion;
-        this.email = email;
-        this.userId = userId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
+    public void setPais(Pais pais) {
+        this.pais = pais;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
+    public Provincia getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(Provincia provincia) {
+        this.provincia = provincia;
+    }
+
+    public Distrito getDistrito() {
+        return distrito;
+    }
+
+    public void setDistrito(Distrito distrito) {
+        this.distrito = distrito;
+    }
+
+    public Long getDistritoId() {
+        return distritoId;
+    }
+
+    public void setDistritoId(Long distritoId) {
+        this.distritoId = distritoId;
+    }
+
+    public String getUbigeo() {
+        return ubigeo;
+    }
+
+    public void setUbigeo(String ubigeo) {
+        this.ubigeo = ubigeo;
     }
 
     public Long getId() {
@@ -167,19 +221,35 @@ public class Empresa implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public Integer getActivoCpe() {
+        return activoCpe;
+    }
+
+    public void setActivoCpe(Integer activoCpe) {
+        this.activoCpe = activoCpe;
+    }
+
+    public String getNombreComercial() {
+        return nombreComercial;
+    }
+
+    public void setNombreComercial(String nombreComercial) {
+        this.nombreComercial = nombreComercial;
     }
 }

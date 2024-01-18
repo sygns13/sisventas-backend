@@ -9,6 +9,7 @@
         <result property="id" column="id" />
         <result property="ruc" column="ruc" />
         <result property="razonsocial" column="razonsocial" />
+        <result property="nombreComercial" column="nombre_comercial" />
         <result property="descripcion" column="descripcion" />
         <result property="telefono" column="telefono" />
         <result property="direccion" column="direccion" />
@@ -18,30 +19,109 @@
         <result property="borrado" column="borrado" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAd" column="updated_at" />
+        <result property="activoCpe" column="activo_cpe" />
+        <result property="ubigeo" column="ubigeo" />
+
+        <result property="distritoId" column="distrito_id" />
+        <result property="pais.id" column="id_pais" />
+        <result property="pais.nombre" column="pais" />
+        <result property="pais.inicial" column="pais_inicial" />
+        <result property="departamento.id" column="id_departamento" />
+        <result property="departamento.nombre" column="departamento" />
+        <result property="provincia.id" column="id_provincia" />
+        <result property="provincia.nombre" column="provincia" />
+        <result property="distrito.id" column="id_istrito" />
+        <result property="distrito.nombre" column="distrito" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from empresas
+        select
+        e.id, e.ruc, e.razonsocial, e.descripcion, e.telefono, e.direccion, e.email, e.activo, e.borrado, e.created_at, e.updated_at, e.user_id, e.nombre_comercial,
+        e.activo_cpe, e.ubigeo, e.distrito_id
+
+        , d.id as id_istrito, d.nombre as distrito
+        , p.id as id_provincia, p.nombre as provincia
+        , de.id as id_departamento, de.nombre as departamento
+        , pa.id as id_pais, pa.nombre as pais, pa.inicial as pais_inicial
+        from empresas e
+        inner join distritos d on e.distrito_id = d.id
+        inner join provincias p on d.provincia_id = p.id
+        inner join departamentos de on p.departamento_id = de.id
+        inner join pais pa on de.pais_id = pa.id
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from empresas e
+        inner join distritos d on e.distrito_id = d.id
+        inner join provincias p on d.provincia_id = p.id
+        inner join departamentos de on p.departamento_id = de.id
+        inner join pais pa on de.pais_id = pa.id
+        <where>
+            <if test="ID != null"> AND e.id = #{ID}</if>
+            <if test="RUC != null"> AND e.ruc = #{RUC}</if>
+            <if test="RAZONSOCIAL != null"> AND e.razonsocial = #{RAZONSOCIAL}</if>
+            <if test="DESCRIPCION != null"> AND e.descripcion = #{DESCRIPCION}</if>
+            <if test="TELEFONO != null"> AND e.telefono = #{TELEFONO}</if>
+            <if test="DIRECCION != null"> AND e.direccion = #{DIRECCION}</if>
+            <if test="EMAIL != null"> AND e.email = #{EMAIL}</if>
+            <if test="USER_ID != null"> AND e.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND e.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND e.borrado = #{BORRADO}</if>
+
+            <if test="BUSCAR != null"> AND e.razonsocial like #{BUSCAR}</if>
+            <if test="ACTIVO_CPE != null"> AND e.activo_cpe != #{ACTIVO_CPE}</if>
+            <if test="UBIGEO != null"> AND e.ubigeo != #{UBIGEO}</if>
+
+            <if test="DISTRITO_ID != null"> AND e.distrito_id = #{DISTRITO_ID}</if>
+
+            <if test="NO_ID != null"> AND e.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND e.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND e.activo != #{NO_ACTIVO}</if>
+
+        </where>
+        order by e.id
     </select>
 
     <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from empresas
-        <where>
-            <if test="ID != null"> AND id = #{ID}</if>
-            <if test="RUC != null"> AND ruc = #{RUC}</if>
-            <if test="RAZONSOCIAL != null"> AND razonsocial = #{RAZONSOCIAL}</if>
-            <if test="DESCRIPCION != null"> AND descripcion = #{DESCRIPCION}</if>
-            <if test="TELEFONO != null"> AND telefono = #{TELEFONO}</if>
-            <if test="DIRECCION != null"> AND direccion = #{DIRECCION}</if>
-            <if test="EMAIL != null"> AND email = #{EMAIL}</if>
-            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
-            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
-            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+        select
+        e.id, e.ruc, e.razonsocial, e.descripcion, e.telefono, e.direccion, e.email, e.activo, e.borrado, e.created_at, e.updated_at, e.user_id, e.nombre_comercial,
+        e.activo_cpe, e.ubigeo, e.distrito_id
 
-            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
-            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
-            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        , d.id as id_istrito, d.nombre as distrito
+        , p.id as id_provincia, p.nombre as provincia
+        , de.id as id_departamento, de.nombre as departamento
+        , pa.id as id_pais, pa.nombre as pais, pa.inicial as pais_inicial
+        from empresas e
+        inner join distritos d on e.distrito_id = d.id
+        inner join provincias p on d.provincia_id = p.id
+        inner join departamentos de on p.departamento_id = de.id
+        inner join pais pa on de.pais_id = pa.id
+        <where>
+            <if test="ID != null"> AND e.id = #{ID}</if>
+            <if test="RUC != null"> AND e.ruc = #{RUC}</if>
+            <if test="RAZONSOCIAL != null"> AND e.razonsocial = #{RAZONSOCIAL}</if>
+            <if test="DESCRIPCION != null"> AND e.descripcion = #{DESCRIPCION}</if>
+            <if test="TELEFONO != null"> AND e.telefono = #{TELEFONO}</if>
+            <if test="DIRECCION != null"> AND e.direccion = #{DIRECCION}</if>
+            <if test="EMAIL != null"> AND e.email = #{EMAIL}</if>
+            <if test="USER_ID != null"> AND e.user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND e.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND e.borrado = #{BORRADO}</if>
+
+            <if test="BUSCAR != null"> AND e.razonsocial like #{BUSCAR}</if>
+            <if test="ACTIVO_CPE != null"> AND e.activo_cpe != #{ACTIVO_CPE}</if>
+            <if test="UBIGEO != null"> AND e.ubigeo != #{UBIGEO}</if>
+
+            <if test="DISTRITO_ID != null"> AND e.distrito_id = #{DISTRITO_ID}</if>
+
+            <if test="NO_ID != null"> AND e.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND e.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND e.activo != #{NO_ACTIVO}</if>
+
         </where>
+        order by e.id
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
     </select>
 
     <update id="updateByPrimaryKeySelective">
@@ -49,6 +129,7 @@
         <set>
             <if test="RUC != null"> ruc = #{RUC}, </if>
             <if test="RAZONSOCIAL != null"> razonsocial = #{RAZONSOCIAL}, </if>
+            <if test="NOMBRE_COMERCIAL != null"> nombre_comercial = #{NOMBRE_COMERCIAL}, </if>
             <if test="DESCRIPCION != null"> descripcion = #{DESCRIPCION}, </if>
             <if test="TELEFONO != null"> telefono = #{TELEFONO}, </if>
             <if test="DIRECCION != null"> direccion = #{DIRECCION}</if>
@@ -56,6 +137,9 @@
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
             <if test="BORRADO != null"> borrado = #{BORRADO}, </if>
+            <if test="ACTIVO_CPE != null"> activo_cpe = #{ACTIVO_CPE}, </if>
+            <if test="UBIGEO != null"> ubigeo = #{UBIGEO}, </if>
+            <if test="DISTRITO_ID != null"> distrito_id = #{DISTRITO_ID}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>

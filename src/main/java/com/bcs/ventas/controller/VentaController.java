@@ -10,6 +10,7 @@ import com.bcs.ventas.model.entities.Producto;
 import com.bcs.ventas.model.entities.Venta;
 import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.service.VentaService;
+import com.bcs.ventas.service.comprobantes.FacturaDetailReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,6 +37,9 @@ public class VentaController {
 
     @Autowired
     private VentaService ventaService;
+
+    @Autowired
+    private FacturaDetailReportService facturaDetailReportService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -355,5 +360,17 @@ public class VentaController {
         IngresosVentasDTO obj = ventaService.listarIngresosVentas(pageable, filtros);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/comprobante/factura/{id}")
+    public ResponseEntity<byte[]> exportPdfCuentasCobrarDetallado(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                  @PathVariable("id") Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("FacturaVenta", "FacturaVenta.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(facturaDetailReportService.exportPdf(id));
     }
 }

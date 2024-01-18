@@ -1,13 +1,18 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Cabecera Comprobante Model")
 @Entity
-@Table(name = "cabeceras")
+@Table(name = "cabecera_comprobantes")
 public class CabeceraComprobante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,7 +26,7 @@ public class CabeceraComprobante implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="idexterno", nullable = true, length= 50)
+    @Column(name="id_externo", nullable = true, length= 50)
     private String idExterno;
 
     @Column(name="empr_razonsocial", nullable = true, length= 200)
@@ -63,10 +68,14 @@ public class CabeceraComprobante implements Serializable {
     @Column(name="clie_nombre", nullable = true, length= 200)
     private String cliNombre;
 
+    /*
     @Column(name="docu_fecha", nullable = true)
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date docFecha;
+    private Date docFecha;*/
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @Column(name="docu_fecha", nullable = true)
+    private LocalDate docFecha;
 
     @Column(name="docu_tipodocumento", nullable = true, length= 45)
     private String docTipodocumento;
@@ -175,127 +184,42 @@ public class CabeceraComprobante implements Serializable {
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
+
+    @Column(name="activo_cpe", nullable = true)
+    private Integer activoCpe;
+
+    @Column(name="importe_letras", nullable = true, length= 500)
+    private String importeLetras;
+
+    @Column(name="icbper", nullable = true, length= 45)
+    private String icbper;
 
     public CabeceraComprobante() {
     }
 
-    public CabeceraComprobante(Long id, String idExterno, String empRazonsocial, String empUbigeo, String empNombrecomercial, String empDireccion, String empProvincia, String empDepartamento, String empDistrito, String empPais, String empNroruc, String empTipodoc, String cliNumero, String cliTipodoc, String cliNombre, Date docFecha, String docTipodocumento, String docNumero, String docMoneda, String docGravada, String docInafecta, String docExonerada, String docGratuita, String docDescuento, String docSubtotal, String docTotal, String docIgv, String tasaIgv, String docIsc, String tasaIsc, String docOtrostributos, String tasaOtrostributos, String docOtroscargos, String docPercepcion, String hashcode, String cdr, String cdrNota, String cdrObservacion, String docEnviaws, String docProceStatus, Date docProceFecha, String docLinkPdf, String docLinkCdr, String docLinkXml, String cliCorreoCpe1, String cliCorreoCpe2, Long ventaId, Long empresaId, Long userId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.idExterno = idExterno;
-        this.empRazonsocial = empRazonsocial;
-        this.empUbigeo = empUbigeo;
-        this.empNombrecomercial = empNombrecomercial;
-        this.empDireccion = empDireccion;
-        this.empProvincia = empProvincia;
-        this.empDepartamento = empDepartamento;
-        this.empDistrito = empDistrito;
-        this.empPais = empPais;
-        this.empNroruc = empNroruc;
-        this.empTipodoc = empTipodoc;
-        this.cliNumero = cliNumero;
-        this.cliTipodoc = cliTipodoc;
-        this.cliNombre = cliNombre;
-        this.docFecha = docFecha;
-        this.docTipodocumento = docTipodocumento;
-        this.docNumero = docNumero;
-        this.docMoneda = docMoneda;
-        this.docGravada = docGravada;
-        this.docInafecta = docInafecta;
-        this.docExonerada = docExonerada;
-        this.docGratuita = docGratuita;
-        this.docDescuento = docDescuento;
-        this.docSubtotal = docSubtotal;
-        this.docTotal = docTotal;
-        this.docIgv = docIgv;
-        this.tasaIgv = tasaIgv;
-        this.docIsc = docIsc;
-        this.tasaIsc = tasaIsc;
-        this.docOtrostributos = docOtrostributos;
-        this.tasaOtrostributos = tasaOtrostributos;
-        this.docOtroscargos = docOtroscargos;
-        this.docPercepcion = docPercepcion;
-        this.hashcode = hashcode;
-        this.cdr = cdr;
-        this.cdrNota = cdrNota;
-        this.cdrObservacion = cdrObservacion;
-        this.docEnviaws = docEnviaws;
-        this.docProceStatus = docProceStatus;
-        this.docProceFecha = docProceFecha;
-        this.docLinkPdf = docLinkPdf;
-        this.docLinkCdr = docLinkCdr;
-        this.docLinkXml = docLinkXml;
-        this.cliCorreoCpe1 = cliCorreoCpe1;
-        this.cliCorreoCpe2 = cliCorreoCpe2;
-        this.ventaId = ventaId;
-        this.empresaId = empresaId;
-        this.userId = userId;
-        this.activo = activo;
-        this.borrado = borrado;
+    public String getIcbper() {
+        return icbper;
     }
 
-    public CabeceraComprobante(Long id, String idExterno, String empRazonsocial, String empUbigeo, String empNombrecomercial, String empDireccion, String empProvincia, String empDepartamento, String empDistrito, String empPais, String empNroruc, String empTipodoc, String cliNumero, String cliTipodoc, String cliNombre, Date docFecha, String docTipodocumento, String docNumero, String docMoneda, String docGravada, String docInafecta, String docExonerada, String docGratuita, String docDescuento, String docSubtotal, String docTotal, String docIgv, String tasaIgv, String docIsc, String tasaIsc, String docOtrostributos, String tasaOtrostributos, String docOtroscargos, String docPercepcion, String hashcode, String cdr, String cdrNota, String cdrObservacion, String docEnviaws, String docProceStatus, Date docProceFecha, String docLinkPdf, String docLinkCdr, String docLinkXml, String cliCorreoCpe1, String cliCorreoCpe2, Long ventaId, Long empresaId, Long userId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.idExterno = idExterno;
-        this.empRazonsocial = empRazonsocial;
-        this.empUbigeo = empUbigeo;
-        this.empNombrecomercial = empNombrecomercial;
-        this.empDireccion = empDireccion;
-        this.empProvincia = empProvincia;
-        this.empDepartamento = empDepartamento;
-        this.empDistrito = empDistrito;
-        this.empPais = empPais;
-        this.empNroruc = empNroruc;
-        this.empTipodoc = empTipodoc;
-        this.cliNumero = cliNumero;
-        this.cliTipodoc = cliTipodoc;
-        this.cliNombre = cliNombre;
-        this.docFecha = docFecha;
-        this.docTipodocumento = docTipodocumento;
-        this.docNumero = docNumero;
-        this.docMoneda = docMoneda;
-        this.docGravada = docGravada;
-        this.docInafecta = docInafecta;
-        this.docExonerada = docExonerada;
-        this.docGratuita = docGratuita;
-        this.docDescuento = docDescuento;
-        this.docSubtotal = docSubtotal;
-        this.docTotal = docTotal;
-        this.docIgv = docIgv;
-        this.tasaIgv = tasaIgv;
-        this.docIsc = docIsc;
-        this.tasaIsc = tasaIsc;
-        this.docOtrostributos = docOtrostributos;
-        this.tasaOtrostributos = tasaOtrostributos;
-        this.docOtroscargos = docOtroscargos;
-        this.docPercepcion = docPercepcion;
-        this.hashcode = hashcode;
-        this.cdr = cdr;
-        this.cdrNota = cdrNota;
-        this.cdrObservacion = cdrObservacion;
-        this.docEnviaws = docEnviaws;
-        this.docProceStatus = docProceStatus;
-        this.docProceFecha = docProceFecha;
-        this.docLinkPdf = docLinkPdf;
-        this.docLinkCdr = docLinkCdr;
-        this.docLinkXml = docLinkXml;
-        this.cliCorreoCpe1 = cliCorreoCpe1;
-        this.cliCorreoCpe2 = cliCorreoCpe2;
-        this.ventaId = ventaId;
-        this.empresaId = empresaId;
-        this.userId = userId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
+    public void setIcbper(String icbper) {
+        this.icbper = icbper;
+    }
+
+    public String getImporteLetras() {
+        return importeLetras;
+    }
+
+    public void setImporteLetras(String importeLetras) {
+        this.importeLetras = importeLetras;
     }
 
     public Long getId() {
@@ -418,11 +342,11 @@ public class CabeceraComprobante implements Serializable {
         this.cliNombre = cliNombre;
     }
 
-    public Date getDocFecha() {
+    public LocalDate getDocFecha() {
         return docFecha;
     }
 
-    public void setDocFecha(Date docFecha) {
+    public void setDocFecha(LocalDate docFecha) {
         this.docFecha = docFecha;
     }
 
@@ -706,19 +630,27 @@ public class CabeceraComprobante implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
+    }
+
+    public Integer getActivoCpe() {
+        return activoCpe;
+    }
+
+    public void setActivoCpe(Integer activoCpe) {
+        this.activoCpe = activoCpe;
     }
 }

@@ -1,14 +1,18 @@
 package com.bcs.ventas.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Schema(description = "Detalle Comprobante Model")
 @Entity
-@Table(name = "detalles")
-public class Detalle implements Serializable {
+@Table(name = "detalles_comprobantes")
+public class DetalleComprobante implements Serializable {
 
     public static long getSerialversionuid() {
         return serialVersionUID;
@@ -70,61 +74,17 @@ public class Detalle implements Serializable {
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
+    @Schema(description = "Fecha de Creación del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="created_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Schema(description = "Fecha de Update del Registro")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date updatedAd;
+    private LocalDateTime updatedAd;
 
-    public Detalle() {
-    }
-
-    public Detalle(Long id, Long cabeceraId, String itemOrden, String itemUnidad, String itemCantidad, String itemCodproducto, String itemDescripcion, String itemAfectacion, String itemTipoPrecioVenta, String itemPventa, String itemPventaNoOnerosa, String itemToSubtotal, String itemToIgv, String itemPreunitfin, Long userId, Long empresaId, Integer activo, Integer borrado) {
-        this.id = id;
-        this.cabeceraId = cabeceraId;
-        this.itemOrden = itemOrden;
-        this.itemUnidad = itemUnidad;
-        this.itemCantidad = itemCantidad;
-        this.itemCodproducto = itemCodproducto;
-        this.itemDescripcion = itemDescripcion;
-        this.itemAfectacion = itemAfectacion;
-        this.itemTipoPrecioVenta = itemTipoPrecioVenta;
-        this.itemPventa = itemPventa;
-        this.itemPventaNoOnerosa = itemPventaNoOnerosa;
-        this.itemToSubtotal = itemToSubtotal;
-        this.itemToIgv = itemToIgv;
-        this.itemPreunitfin = itemPreunitfin;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-    }
-
-    public Detalle(Long id, Long cabeceraId, String itemOrden, String itemUnidad, String itemCantidad, String itemCodproducto, String itemDescripcion, String itemAfectacion, String itemTipoPrecioVenta, String itemPventa, String itemPventaNoOnerosa, String itemToSubtotal, String itemToIgv, String itemPreunitfin, Long userId, Long empresaId, Integer activo, Integer borrado, Date createdAt, Date updatedAd) {
-        this.id = id;
-        this.cabeceraId = cabeceraId;
-        this.itemOrden = itemOrden;
-        this.itemUnidad = itemUnidad;
-        this.itemCantidad = itemCantidad;
-        this.itemCodproducto = itemCodproducto;
-        this.itemDescripcion = itemDescripcion;
-        this.itemAfectacion = itemAfectacion;
-        this.itemTipoPrecioVenta = itemTipoPrecioVenta;
-        this.itemPventa = itemPventa;
-        this.itemPventaNoOnerosa = itemPventaNoOnerosa;
-        this.itemToSubtotal = itemToSubtotal;
-        this.itemToIgv = itemToIgv;
-        this.itemPreunitfin = itemPreunitfin;
-        this.userId = userId;
-        this.empresaId = empresaId;
-        this.activo = activo;
-        this.borrado = borrado;
-        this.createdAt = createdAt;
-        this.updatedAd = updatedAd;
+    public DetalleComprobante() {
     }
 
     public Long getId() {
@@ -271,19 +231,19 @@ public class Detalle implements Serializable {
         this.borrado = borrado;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAd() {
+    public LocalDateTime getUpdatedAd() {
         return updatedAd;
     }
 
-    public void setUpdatedAd(Date updatedAd) {
+    public void setUpdatedAd(LocalDateTime updatedAd) {
         this.updatedAd = updatedAd;
     }
 }

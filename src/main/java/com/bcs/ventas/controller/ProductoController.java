@@ -60,6 +60,8 @@ public class ProductoController {
                                                  @RequestParam(name = "page", defaultValue = "0") int page,
                                                  @RequestParam(name = "size", defaultValue = "5") int size,
                                                  @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
+
+        this.SetClaims(Authorization);
         Pageable pageable = PageRequest.of(page,size);
         Page<Producto> obj = productoService.listar(pageable, buscar);
 
@@ -69,6 +71,8 @@ public class ProductoController {
     @GetMapping("/{id}")
     public ResponseEntity<Producto> listarPorId(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                 @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
         Producto obj = productoService.listarPorId(id);
 
         if(obj == null) {
@@ -81,6 +85,8 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<Producto> registrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                               @Valid @RequestBody Producto a) throws Exception{
+
+        this.SetClaims(Authorization);
         a.setId(null);
         Producto obj = productoService.registrar(a);
 
@@ -92,6 +98,8 @@ public class ProductoController {
     @PutMapping
     public ResponseEntity<Integer> modificar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                              @Valid @RequestBody Producto a) throws Exception{
+
+        this.SetClaims(Authorization);
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -111,6 +119,8 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                          @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
         Producto obj = productoService.listarPorId(id);
 
         if(obj == null) {
@@ -124,6 +134,8 @@ public class ProductoController {
     @PostMapping("/productosventa")
     public ResponseEntity<Page<ProductosVentaDTO>> getProductosVentas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                       @RequestBody FiltroProductosVenta filtros) throws Exception{
+
+        this.SetClaims(Authorization);
 
         if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
         if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
@@ -140,6 +152,8 @@ public class ProductoController {
     public ResponseEntity<Page<InventarioDTO>> getProductoInventario(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                      @RequestBody FiltroInventario filtros) throws Exception{
 
+        this.SetClaims(Authorization);
+
         if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
         if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
 
@@ -152,6 +166,8 @@ public class ProductoController {
     @PostMapping("/productoprecio")
     public ResponseEntity<Page<ProductosVentaDTO>> getProductoPrecio(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                      @RequestBody FiltroGeneral filtros) throws Exception{
+
+        this.SetClaims(Authorization);
 
         if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
         if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
@@ -167,6 +183,8 @@ public class ProductoController {
     @PostMapping("/productogestionlotes")
     public ResponseEntity<Page<InventarioDTO>> getProductoLotes(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                 @RequestBody FiltroGeneral filtros) throws Exception{
+
+        this.SetClaims(Authorization);
 
         if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
         if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
@@ -184,6 +202,8 @@ public class ProductoController {
     public ResponseEntity<Page<ProductoBajoStockDTO>> getProductosBajoStock(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                             @RequestBody FiltroGeneral filtros) throws Exception{
 
+        this.SetClaims(Authorization);
+
         if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
         if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
 
@@ -198,6 +218,8 @@ public class ProductoController {
     @PostMapping("/productosvencidos")
     public ResponseEntity<Page<ProductoVencidoDTO>> getProductosVencidos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                          @RequestBody FiltroGeneral filtros) throws Exception{
+
+        this.SetClaims(Authorization);
 
         if(filtros.getPage() == null) filtros.setPage(Constantes.CANTIDAD_ZERO);
         if(filtros.getSize() == null) filtros.setSize(Constantes.CANTIDAD_MINIMA_PAGE);
@@ -215,6 +237,8 @@ public class ProductoController {
 
     @GetMapping("/tipos")
     public ResponseEntity<List<TipoProducto>> getTipoProductos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
         List<TipoProducto> obj = productoService.getTipoProductos();
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
@@ -222,6 +246,8 @@ public class ProductoController {
 
     @GetMapping("/marcas")
     public ResponseEntity<List<Marca>> getMarcas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
         List<Marca> obj = productoService.getMarcas();
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
@@ -229,6 +255,8 @@ public class ProductoController {
 
     @GetMapping("/presentaciones")
     public ResponseEntity<List<Presentacion>> getPresentaciones(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
         List<Presentacion> obj = productoService.getPresentaciones();
 
         return new ResponseEntity<>(obj, HttpStatus.OK);

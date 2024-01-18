@@ -101,7 +101,7 @@ public  class Constantes {
 
     //Afectos ISC
     public static final Integer TIPO_ISC_PERCENTIL = 1;
-    public static final Integer TIPO_ISC_FIJO = 1;
+    public static final Integer TIPO_ISC_FIJO = 2;
 
     //Tipos de Descuento
     public static final Integer TIPO_DESCUENTO_PORCENTIL = 1;
@@ -180,6 +180,10 @@ public  class Constantes {
     public static final String PRIORIDAD_ALTA = "1";
     public static final String PRIORIDAD_MEDIA = "2";
     public static final String PRIORIDAD_BAJA = "3";
+
+
+    public static final String TIPO_DOCUMENTO_EMPRESA_RUC = "6";
+    public static final String CURRENCY_PEN = "PEN";
 
 
 }

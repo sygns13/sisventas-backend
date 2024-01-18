@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.bcs.ventas.dao.mappers.DetalleMapper">
+<mapper namespace="com.bcs.ventas.dao.mappers.DetalleComprobanteMapper">
 
-    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.Detalle">
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.DetalleComprobante">
         <result property="id" column="id" />
         <result property="cabeceraId" column="cabecera_id" />
         <result property="itemOrden" column="item_orden" />
@@ -29,11 +29,15 @@
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
-        select * from detalles
+        select
+        id, cabecera_id, item_orden, item_unidad, item_cantidad, item_codproducto, item_descripcion, item_afectacion, item_tipo_precio_venta, item_pventa,
+        item_pventa_no_onerosa, item_to_subtotal, item_to_igv, item_preunitfin, user_id, empresa_id, activo, borrado, created_at, updated_at
+        from detalles_comprobantes
+        order by item_orden, id
     </select>
 
-    <select id="listByParameterMap" resultMap="principalResultMap">
-        select * from detalles
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*) from detalles_comprobantes
         <where>
             <if test="ID != null"> AND id = #{ID}</if>
             <if test="CABECERA_ID != null"> AND cabecera_id = #{CABECERA_ID}</if>
@@ -58,10 +62,47 @@
             <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
         </where>
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+        order by item_orden, id
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select
+        id, cabecera_id, item_orden, item_unidad, item_cantidad, item_codproducto, item_descripcion, item_afectacion, item_tipo_precio_venta, item_pventa,
+        item_pventa_no_onerosa, item_to_subtotal, item_to_igv, item_preunitfin, user_id, empresa_id, activo, borrado, created_at, updated_at
+        from detalles_comprobantes
+        <where>
+            <if test="ID != null"> AND id = #{ID}</if>
+            <if test="CABECERA_ID != null"> AND cabecera_id = #{CABECERA_ID}</if>
+            <if test="ITEM_ORDEN != null"> AND item_orden = #{ITEM_ORDEN}</if>
+            <if test="ITEM_UNIDAD != null"> AND item_unidad = #{ITEM_UNIDAD}</if>
+            <if test="ITEM_CANTIDAD != null"> AND item_cantidad = #{ITEM_CANTIDAD}</if>
+            <if test="ITEM_CODPRODUCTO != null"> AND item_codproducto = #{ITEM_CODPRODUCTO}</if>
+            <if test="ITEM_DESCRIPCION != null"> AND item_descripcion = #{ITEM_DESCRIPCION}</if>
+            <if test="ITEM_AFECTACION != null"> AND item_afectacion = #{ITEM_AFECTACION}</if>
+            <if test="ITEM_TIPO_PRECIO_VENTA != null"> AND item_tipo_precio_venta = #{ITEM_TIPO_PRECIO_VENTA}</if>
+            <if test="ITEM_PVENTA != null"> AND item_pventa = #{ITEM_PVENTA}</if>
+            <if test="ITEM_PVENTA_NO_ONEROSA != null"> AND item_pventa_no_onerosa = #{ITEM_PVENTA_NO_ONEROSA}</if>
+            <if test="ITEM_TO_SUBTOTAL != null"> AND item_to_subtotal = #{ITEM_TO_SUBTOTAL}</if>
+            <if test="ITEM_TO_IGV != null"> AND item_to_igv = #{ITEM_TO_IGV}</if>
+            <if test="ITEM_PREUNITFIN != null"> AND item_preunitfin = #{ITEM_PREUNITFIN}</if>
+            <if test="EMPRESA_ID != null"> AND empresa_id = #{EMPRESA_ID}</if>
+            <if test="USER_ID != null"> AND user_id = #{USER_ID}</if>
+            <if test="ACTIVO != null"> AND activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND borrado = #{BORRADO}</if>
+
+            <if test="NO_ID != null"> AND id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND activo != #{NO_ACTIVO}</if>
+        </where>
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+        order by item_orden, id
     </select>
 
     <update id="updateByPrimaryKeySelective">
-        update detalles
+        update detalles_comprobantes
         <set>
             <if test="CABECERA_ID != null">  cabecera_id = #{CABECERA_ID}, </if>
             <if test="ITEM_ORDEN != null">  item_orden = #{ITEM_ORDEN}, </if>

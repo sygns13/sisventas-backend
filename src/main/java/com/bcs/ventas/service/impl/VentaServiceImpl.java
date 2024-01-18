@@ -12,6 +12,7 @@ import com.bcs.ventas.service.AlmacenService;
 import com.bcs.ventas.service.ClienteService;
 import com.bcs.ventas.service.InitComprobanteService;
 import com.bcs.ventas.service.VentaService;
+import com.bcs.ventas.service.comprobantes.NumberFormatToWordsService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -102,7 +103,31 @@ public class VentaServiceImpl implements VentaService {
     private ClienteMapper clienteMapper;
 
     @Autowired
+    private EmpresaDAO empresaDAO;
+
+    @Autowired
+    private EmpresaMapper empresaMapper;
+
+    @Autowired
+    private CabeceraComprobanteDAO cabeceraComprobanteDAO;
+
+    @Autowired
+    private CabeceraComprobanteMapper cabeceraComprobanteMapper;
+
+    @Autowired
+    private DetalleComprobanteDAO detalleComprobanteDAO;
+
+    @Autowired
+    private DetalleComprobanteMapper detalleComprobanteMapper;
+
+    @Autowired
+    private ConfigDAO configDAO;
+
+    @Autowired
     private ClaimsAuthorization claimsAuthorization;
+
+    @Autowired
+    private NumberFormatToWordsService numberFormatToWordsService;
 
     @Override
     public Venta registrar(Venta v) throws Exception {
@@ -435,11 +460,166 @@ public class VentaServiceImpl implements VentaService {
         params.put("COMPROBANTE_ID", comprobante.getId());
         params.put("UPDATED_AT", c.getVenta().getUpdatedAd());
 
+        params.put("USER_ID",claimsAuthorization.getUserId());
         params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
         ventaMapper.updateByPrimaryKeySelective(params);
 
+        this.GenerarComprobante(c.getVenta(), initComprobante);
+
 
         return cobroVenta;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private void GenerarComprobante(Venta venta, InitComprobante initComprobante) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", venta.getEmpresaId());
+
+        List<Empresa> empresas = empresaMapper.listByParameterMap(params);
+
+        Empresa empresa = empresas.get(0);
+        TipoComprobante tipoComprobante = tipoComprobanteDAO.listarPorId(initComprobante.getTipoComprobante().getId());
+
+        String tipoDocumento = "";
+        if(tipoComprobante.getPrefix().equals("F"))
+        {
+            tipoDocumento="01";
+        }else if(tipoComprobante.getPrefix().equals("B"))
+        {
+            tipoDocumento="03";
+        }
+        int numeroComprobante = Integer.parseInt(venta.getComprobante().getNumero());
+        Config config_igv = configDAO.listarPorId("igv_peru");
+        BigDecimal igv = new BigDecimal(config_igv.getValor());
+        LocalDateTime fechaActualTime = LocalDateTime.now();
+
+        String strImporteLetra = String.format("%.2f",venta.getTotalMonto());
+        String INI_SUFIX = "/100 ";
+        String strCurrencyCodeWords = "SOLES";
+        String CONECTOR = "Y";
+        String strSufix = INI_SUFIX + strCurrencyCodeWords;
+
+        strImporteLetra = numberFormatToWordsService.Convert(strImporteLetra, "", "", strSufix, strSufix, CONECTOR, true);
+
+
+
+        CabeceraComprobante cabeceraComprobante = new CabeceraComprobante();
+
+
+        cabeceraComprobante.setIdExterno(empresa.getRuc()+tipoDocumento+ venta.getComprobante().getSerie()+"-"+numeroComprobante);
+        cabeceraComprobante.setEmpRazonsocial(empresa.getRazonsocial() != null ? empresa.getRazonsocial().toUpperCase() : "");
+        cabeceraComprobante.setEmpUbigeo(empresa.getUbigeo());
+        cabeceraComprobante.setEmpNombrecomercial(empresa.getNombreComercial() != null ? empresa.getNombreComercial().toUpperCase() : "");
+        cabeceraComprobante.setEmpDireccion(empresa.getDireccion() != null ? empresa.getDireccion().toUpperCase() : "");
+        cabeceraComprobante.setEmpDistrito(empresa.getDistrito().getNombre() != null ? empresa.getDistrito().getNombre().toUpperCase() : "");
+        cabeceraComprobante.setEmpProvincia(empresa.getProvincia().getNombre() != null ? empresa.getProvincia().getNombre().toUpperCase() : "");
+        cabeceraComprobante.setEmpDepartamento(empresa.getDepartamento().getNombre() != null ? empresa.getDepartamento().getNombre().toUpperCase() : "");
+        cabeceraComprobante.setEmpPais(empresa.getPais().getInicial() != null ? empresa.getPais().getInicial().toUpperCase() : "");
+        cabeceraComprobante.setEmpNroruc(empresa.getRuc());
+        cabeceraComprobante.setEmpTipodoc(Constantes.TIPO_DOCUMENTO_EMPRESA_RUC);
+
+        cabeceraComprobante.setCliTipodoc(venta.getCliente().getTipoDocumento().getKey());
+        cabeceraComprobante.setCliNumero(venta.getCliente().getDocumento());
+        cabeceraComprobante.setCliNombre(venta.getCliente().getNombre() != null ? venta.getCliente().getNombre().toUpperCase() : "");
+        cabeceraComprobante.setCliCorreoCpe1(venta.getCliente().getCorreo1() != null ? venta.getCliente().getCorreo1().toUpperCase() : "");
+        cabeceraComprobante.setCliCorreoCpe2(venta.getCliente().getCorreo2() != null ? venta.getCliente().getCorreo2().toUpperCase() : "");
+
+        cabeceraComprobante.setDocFecha(LocalDate.now());
+        cabeceraComprobante.setDocTipodocumento(tipoDocumento);
+        cabeceraComprobante.setDocNumero(venta.getComprobante().getSerie()+"-"+venta.getComprobante().getNumero());
+        cabeceraComprobante.setDocMoneda(Constantes.CURRENCY_PEN);
+        cabeceraComprobante.setDocGravada(String.format("%.2f",venta.getSubtotalAfecto()));
+        cabeceraComprobante.setDocInafecta(String.format("%.2f",venta.getSubtotalInafecto()));
+        cabeceraComprobante.setDocExonerada(String.format("%.2f",venta.getSubtotalExonerado()));
+        cabeceraComprobante.setDocGratuita("0.00");
+        cabeceraComprobante.setDocDescuento("0.00");
+        cabeceraComprobante.setDocSubtotal(String.format("%.2f",venta.getSubtotalAfecto().add(venta.getSubtotalInafecto()).add(venta.getSubtotalExonerado())));
+        cabeceraComprobante.setDocTotal(String.format("%.2f",venta.getTotalMonto()));
+        cabeceraComprobante.setIcbper(venta.getMontoIcbper() != null ? String.format("%.2f",venta.getMontoIcbper()) : "0.00");
+        cabeceraComprobante.setDocIgv(String.format("%.2f",venta.getIgv()));
+        cabeceraComprobante.setTasaIgv(String.format("%.2f",igv));
+        cabeceraComprobante.setDocIsc(venta.getIsc() != null ? String.format("%.2f",venta.getIsc()) : "0.00");
+        cabeceraComprobante.setTasaIsc("0.00");
+        cabeceraComprobante.setDocOtrostributos("0.00");
+        cabeceraComprobante.setTasaOtrostributos("0.00");
+        cabeceraComprobante.setDocOtroscargos("0.00");
+        cabeceraComprobante.setDocPercepcion("0.00");
+        cabeceraComprobante.setHashcode("");
+        cabeceraComprobante.setCdr("");
+        cabeceraComprobante.setCdrNota("");
+        cabeceraComprobante.setCdrObservacion("");
+        cabeceraComprobante.setDocEnviaws("0");
+        cabeceraComprobante.setDocProceStatus("N");
+        cabeceraComprobante.setDocProceFecha(null);
+        cabeceraComprobante.setDocLinkCdr("");
+        cabeceraComprobante.setDocLinkPdf("");
+        cabeceraComprobante.setDocLinkXml("");
+        cabeceraComprobante.setVentaId(venta.getId());
+        cabeceraComprobante.setUserId(claimsAuthorization.getUserId());
+        cabeceraComprobante.setCreatedAt(fechaActualTime);
+        cabeceraComprobante.setUpdatedAd(fechaActualTime);
+        cabeceraComprobante.setEmpresaId(claimsAuthorization.getEmpresaId());
+        cabeceraComprobante.setActivo(Constantes.REGISTRO_ACTIVO);
+        cabeceraComprobante.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+
+        cabeceraComprobante.setActivoCpe(empresa.getActivoCpe());
+        cabeceraComprobante.setImporteLetras(strImporteLetra.toUpperCase());
+
+        cabeceraComprobante = cabeceraComprobanteDAO.registrar(cabeceraComprobante);
+
+
+        params.clear();
+        params.put("VENTA_ID",venta.getId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+
+        List<DetalleVenta> detallesVentas = detalleVentaMapper.listByParameterMap(params);
+        int contador = 1;
+        for (DetalleVenta dv: detallesVentas) {
+
+
+            BigDecimal punit = dv.getPrecioVenta();
+            BigDecimal desc = dv.getDescuento();
+            BigDecimal preunitfin = new BigDecimal(0);
+            BigDecimal totalItem = dv.getPrecioTotal();
+
+            if(dv.getTipDescuento().equals(Constantes.TIPO_DESCUENTO_PORCENTIL))
+                preunitfin = punit.subtract(punit.multiply(desc).divide(new BigDecimal(100), 3, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+            else
+                preunitfin = (totalItem.subtract(desc)).divide(new BigDecimal(dv.getCantidad()), 3, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+
+            BigDecimal totalNeto = totalItem.divide(new BigDecimal(1).add(igv.divide(new BigDecimal(100), 3, RoundingMode.HALF_UP)), 3, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal totalIgv = totalNeto.multiply(igv.divide(new BigDecimal(100), 3, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal preunit = totalNeto.divide(new BigDecimal(dv.getCantidad()), 3, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+
+            DetalleComprobante detalleComprobante = new DetalleComprobante();
+
+            detalleComprobante.setCabeceraId(cabeceraComprobante.getId());
+            detalleComprobante.setItemOrden(String.valueOf(contador));
+            detalleComprobante.setItemUnidad("NIU");
+            detalleComprobante.setItemCantidad(dv.getCantidad().toString());
+            detalleComprobante.setItemCodproducto(dv.getProducto().getCodigoProducto());
+            detalleComprobante.setItemDescripcion(dv.getUnidad().toUpperCase() + " " + dv.getProducto().getPresentacion().getPresentacion().toUpperCase() + " " +dv.getProducto().getNombre().toUpperCase() + " " + dv.getProducto().getMarca().getNombre().toUpperCase());
+            detalleComprobante.setItemAfectacion("10");
+            detalleComprobante.setItemTipoPrecioVenta("01");
+            detalleComprobante.setItemPventa(String.format("%.2f", preunit));
+            detalleComprobante.setItemPventaNoOnerosa("0.00");
+            detalleComprobante.setItemToSubtotal(String.format("%.2f", totalNeto));
+            detalleComprobante.setItemToIgv(String.format("%.2f", totalIgv));
+            detalleComprobante.setItemPreunitfin(String.format("%.2f", preunitfin));
+            detalleComprobante.setUserId(claimsAuthorization.getUserId());
+            detalleComprobante.setCreatedAt(fechaActualTime);
+            detalleComprobante.setUpdatedAd(fechaActualTime);
+            detalleComprobante.setEmpresaId(claimsAuthorization.getEmpresaId());
+            detalleComprobante.setActivo(Constantes.REGISTRO_ACTIVO);
+            detalleComprobante.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+
+            detalleComprobante = detalleComprobanteDAO.registrar(detalleComprobante);
+
+            contador++;
+        }
+
+
     }
 
     @Transactional(readOnly=false,rollbackFor=Exception.class)
@@ -1372,32 +1552,53 @@ public class VentaServiceImpl implements VentaService {
         BigDecimal isc = new BigDecimal(0);
 
         for (DetalleVenta dv: detallesVentas) {
-            if(dv.getEsGrabado().intValue() == Constantes.GRABADO_IGV.intValue())
-                subTotalAfecto = subTotalAfecto.add(dv.getPrecioTotal());
-            if(dv.getEsGrabado().intValue() == Constantes.INAFECTO_IGV.intValue())
+            BigDecimal montoGrabado = new BigDecimal(0);
+            if(dv.getEsGrabado().intValue() == Constantes.GRABADO_IGV.intValue()) {
+                montoGrabado = dv.getPrecioTotal().divide(new BigDecimal(Constantes.PERCENTIL_IGV), 2, RoundingMode.HALF_UP);
+                igv = igv.add(dv.getPrecioTotal().subtract(montoGrabado));
+            }else if(dv.getEsGrabado().intValue() == Constantes.INAFECTO_IGV.intValue()) {
                 subTotalInafecto = subTotalInafecto.add(dv.getPrecioTotal());
-            if(dv.getEsGrabado().intValue() == Constantes.EXONERADO_IGV.intValue())
+            }else if(dv.getEsGrabado().intValue() == Constantes.EXONERADO_IGV.intValue())
                 subtotalExonerado = subtotalExonerado.add(dv.getPrecioTotal());
 
 
-            if(dv.getEsIsc().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
-                subTotalISC = subTotalISC.add(dv.getPrecioTotal());
+            if(dv.getEsGrabado().intValue() == Constantes.GRABADO_IGV.intValue() && dv.getEsIsc().intValue() == Constantes.REGISTRO_ACTIVO.intValue()){
+
 
                 if(dv.getProducto().getTipoTasaIsc().intValue() == Constantes.TIPO_ISC_PERCENTIL.intValue()){
-                    BigDecimal iscProd = dv.getPrecioTotal().subtract(dv.getPrecioTotal().multiply(BigDecimal.valueOf(dv.getProducto().getTasaIsc())).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
-                    isc = isc.add(iscProd);
+                    BigDecimal montoGrabadoIsc = montoGrabado.divide((BigDecimal.valueOf(dv.getProducto().getTasaIsc()).divide(new BigDecimal(100), 2 , RoundingMode.HALF_UP)).add(new BigDecimal(1)), 2, RoundingMode.HALF_UP);
+                    isc = isc.add(montoGrabado.subtract(montoGrabadoIsc));
+
+                    montoGrabado = montoGrabadoIsc;
+
+
+                    //BigDecimal iscProd = dv.getPrecioTotal().subtract(dv.getPrecioTotal().multiply(BigDecimal.valueOf(dv.getProducto().getTasaIsc())).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                    //isc = isc.add(iscProd);
 
                 }
                 if(dv.getProducto().getTipoTasaIsc().intValue() == Constantes.TIPO_ISC_FIJO.intValue()){
-                    BigDecimal iscProd = dv.getPrecioTotal().subtract(BigDecimal.valueOf(dv.getProducto().getTasaIsc()));
-                    isc = isc.add(iscProd);
+                    BigDecimal montoGrabadoIsc = montoGrabado.subtract(BigDecimal.valueOf(dv.getProducto().getTasaIsc()).multiply(BigDecimal.valueOf(dv.getCantidad())).multiply(BigDecimal.valueOf(dv.getCantidadReal())));
+                    isc = isc.add(montoGrabado.subtract(montoGrabadoIsc));
+
+                    montoGrabado = montoGrabadoIsc;
+
+                    //BigDecimal iscProd = dv.getPrecioTotal().subtract(BigDecimal.valueOf(dv.getProducto().getTasaIsc()).multiply(BigDecimal.valueOf(dv.getCantidad())).multiply(BigDecimal.valueOf(dv.getCantidadReal())));
+                    //isc = isc.add(iscProd);
                 }
+
+                subTotalISC = subTotalISC.add(montoGrabado);
+            }
+
+            if(dv.getEsGrabado().intValue() == Constantes.GRABADO_IGV.intValue()) {
+                subTotalAfecto = subTotalAfecto.add(montoGrabado);
             }
         }
 
         totalVenta = totalVenta.add(subTotalInafecto);
         totalVenta = totalVenta.add(subTotalAfecto);
         totalVenta = totalVenta.add(subtotalExonerado);
+        totalVenta = totalVenta.add(igv);
+        totalVenta = totalVenta.add(isc);
 
         BigDecimal totalICBPER = new BigDecimal(0);
         totalICBPER = venta.getMontoIcbper().multiply(new BigDecimal(venta.getCantidadIcbper()));
@@ -1411,8 +1612,8 @@ public class VentaServiceImpl implements VentaService {
         venta.setTotalAfectoIsc(subTotalISC);
 
         //Calc IGV
-        BigDecimal base = subTotalAfecto.divide( new BigDecimal(Constantes.PERCENTIL_IGV), 2, RoundingMode.HALF_UP);
-        igv = subTotalAfecto.subtract(base);
+        //BigDecimal base = subTotalAfecto.divide( new BigDecimal(Constantes.PERCENTIL_IGV), 2, RoundingMode.HALF_UP);
+        //igv = subTotalAfecto.subtract(base);
         venta.setIgv(igv);
 
         //Calc ISC

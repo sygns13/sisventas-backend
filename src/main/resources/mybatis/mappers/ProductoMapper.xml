@@ -1235,8 +1235,8 @@
         ifnull(s.id, 0) as s_id,
         ifnull(s.cantidad, 0) as s_cantidad,
         ifnull(d.id, 0) as d_id,
-        ifnull(d.precio, p.precio_unidad) as precio_unidad,
-        ifnull(d.costo_compra, p.precio_compra) as precio_compra,
+        ifnull(d.precio, p.precio_unidad) as precio_detalle_unidad,
+        ifnull(d.costo_compra, p.precio_compra) as costo_detalle_unidad,
         ifnull(d.codigo_unidad, 'NO CONFIG') as d_codigo_unidad,
 
         ifnull(u.id, 0) as u_id,

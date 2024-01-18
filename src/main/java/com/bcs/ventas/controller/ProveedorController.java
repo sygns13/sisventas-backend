@@ -59,6 +59,8 @@ public class ProveedorController {
                                                   @RequestParam(name = "size", defaultValue = "5") int size,
                                                   @RequestParam(name = "buscar", defaultValue = "") String buscar) throws Exception{
 
+        this.SetClaims(Authorization);
+
         Pageable pageable = PageRequest.of(page,size);
         Page<Proveedor> resultado = proveedorService.listar(pageable, buscar);
 
@@ -79,6 +81,8 @@ public class ProveedorController {
     @GetMapping("/{id}")
     public ResponseEntity<Proveedor> listarPorId(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                  @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
         Proveedor obj = proveedorService.listarPorId(id);
 
         if(obj == null) {
@@ -91,6 +95,8 @@ public class ProveedorController {
     @PostMapping
     public ResponseEntity<Proveedor> registrar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                @Valid @RequestBody Proveedor a) throws Exception{
+
+        this.SetClaims(Authorization);
         a.setId(null);
         Proveedor obj = proveedorService.registrar(a);
         obj = proveedorService.listarPorId(obj.getId());
@@ -105,6 +111,8 @@ public class ProveedorController {
     @PutMapping
     public ResponseEntity<Integer> modificar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                              @Valid @RequestBody Proveedor a) throws Exception{
+
+        this.SetClaims(Authorization);
         if(a.getId() == null){
             throw new ModeloNotFoundException("ID NO ENVIADO ");
         }
@@ -123,6 +131,8 @@ public class ProveedorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                          @PathVariable("id") Long id) throws Exception{
+
+        this.SetClaims(Authorization);
         Proveedor obj = proveedorService.listarPorId(id);
 
         if(obj == null) {
@@ -150,6 +160,8 @@ public class ProveedorController {
 
     @GetMapping("/tipodocumentos")
     public ResponseEntity<List<TipoDocumento>> getTipoDocumentos(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
         List<TipoDocumento> obj = tipoDocumentoService.listar();
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
@@ -158,6 +170,8 @@ public class ProveedorController {
     @GetMapping("/getbydoc/{document}")
     public ResponseEntity<Proveedor> listarPorDNI(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                   @PathVariable("document") String document) throws Exception{
+
+        this.SetClaims(Authorization);
         Proveedor obj = proveedorService.getByDocument(document);
 
         if(obj == null) {

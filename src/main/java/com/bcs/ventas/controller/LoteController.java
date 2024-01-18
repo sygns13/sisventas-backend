@@ -109,7 +109,11 @@ public class LoteController {
     }
 
     @PostMapping("/modificarorden")
-    public ResponseEntity<Void> modificarOrden(@RequestBody LotesChangeOrdenDTO lotes) throws Exception{
+    public ResponseEntity<Void> modificarOrden(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                               @RequestBody LotesChangeOrdenDTO lotes) throws Exception{
+
+        this.SetClaims(Authorization);
+
         loteService.modificarOrden(lotes);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
