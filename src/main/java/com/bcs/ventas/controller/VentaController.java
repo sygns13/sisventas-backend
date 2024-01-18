@@ -12,6 +12,7 @@ import com.bcs.ventas.service.ProductoService;
 import com.bcs.ventas.service.VentaService;
 import com.bcs.ventas.service.comprobantes.BoletaDetailReportService;
 import com.bcs.ventas.service.comprobantes.FacturaDetailReportService;
+import com.bcs.ventas.service.comprobantes.NotaVentaDetailReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -44,6 +45,9 @@ public class VentaController {
 
     @Autowired
     private BoletaDetailReportService boletaDetailReportService;
+
+    @Autowired
+    private NotaVentaDetailReportService notaVentaDetailReportService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -388,5 +392,17 @@ public class VentaController {
         this.SetClaims(Authorization);
 
         return ResponseEntity.ok().headers(headers).body(boletaDetailReportService.exportPdf(id));
+    }
+
+    @PostMapping("/comprobante/nota_venta/{id}")
+    public ResponseEntity<byte[]> exportPdfComprobantesNotasVentas(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                  @PathVariable("id") Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("NotaVenta", "NotaVenta.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(notaVentaDetailReportService.exportPdf(id));
     }
 }

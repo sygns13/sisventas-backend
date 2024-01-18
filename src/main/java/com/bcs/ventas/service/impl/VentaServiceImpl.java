@@ -489,6 +489,10 @@ public class VentaServiceImpl implements VentaService {
         {
             tipoDocumento="03";
         }
+        else if(tipoComprobante.getPrefix().equals("NV"))
+        {
+            tipoDocumento="NV";
+        }
         int numeroComprobante = Integer.parseInt(venta.getComprobante().getNumero());
         Config config_igv = configDAO.listarPorId("igv_peru");
         BigDecimal igv = new BigDecimal(config_igv.getValor());
