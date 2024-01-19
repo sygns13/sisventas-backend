@@ -10,6 +10,7 @@ import com.bcs.ventas.model.entities.PagoProveedor;
 import com.bcs.ventas.model.entities.DetalleEntradaStock;
 import com.bcs.ventas.model.entities.EntradaStock;
 import com.bcs.ventas.service.EntradaStockService;
+import com.bcs.ventas.service.comprobantes.TicketCompraDetailReportService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -38,6 +40,8 @@ public class EntradaStockController {
 
     @Autowired
     private FacturaProveedorDAO facturaProveedorDAO;
+    @Autowired
+    private TicketCompraDetailReportService ticketCompraDetailReportService;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -387,5 +391,17 @@ public class EntradaStockController {
         EgresosComprasDTO obj = entradaStockService.listarIngresosVentas(pageable, filtros);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/comprobante/{id}")
+    public ResponseEntity<byte[]> exportPdfComprobantes(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                                   @PathVariable("id") Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("ReporteCompra", "ReporteCompra.pdf");
+
+        this.SetClaims(Authorization);
+
+        return ResponseEntity.ok().headers(headers).body(ticketCompraDetailReportService.exportPdf(id));
     }
 }
