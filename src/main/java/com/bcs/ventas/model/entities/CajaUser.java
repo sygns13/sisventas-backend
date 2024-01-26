@@ -2,20 +2,15 @@ package com.bcs.ventas.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-@Schema(description = "Caja Acciones Model")
+@Schema(description = "Caja Users")
 @Entity
-@Table(name = "caja_accions")
-public class CajaAccion implements Serializable {
+@Table(name = "caja_users")
+public class CajaUser implements Serializable {
 
     public static long getSerialversionuid() {
         return serialVersionUID;
@@ -26,29 +21,25 @@ public class CajaAccion implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "Tabla Datos de la Caja")
+    @Schema(description = "Caja")
     @ManyToOne
-    @JoinColumn(name = "caja_dato_id", nullable = false, foreignKey = @ForeignKey(name = "FK_caja_datos_caja_accions"))
-    private CajaDato cajaDato;
+    @JoinColumn(name = "caja_id", nullable = false, foreignKey = @ForeignKey(name = "FK_caja_users_caja"))
+    private Caja caja;
 
-    @Schema(description = "Accion de la Caja")
-    @Column(name="accion", nullable = true)
-    private Integer accion;
+    @Schema(description = "User asignado a la Caja")
+    @ManyToOne
+    @JoinColumn(name = "user_id_asignado", nullable = false, foreignKey = @ForeignKey(name = "FK_user_caja_users"))
+    private User user;
 
-    @Schema(description = "Fecha de Acción")
-    @JsonFormat(pattern="yyyy-MM-dd")
-    @Column(name="fecha", nullable = true)
-    private LocalDate fecha;
+    @Schema(description = "Fecha de inicio de la Asignación de la caja")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name="fecha_registro", nullable = true)
+    private LocalDateTime fechaRegistro;
 
-    @Schema(description = "Hora de Acción")
-    @Column(name="hora", nullable = true)
-    //@Temporal(TemporalType.TIME)
-    @DateTimeFormat(pattern="HH:mm:ss")
-    private Time hora;
-
-    @Schema(description = "Monto de acción")
-    @Column(name="monto", nullable = true)
-    private BigDecimal monto;
+    @Schema(description = "Fecha de final de la Asignación de la caja")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name="fecha_fin", nullable = true)
+    private LocalDateTime fechaFin;
 
     @Schema(description = "User ID que ejecuta la acción")
     @Column(name="user_id", nullable = true)
@@ -59,11 +50,11 @@ public class CajaAccion implements Serializable {
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
-    @Schema(description = "Estado del registro")
+    @Schema(description = "Estado de Producto")
     @Column(name="activo", nullable = true)
     private Integer activo;
 
-    @Schema(description = "Borrado Lógico del registro")
+    @Schema(description = "Borrado Lógico de Producto")
     @Column(name="borrado", nullable = true)
     private Integer borrado;
 
@@ -77,7 +68,7 @@ public class CajaAccion implements Serializable {
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
 
-    public CajaAccion() {
+    public CajaUser() {
     }
 
     public Long getId() {
@@ -88,44 +79,36 @@ public class CajaAccion implements Serializable {
         this.id = id;
     }
 
-    public CajaDato getCajaDato() {
-        return cajaDato;
+    public Caja getCaja() {
+        return caja;
     }
 
-    public void setCajaDato(CajaDato cajaDato) {
-        this.cajaDato = cajaDato;
+    public void setCaja(Caja caja) {
+        this.caja = caja;
     }
 
-    public Integer getAccion() {
-        return accion;
+    public User getUser() {
+        return user;
     }
 
-    public void setAccion(Integer accion) {
-        this.accion = accion;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public LocalDate getFecha() {
-        return fecha;
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
     }
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
-    public Time getHora() {
-        return hora;
+    public LocalDateTime getFechaFin() {
+        return fechaFin;
     }
 
-    public void setHora(Time hora) {
-        this.hora = hora;
-    }
-
-    public BigDecimal getMonto() {
-        return monto;
-    }
-
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
+    public void setFechaFin(LocalDateTime fechaFin) {
+        this.fechaFin = fechaFin;
     }
 
     public Long getUserId() {

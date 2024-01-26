@@ -13,6 +13,8 @@
         <mapper resource="mybatis/mappers/CabeceraComprobanteMapper.xml"/>
         <mapper resource="mybatis/mappers/CajaAccionMapper.xml"/>
         <mapper resource="mybatis/mappers/CajaMapper.xml"/>
+        <mapper resource="mybatis/mappers/CajaUserMapper.xml"/>
+        <mapper resource="mybatis/mappers/CajaDatoMapper.xml"/>
         <mapper resource="mybatis/mappers/ClienteMapper.xml"/>
         <mapper resource="mybatis/mappers/CobroVentaMapper.xml"/>
         <mapper resource="mybatis/mappers/ComprobanteMapper.xml"/>

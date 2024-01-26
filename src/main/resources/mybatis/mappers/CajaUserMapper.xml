@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bcs.ventas.dao.mappers.CajaUserMapper">
+
+    <resultMap id="principalResultMap" type="com.bcs.ventas.model.entities.CajaUser">
+        <result property="id" column="id" />
+        <result property="fechaRegistro" column="fecha_registro" />
+        <result property="fechaFin" column="fecha_fin" />
+        <result property="userId" column="user_id" />
+        <result property="empresaId" column="empresa_id" />
+        <result property="activo" column="activo" />
+        <result property="borrado" column="borrado" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAd" column="updated_at" />
+
+        <result property="caja.id" column="ca_id" />
+        <result property="caja.estado" column="ca_nombre" />
+        <result property="caja.lockedBy" column="ca_locked_by" />
+        <result property="caja.lastBalanced" column="ca_last_balanced" />
+        <result property="caja.lastBalancedBy" column="ca_last_balanced_by" />
+        <result property="caja.lastSettled" column="ca_last_settled" />
+        <result property="caja.lastSettledBy" column="ca_last_settled_by" />
+        <result property="caja.lastUsed" column="ca_last_used" />
+        <result property="caja.lastUsedBy" column="ca_last_used_by" />
+        <result property="caja.estado" column="ca_estado" />
+        <result property="caja.isCreatedBy" column="ca_is_created_by" />
+        <result property="caja.isBalanced" column="ca_is_balanced" />
+        <result property="caja.lastSystemSettled" column="ca_last_system_settled" />
+        <result property="caja.currencyCode" column="ca_currency_code" />
+
+        <result property="caja.empresaId" column="ca_empresa_id" />
+        <result property="caja.activo" column="ca_activo" />
+        <result property="caja.borrado" column="ca_borrado" />
+        <result property="caja.createdAt" column="ca_created_at" />
+        <result property="caja.updatedAd" column="ca_updated_at" />
+
+        <result property="almacen.id" column="al_id" />
+        <result property="almacen.nombre" column="al_nombre" />
+        <result property="almacen.direccion" column="al_direccion" />
+        <result property="almacen.empresaId" column="al_empresa_id" />
+        <result property="almacen.userId" column="al_user_id" />
+        <result property="almacen.activo" column="al_activo" />
+        <result property="almacen.borrado" column="al_borrado" />
+        <result property="almacen.distritoId" column="al_distrito_id" />
+        <result property="almacen.codigo" column="al_codigo" />
+
+        <result property="user.id" column="user_id" />
+        <result property="user.name" column="user_name" />
+        <result property="user.email" column="user_email" />
+        <result property="user.tipoUser.id" column="user_tipo_user_id" />
+        <result property="user.userId" column="user_user_id" />
+        <result property="user.empresaId" column="user_empresa_id" />
+        <result property="user.activo" column="user_activo" />
+        <result property="user.borrado" column="user_borrado" />
+        <result property="user.almacenId" column="user_almacen_id" />
+
+        <result property="user.datos.id" column="du_id" />
+        <result property="user.datos.nombres" column="du_nombres" />
+        <result property="user.datos.apellidoPaterno" column="du_apellido_paterno" />
+        <result property="user.datos.apellidoMaterno" column="du_apellido_materno" />
+        <result property="user.datos.direccion" column="du_direccion" />
+        <result property="user.datos.telefono" column="du_telefono" />
+        <result property="user.datos.tipoDocumento.id" column="du_tipo_documento_id" />
+        <result property="user.datos.documento" column="du_documento" />
+        <result property="user.datos.email" column="du_email" />
+        <result property="user.datos.userId" column="du_user_id" />
+        <result property="user.datos.userGestionaId" column="du_user_gestiona_id" />
+        <result property="user.datos.empresaId" column="du_empresa_id" />
+        <result property="user.datos.activo" column="du_activo" />
+        <result property="user.datos.borrado" column="du_borrado" />
+    </resultMap>
+
+    <select id="getAllEntities" resultMap="principalResultMap">
+        select
+            cu.id,
+            cu.caja_id,
+            cu.user_id_asignado,
+            cu.fecha_registro,
+            cu.fecha_fin,
+            cu.activo,
+            cu.borrado,
+            cu.user_id,
+            cu.empresa_id,
+            cu.created_at,
+            cu.updated_at,
+
+
+            c.id as ca_id,
+            c.nombre as ca_nombre,
+            c.almacen_id as ca_almacen_id,
+            c.locked_by as ca_locked_by,
+            c.last_balanced as ca_last_balanced,
+            c.last_balanced_by as ca_last_balanced_by,
+            c.last_settled_by as ca_last_settled_by,
+            c.last_settled as ca_last_settled,
+            c.last_used_by as ca_last_used_by,
+            c.last_used as ca_last_used,
+            c.estado as ca_estado,
+            c.is_created_by as ca_is_created_by,
+            c.is_balanced as ca_is_balanced,
+            c.last_system_settled as ca_last_system_settled,
+            c.currency_code as ca_currency_code,
+            c.activo as ca_activo,
+            c.borrado as ca_borrado,
+            c.created_at as ca_created_at,
+            c.updated_at as ca_updated_at,
+            c.empresa_id as ca_empresa_id,
+
+            a.id as al_id,
+            a.nombre as al_nombre,
+            a.direccion as al_direccion,
+            a.empresa_id as al_empresa_id,
+            a.user_id as al_user_id,
+            a.activo as al_activo,
+            a.borrado as al_borrado,
+            a.distrito_id as al_distrito_id,
+            a.codigo as al_codigo,
+
+            u.id as user_id,
+            u.name as user_name,
+            u.email as user_email,
+            u.tipo_user_id as user_tipo_user_id,
+            u.user_id as user_user_id,
+            u.empresa_id as user_empresa_id,
+            u.activo as user_activo,
+            u.borrado as user_borrado,
+            u.almacen_id as user_almacen_id,
+
+            du.id as du_id,
+            du.nombres as du_nombres,
+            du.apellido_paterno as du_apellido_paterno,
+            du.apellido_materno as du_apellido_materno,
+            du.direccion as du_direccion,
+            du.telefono as du_telefono,
+            du.tipo_documento_id as du_tipo_documento_id,
+            du.documento as du_documento,
+            du.email as du_email,
+            du.user_id as du_user_id,
+            du.user_gestiona_id as du_user_gestiona_id,
+            du.empresa_id as du_empresa_id,
+            du.activo as du_activo,
+            du.borrado as du_borrado
+
+        from caja_users cu
+        inner join cajas c on c.id = cu.caja_id
+        inner join almacens a on a.id = c.almacen_id
+        inner join users u on u.id = cu.user_id_asignado
+        left join datos_users du on du.user_id = u.id
+    </select>
+
+    <select id="listByParameterMap" resultMap="principalResultMap">
+        select
+            cu.id,
+            cu.caja_id,
+            cu.user_id_asignado,
+            cu.fecha_registro,
+            cu.fecha_fin,
+            cu.activo,
+            cu.borrado,
+            cu.user_id,
+            cu.empresa_id,
+            cu.created_at,
+            cu.updated_at,
+
+
+            c.id as ca_id,
+            c.nombre as ca_nombre,
+            c.almacen_id as ca_almacen_id,
+            c.locked_by as ca_locked_by,
+            c.last_balanced as ca_last_balanced,
+            c.last_balanced_by as ca_last_balanced_by,
+            c.last_settled_by as ca_last_settled_by,
+            c.last_settled as ca_last_settled,
+            c.last_used_by as ca_last_used_by,
+            c.last_used as ca_last_used,
+            c.estado as ca_estado,
+            c.is_created_by as ca_is_created_by,
+            c.is_balanced as ca_is_balanced,
+            c.last_system_settled as ca_last_system_settled,
+            c.currency_code as ca_currency_code,
+            c.activo as ca_activo,
+            c.borrado as ca_borrado,
+            c.created_at as ca_created_at,
+            c.updated_at as ca_updated_at,
+            c.empresa_id as ca_empresa_id,
+
+            a.id as al_id,
+            a.nombre as al_nombre,
+            a.direccion as al_direccion,
+            a.empresa_id as al_empresa_id,
+            a.user_id as al_user_id,
+            a.activo as al_activo,
+            a.borrado as al_borrado,
+            a.distrito_id as al_distrito_id,
+            a.codigo as al_codigo,
+
+            u.id as user_id,
+            u.name as user_name,
+            u.email as user_email,
+            u.tipo_user_id as user_tipo_user_id,
+            u.user_id as user_user_id,
+            u.empresa_id as user_empresa_id,
+            u.activo as user_activo,
+            u.borrado as user_borrado,
+            u.almacen_id as user_almacen_id,
+
+            du.id as du_id,
+            du.nombres as du_nombres,
+            du.apellido_paterno as du_apellido_paterno,
+            du.apellido_materno as du_apellido_materno,
+            du.direccion as du_direccion,
+            du.telefono as du_telefono,
+            du.tipo_documento_id as du_tipo_documento_id,
+            du.documento as du_documento,
+            du.email as du_email,
+            du.user_id as du_user_id,
+            du.user_gestiona_id as du_user_gestiona_id,
+            du.empresa_id as du_empresa_id,
+            du.activo as du_activo,
+            du.borrado as du_borrado
+
+        from caja_users cu
+        inner join cajas c on c.id = cu.caja_id
+        inner join almacens a on a.id = c.almacen_id
+        inner join users u on u.id = cu.user_id_asignado
+        left join datos_users du on du.user_id = u.id
+        <where>
+            <if test="ID != null"> AND c.id = #{ID}</if>
+            <if test="NOMBRE != null"> AND c.nombre = #{NOMBRE}</if>
+            <if test="ALMACEN_ID != null"> AND c.almacen_id = #{ALMACEN_ID}</if>
+            <if test="LOCKED_BY != null"> AND c.locked_by = #{LOCKED_BY}</if>
+            <if test="LAST_BALANCED != null"> AND c.last_balanced = #{LAST_BALANCED}</if>
+            <if test="LAST_BALANCED_BY != null"> AND c.last_balanced_by = #{LAST_BALANCED_BY}</if>
+            <if test="LAST_SETTLED_BY != null"> AND c.last_settled_by = #{LAST_SETTLED_BY}</if>
+            <if test="LAST_SETTLED != null"> AND c.last_settled = #{LAST_SETTLED}</if>
+            <if test="LAST_USED_BY != null"> AND c.last_used_by = #{LAST_USED_BY}</if>
+            <if test="LAST_USED != null"> AND c.last_used = #{LAST_USED}</if>
+            <if test="ESTADO != null"> AND c.estado = #{ESTADO}</if>
+            <if test="IS_CREATED_BY != null"> AND c.is_created_by = #{IS_CREATED_BY}</if>
+            <if test="IS_BALANCED != null"> AND c.is_balanced = #{IS_BALANCED}</if>
+            <if test="LAST_SYSTEM_SETTLED != null"> AND c.last_system_settled = #{LAST_SYSTEM_SETTLED}</if>
+            <if test="CURRENCY_CODE != null"> AND c.currency_code = #{CURRENCY_CODE}</if>
+            <if test="ACTIVO != null"> AND c.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND c.borrado = #{BORRADO}</if>
+            <if test="EMPRESA_ID != null"> AND c.empresa_id = #{EMPRESA_ID}</if>
+
+            <if test="NO_ID != null"> AND c.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND c.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND c.activo != #{NO_ACTIVO}</if>
+
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="CU_ID != null"> AND cu.id = #{CU_ID}</if>
+            <if test="CU_USER_ID_ASIGNADO != null"> AND cu.user_id_asignado = #{CU_USER_ID_ASIGNADO}</if>
+            <if test="CU_FECHA_REGISTRO != null"> AND cu.fecha_registro = #{CU_FECHA_REGISTRO}</if>
+            <if test="CU_FECHA_FIN != null"> AND cu.fecha_fin = #{CU_FECHA_FIN}</if>
+            <if test="CU_ACTIVO != null"> AND cu.activo = #{CU_ACTIVO}</if>
+            <if test="CU_BORRADO != null"> AND cu.borrado = #{CU_BORRADO}</if>
+            <if test="CU_USER_ID != null"> AND cu.user_id = #{CU_USER_ID}</if>
+            <if test="CU_EMPRESA_ID != null"> AND cu.empresa_id = #{CU_EMPRESA_ID}</if>
+        </where>
+
+        <if test="ORDER_DESC != null"> order by c.id desc, u.id desc </if>
+        <if test="ORDER_DESC == null"> order by c.nombre, c.created_at, c.id, u.id </if>
+
+        <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
+        <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
+    </select>
+
+    <select id="getTotalElements" resultType="java.lang.Long">
+        select COUNT(*)
+        from caja_users cu
+        inner join cajas c on c.id = cu.caja_id
+        inner join almacens a on a.id = c.almacen_id
+        inner join users u on u.id = cu.user_id_asignado
+        left join datos_users du on du.user_id = u.id
+        <where>
+            <if test="ID != null"> AND c.id = #{ID}</if>
+            <if test="NOMBRE != null"> AND c.nombre = #{NOMBRE}</if>
+            <if test="ALMACEN_ID != null"> AND c.almacen_id = #{ALMACEN_ID}</if>
+            <if test="LOCKED_BY != null"> AND c.locked_by = #{LOCKED_BY}</if>
+            <if test="LAST_BALANCED != null"> AND c.last_balanced = #{LAST_BALANCED}</if>
+            <if test="LAST_BALANCED_BY != null"> AND c.last_balanced_by = #{LAST_BALANCED_BY}</if>
+            <if test="LAST_SETTLED_BY != null"> AND c.last_settled_by = #{LAST_SETTLED_BY}</if>
+            <if test="LAST_SETTLED != null"> AND c.last_settled = #{LAST_SETTLED}</if>
+            <if test="LAST_USED_BY != null"> AND c.last_used_by = #{LAST_USED_BY}</if>
+            <if test="LAST_USED != null"> AND c.last_used = #{LAST_USED}</if>
+            <if test="ESTADO != null"> AND c.estado = #{ESTADO}</if>
+            <if test="IS_CREATED_BY != null"> AND c.is_created_by = #{IS_CREATED_BY}</if>
+            <if test="IS_BALANCED != null"> AND c.is_balanced = #{IS_BALANCED}</if>
+            <if test="LAST_SYSTEM_SETTLED != null"> AND c.last_system_settled = #{LAST_SYSTEM_SETTLED}</if>
+            <if test="CURRENCY_CODE != null"> AND c.currency_code = #{CURRENCY_CODE}</if>
+            <if test="ACTIVO != null"> AND c.activo = #{ACTIVO}</if>
+            <if test="BORRADO != null"> AND c.borrado = #{BORRADO}</if>
+            <if test="EMPRESA_ID != null"> AND c.empresa_id = #{EMPRESA_ID}</if>
+
+            <if test="NO_ID != null"> AND c.id != #{NO_ID}</if>
+            <if test="NO_BORRADO != null"> AND c.borrado != #{NO_BORRADO}</if>
+            <if test="NO_ACTIVO != null"> AND c.activo != #{NO_ACTIVO}</if>
+
+
+            <if test="A_ID != null"> AND a.id = #{A_ID}</if>
+            <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>
+            <if test="A_BUSCAR != null"> AND (a.nombre like #{A_BUSCAR} )</if>
+
+            <if test="CU_ID != null"> AND cu.id = #{CU_ID}</if>
+            <if test="CU_USER_ID_ASIGNADO != null"> AND cu.user_id_asignado = #{CU_USER_ID_ASIGNADO}</if>
+            <if test="CU_FECHA_REGISTRO != null"> AND cu.fecha_registro = #{CU_FECHA_REGISTRO}</if>
+            <if test="CU_FECHA_FIN != null"> AND cu.fecha_fin = #{CU_FECHA_FIN}</if>
+            <if test="CU_ACTIVO != null"> AND cu.activo = #{CU_ACTIVO}</if>
+            <if test="CU_BORRADO != null"> AND cu.borrado = #{CU_BORRADO}</if>
+            <if test="CU_USER_ID != null"> AND cu.user_id = #{CU_USER_ID}</if>
+            <if test="CU_EMPRESA_ID != null"> AND cu.empresa_id = #{CU_EMPRESA_ID}</if>
+        </where>
+
+        <if test="ORDER_DESC != null"> order by c.id desc, u.id desc </if>
+        <if test="ORDER_DESC == null"> order by c.nombre, c.created_at, c.id, u.id </if>
+    </select>
+
+    <update id="updateByPrimaryKeySelective">
+        update caja_users
+        <set>
+            <if test="CAJA_ID != null"> caja_id = #{CAJA_ID}, </if>
+            <if test="USER_ID_ASIGNADO != null"> user_id_asignado = #{USER_ID_ASIGNADO}, </if>
+            <if test="FECHA_REGISTRO != null"> fecha_registro = #{FECHA_REGISTRO}, </if>
+            <if test="FECHA_FIN != null"> fecha_fin = #{FECHA_FIN}, </if>
+            <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>
+            <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
+
+            <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
+        </set>
+        where id = #{ID} and empresa_id=#{EMPRESA_ID}
+    </update>
+
+</mapper>
