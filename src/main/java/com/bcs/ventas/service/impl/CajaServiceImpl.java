@@ -1,6 +1,7 @@
 package com.bcs.ventas.service.impl;
 
 import com.bcs.ventas.dao.CajaDAO;
+import com.bcs.ventas.dao.CajaUserDAO;
 import com.bcs.ventas.dao.mappers.CajaMapper;
 import com.bcs.ventas.dao.mappers.CajaUserMapper;
 import com.bcs.ventas.exception.ValidationServiceException;
@@ -30,6 +31,9 @@ public class CajaServiceImpl implements CajaService {
 
     @Autowired
     private CajaDAO cajaDAO;
+
+    @Autowired
+    private CajaUserDAO cajaUserDAO;
 
     @Autowired
     private CajaMapper cajaMapper;
@@ -177,6 +181,35 @@ public class CajaServiceImpl implements CajaService {
 
         return cajas;
     }
+
+    public List<CajaUser> AllByAlmacenAndUsers(String buscar, Long idAlmacen, Long idUser) throws Exception {
+        //return cajaDAO.listar();
+
+        //Oauth inicio
+        Long EmpresaId = claimsAuthorization.getEmpresaId();
+        //Oauth final
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("CU_NO_BORRADO_LEFT",Constantes.REGISTRO_BORRADO);
+        params.put("CU_ACTIVO_LEFT",Constantes.REGISTRO_ACTIVO);
+        params.put("EMPRESA_ID",EmpresaId);
+        params.put("BUSCAR","%"+buscar+"%");
+
+        if(idAlmacen != null && idAlmacen > 0)
+            params.put("ALMACEN_ID",idAlmacen);
+
+        if(idUser != null && idUser > 0)
+            params.put("CU_USER_ID_ASIGNADO_LEFT",idUser);
+
+
+        List<CajaUser> cajasUser = cajaUserMapper.listCajasAsignedsByParameterMap(params);
+        //Page<Almacen> resultado = new PageImpl<>(almacenes, page, totalPages);
+
+        return cajasUser;
+    }
+
+
 
     @Override
     public Caja listarPorId(Long id) throws Exception {
@@ -398,5 +431,218 @@ public class CajaServiceImpl implements CajaService {
         resultValidacion.put("warnings",warnings);
 
         return resultado;
+    }
+
+
+    //Funcions Caja Asignacion
+
+    @Override
+    public CajaUser AsignarCaja(CajaUser a) throws Exception {
+        LocalDateTime fechaActual = LocalDateTime.now();
+        a.setCreatedAt(fechaActual);
+        a.setUpdatedAd(fechaActual);
+
+        //Oauth inicio
+        a.setEmpresaId(claimsAuthorization.getEmpresaId());
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
+
+        a.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+        a.setActivo(Constantes.REGISTRO_ACTIVO);
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionAsignacionCaja(a, resultValidacion);
+
+
+        if(validacion)
+            return this.grabarAsignacionCaja(a);
+
+        String errorValidacion = "Error de validación Método Asignar Caja a Usuario";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    private boolean validacionAsignacionCaja(CajaUser a, Map<String, Object> resultValidacion){
+
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+
+        if(a.getUser() == null || a.getUser().getId() == null || a.getUser().getId() <= 0){
+            resultado = false;
+            error = "Debe remitir un usuario Válido";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(a.getCaja() == null || a.getCaja().getId() == null || a.getCaja().getId() <= 0){
+            resultado = false;
+            error = "Debe remitir una Caja Válida";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",a.getCaja().getId());
+        params.put("CU_USER_ID_ASIGNADO",a.getUser().getId());
+
+        params.put("EMPRESA_ID",a.getEmpresaId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("CU_ACTIVO",Constantes.REGISTRO_ACTIVO);
+
+        List<CajaUser> cajasAsignesV1 = cajaUserMapper.listByParameterMap(params);
+
+
+
+        if(cajasAsignesV1.size() > 0){
+            resultado = false;
+            error = "El nombre del Caja ingresado ya se encuentra registrado";
+            errors.add(error);
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private CajaUser grabarAsignacionCaja(CajaUser a) throws Exception {
+
+        a.setFechaRegistro(LocalDateTime.now());
+        a.setFechaFin(null);
+
+        return cajaUserDAO.registrar(a);
+    }
+
+
+
+    @Override
+    public CajaUser EliminarAsignacionCaja(CajaUser a) throws Exception {
+
+        a = cajaUserDAO.listarPorId(a.getId());
+        LocalDateTime fechaActual = LocalDateTime.now();
+        a.setUpdatedAd(fechaActual);
+
+        //Oauth inicio
+        a.setUserId(claimsAuthorization.getUserId());
+        //Oauth final
+
+        a.setBorrado(Constantes.REGISTRO_BORRADO);
+        a.setActivo(Constantes.REGISTRO_INACTIVO);
+
+        Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        boolean validacion = this.validacionRemoverAsignacionCaja(a, resultValidacion);
+
+
+        if(validacion)
+            return this.grabarEliminacionAsignacionCaja(a);
+
+        String errorValidacion = "Error de validación Método Eliminar Asignación de Caja a Usuario";
+
+        if(resultValidacion.get("errors") != null){
+            List<String> errors =   (List<String>) resultValidacion.get("errors");
+            if(errors.size() >0)
+                errorValidacion = errors.stream().map(e -> e.concat(". ")).collect(Collectors.joining());
+        }
+
+        throw new ValidationServiceException(errorValidacion);
+    }
+
+    private boolean validacionRemoverAsignacionCaja(CajaUser a, Map<String, Object> resultValidacion){
+
+        boolean resultado = true;
+        List<String> errors = new ArrayList<String>();
+        List<String> warnings = new ArrayList<String>();
+        String error;
+        String warning;
+
+
+        if(a.getUser() == null || a.getUser().getId() == null || a.getUser().getId() <= 0){
+            resultado = false;
+            error = "Debe remitir un usuario Válido";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(a.getCaja() == null || a.getCaja().getId() == null || a.getCaja().getId() <= 0){
+            resultado = false;
+            error = "Debe remitir una Caja Válida";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        if(a.getId() == null || a.getId() <= 0){
+            resultado = false;
+            error = "Debe remitir una Asignación Válida";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",a.getCaja().getId());
+        params.put("CU_ID",a.getId());
+        params.put("CU_USER_ID_ASIGNADO",a.getUser().getId());
+
+        params.put("EMPRESA_ID",a.getEmpresaId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("CU_ACTIVO",Constantes.REGISTRO_ACTIVO);
+
+        List<CajaUser> cajasAsignesV1 = cajaUserMapper.listByParameterMap(params);
+
+
+
+        if(cajasAsignesV1.isEmpty()){
+            resultado = false;
+            error = "Debe remitir una Asignación Válida";
+            errors.add(error);
+        }
+
+        resultValidacion.put("errors",errors);
+        resultValidacion.put("warnings",warnings);
+
+        return resultado;
+    }
+
+    @Transactional(readOnly=false,rollbackFor=Exception.class)
+    private CajaUser grabarEliminacionAsignacionCaja(CajaUser a) throws Exception {
+
+        //a.setFechaRegistro(LocalDateTime.now());
+        a.setFechaFin(LocalDateTime.now());
+
+        return cajaUserDAO.modificar(a);
     }
 }

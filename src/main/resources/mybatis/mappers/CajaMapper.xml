@@ -134,6 +134,8 @@
             <if test="NO_BORRADO != null"> AND c.borrado != #{NO_BORRADO}</if>
             <if test="NO_ACTIVO != null"> AND c.activo != #{NO_ACTIVO}</if>
 
+            <if test="BUSCAR != null"> AND (c.nombre like #{BUSCAR} )</if>
+
 
             <if test="A_ID != null"> AND a.id = #{A_ID}</if>
             <if test="A_NOMBRE != null"> AND a.nombre = #{A_NOMBRE}</if>

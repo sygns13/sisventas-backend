@@ -2,6 +2,7 @@ package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
 import com.bcs.ventas.model.entities.Caja;
+import com.bcs.ventas.model.entities.CajaUser;
 import com.bcs.ventas.service.CajaService;
 import com.bcs.ventas.utils.JwtUtils;
 import com.bcs.ventas.utils.beans.ClaimsAuthorization;
@@ -78,6 +79,24 @@ public class CajaController {
 
         //Pageable pageable = PageRequest.of(page,size);
         List<Caja> resultado = cajaService.AllByAlmacen(buscar, idAlmacen);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
+    @GetMapping("/get_by_almacen_and_user")
+    public ResponseEntity<List<CajaUser>> AllByAlmacenAndUsers(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                               @RequestParam(name = "buscar", defaultValue = "") String buscar,
+                                                               @RequestParam(name = "almacen_id", defaultValue = "0") long idAlmacen,
+                                                               @RequestParam(name = "user_id", defaultValue = "0") long idUser) throws Exception{
+
+        // @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestHeader Map<String, String> headers
+        this.SetClaims(Authorization);
+        /*headers.forEach((key, value) -> {
+            System.out.println(String.format("Header '%s' = %s", key, value));
+        });*/
+
+        //Pageable pageable = PageRequest.of(page,size);
+        List<CajaUser> resultado = cajaService.AllByAlmacenAndUsers(buscar, idAlmacen, idUser);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
@@ -168,6 +187,28 @@ public class CajaController {
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
+
+    @PostMapping("/asignar_caja_to_user")
+    public ResponseEntity<CajaUser> asignarCajaToUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestBody CajaUser a) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        a.setId(null);
+        CajaUser obj = cajaService.AsignarCaja(a);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/eliminar_asignacion_caja_to_user")
+    public ResponseEntity<CajaUser> eliminarAsignacionCajaToUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestBody CajaUser a) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        CajaUser obj = cajaService.EliminarAsignacionCaja(a);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
 
 }
 
