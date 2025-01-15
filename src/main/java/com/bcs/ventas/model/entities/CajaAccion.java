@@ -36,19 +36,25 @@ public class CajaAccion implements Serializable {
     private Integer accion;
 
     @Schema(description = "Fecha de Acción")
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="fecha", nullable = true)
-    private LocalDate fecha;
+    private LocalDateTime fecha;
 
+    /*
     @Schema(description = "Hora de Acción")
     @Column(name="hora", nullable = true)
     //@Temporal(TemporalType.TIME)
     @DateTimeFormat(pattern="HH:mm:ss")
     private Time hora;
+     */
 
     @Schema(description = "Monto de acción")
     @Column(name="monto", nullable = true)
     private BigDecimal monto;
+
+    @Schema(description = "Descripcion de la Accion")
+    @Column(name="descripcion", nullable = true)
+    private String descripcion;
 
     @Schema(description = "User ID que ejecuta la acción")
     @Column(name="user_id", nullable = true)
@@ -80,6 +86,14 @@ public class CajaAccion implements Serializable {
     public CajaAccion() {
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     public Long getId() {
         return id;
     }
@@ -104,20 +118,12 @@ public class CajaAccion implements Serializable {
         this.accion = accion;
     }
 
-    public LocalDate getFecha() {
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
-    }
-
-    public Time getHora() {
-        return hora;
-    }
-
-    public void setHora(Time hora) {
-        this.hora = hora;
     }
 
     public BigDecimal getMonto() {

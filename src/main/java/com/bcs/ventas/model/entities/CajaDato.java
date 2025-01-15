@@ -52,6 +52,10 @@ public class CajaDato implements Serializable {
     @Column(name="monto_final", nullable = true)
     private BigDecimal montoFinal;
 
+    @Schema(description = "monto Temporal")
+    @Transient
+    private BigDecimal montoTemporal;
+
     @Schema(description = "User ID que hace el Último edit de la tabla")
     @Column(name="last_user_id", nullable = true)
     private Long lastUserId;
@@ -79,7 +83,23 @@ public class CajaDato implements Serializable {
     @Column(name="empresa_id", nullable = true)
     private Long empresaId;
 
+    @Schema(description = "Sustento de Inicio de Caja")
+    @Column(name="sustento_ini", nullable = true)
+    private String sustentoInicio;
+
+    @Schema(description = "Sustento de Cierre de Caja")
+    @Column(name="sustento_fin", nullable = true)
+    private String sustentoCierre;
+
     public CajaDato() {
+    }
+
+    public BigDecimal getMontoTemporal() {
+        return montoTemporal;
+    }
+
+    public void setMontoTemporal(BigDecimal montoTemporal) {
+        this.montoTemporal = montoTemporal;
     }
 
     public Long getId() {
@@ -184,5 +204,21 @@ public class CajaDato implements Serializable {
 
     public void setEmpresaId(Long empresaId) {
         this.empresaId = empresaId;
+    }
+
+    public String getSustentoInicio() {
+        return sustentoInicio;
+    }
+
+    public void setSustentoInicio(String sustentoInicio) {
+        this.sustentoInicio = sustentoInicio;
+    }
+
+    public String getSustentoCierre() {
+        return sustentoCierre;
+    }
+
+    public void setSustentoCierre(String sustentoCierre) {
+        this.sustentoCierre = sustentoCierre;
     }
 }

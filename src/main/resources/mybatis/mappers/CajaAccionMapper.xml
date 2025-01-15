@@ -9,8 +9,8 @@
         <result property="id" column="id" />
         <result property="accion" column="accion" />
         <result property="fecha" column="fecha" />
-        <result property="hora" column="hora" />
         <result property="monto" column="monto" />
+        <result property="descripcion" column="descripcion" />
         <result property="userId" column="user_id" />
         <result property="empresaId" column="empresa_id" />
         <result property="activo" column="activo" />
@@ -29,6 +29,7 @@
             ca.accion,
             ca.fecha,
             ca.monto,
+            ca.descripcion,
             ca.user_id,
             ca.empresa_id,
             ca.activo,
@@ -51,6 +52,7 @@
             ca.accion,
             ca.fecha,
             ca.monto,
+            ca.descripcion,
             ca.user_id,
             ca.empresa_id,
             ca.activo,
@@ -70,6 +72,7 @@
             <if test="ACCION != null"> AND ca.accion = #{ACCION}</if>
             <if test="FECHA != null"> AND ca.fecha = #{FECHA}</if>
             <if test="MONTO != null"> AND ca.monto = #{MONTO}</if>
+            <if test="DESCRIPCION != null"> AND ca.descripcion = #{DESCRIPCION}</if>
             <if test="USER_ID != null"> AND ca.user_id = #{USER_ID}</if>
             <if test="EMPRESA_ID != null"> AND ca.empresa_id = #{EMPRESA_ID}</if>
             <if test="ACTIVO != null"> AND ca.activo = #{ACTIVO}</if>
@@ -101,6 +104,7 @@
             <if test="ACCION != null"> AND ca.accion = #{ACCION}</if>
             <if test="FECHA != null"> AND ca.fecha = #{FECHA}</if>
             <if test="MONTO != null"> AND ca.monto = #{MONTO}</if>
+            <if test="DESCRIPCION != null"> AND ca.descripcion = #{DESCRIPCION}</if>
             <if test="USER_ID != null"> AND ca.user_id = #{USER_ID}</if>
             <if test="EMPRESA_ID != null"> AND ca.empresa_id = #{EMPRESA_ID}</if>
             <if test="ACTIVO != null"> AND ca.activo = #{ACTIVO}</if>
@@ -125,6 +129,7 @@
             <if test="ACCION != null"> accion = #{ACCION}, </if>
             <if test="FECHA != null"> fecha = #{FECHA}, </if>
             <if test="MONTO != null"> monto = #{MONTO}, </if>
+            <if test="DESCRIPCION != null"> descripcion = #{DESCRIPCION}, </if>
             <if test="USER_ID != null"> user_id = #{USER_ID}, </if>
 <!--            <if test="EMPRESA_ID != null"> empresa_id = #{EMPRESA_ID}, </if>-->
             <if test="ACTIVO != null"> activo = #{ACTIVO}, </if>

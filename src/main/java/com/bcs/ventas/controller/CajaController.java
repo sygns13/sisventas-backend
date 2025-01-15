@@ -1,7 +1,10 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.dto.CajaInicioCierreDto;
 import com.bcs.ventas.model.entities.Caja;
+import com.bcs.ventas.model.entities.CajaAccion;
+import com.bcs.ventas.model.entities.CajaDato;
 import com.bcs.ventas.model.entities.CajaUser;
 import com.bcs.ventas.service.CajaService;
 import com.bcs.ventas.utils.JwtUtils;
@@ -97,6 +100,24 @@ public class CajaController {
 
         //Pageable pageable = PageRequest.of(page,size);
         List<CajaUser> resultado = cajaService.AllByAlmacenAndUsers(buscar, idAlmacen, idUser);
+
+        return new ResponseEntity<>(resultado, HttpStatus.OK);
+    }
+
+    @GetMapping("/get_by_almacen_user")
+    public ResponseEntity<List<CajaUser>> listarAllByAlmacenAndUserSession(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
+                                                         @RequestParam(name = "buscar", defaultValue = "") String buscar,
+                                                         @RequestParam(name = "almacen_id", defaultValue = "5") long idAlmacen) throws Exception{
+
+        // @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestHeader Map<String, String> headers
+        this.SetClaims(Authorization);
+        /*headers.forEach((key, value) -> {
+            System.out.println(String.format("Header '%s' = %s", key, value));
+        });*/
+        Long idUser = claimsAuthorization.getUserId();
+
+        //Pageable pageable = PageRequest.of(page,size);
+        List<CajaUser> resultado = cajaService.CajasByAlmacenUser(buscar, idAlmacen, idUser);
 
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
@@ -207,6 +228,57 @@ public class CajaController {
         CajaUser obj = cajaService.EliminarAsignacionCaja(a);
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @GetMapping("/get_caja_iniciada")
+    public ResponseEntity<CajaDato> getCajaIniciadaByUserSession(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+        this.SetClaims(Authorization);
+
+        CajaDato obj = cajaService.getCajaIniciadaByUserSession();
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/get_last_caja")
+    public ResponseEntity<CajaDato> getLastMontoCaja(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestBody CajaInicioCierreDto a) throws Exception{
+        this.SetClaims(Authorization);
+
+        CajaDato obj = cajaService.getLastCajaCerrada(a.getIdCaja());
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/iniciar_caja")
+    public ResponseEntity<CajaDato> iniciarCaja(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestBody CajaInicioCierreDto a) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        CajaDato obj = cajaService.IniciarCaja(a.getIdCaja(), claimsAuthorization.getUserId(), a.getMonto(), a.getSustento());
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/cierre_caja")
+    public ResponseEntity<CajaDato> cerrarCaja(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestBody CajaInicioCierreDto a) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        CajaDato obj = cajaService.CerrarCaja(a.getIdCaja(), claimsAuthorization.getUserId(), a.getMonto());
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
+    }
+
+    @PostMapping("/caja_accion")
+    public ResponseEntity<CajaAccion> cerrarCaja(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization, @RequestBody CajaAccion a) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        CajaDato cajaDato = cajaService.getCajaIniciadaByUserSession();
+
+        CajaAccion response = cajaService.registrarCajaAccion(cajaDato, a);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

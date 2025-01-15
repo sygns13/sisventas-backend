@@ -8,10 +8,7 @@ import com.bcs.ventas.model.dto.ProductosVentaDTO;
 import com.bcs.ventas.model.dto.TopProductosVendidosDTO;
 import com.bcs.ventas.model.dto.VentasDetallesDTO;
 import com.bcs.ventas.model.entities.*;
-import com.bcs.ventas.service.AlmacenService;
-import com.bcs.ventas.service.ClienteService;
-import com.bcs.ventas.service.InitComprobanteService;
-import com.bcs.ventas.service.VentaService;
+import com.bcs.ventas.service.*;
 import com.bcs.ventas.service.comprobantes.NumberFormatToWordsService;
 import com.bcs.ventas.utils.Constantes;
 import com.bcs.ventas.utils.beans.AgregarProductoBean;
@@ -128,6 +125,9 @@ public class VentaServiceImpl implements VentaService {
 
     @Autowired
     private NumberFormatToWordsService numberFormatToWordsService;
+
+    @Autowired
+    private CajaService cajaService;
 
     @Override
     public Venta registrar(Venta v) throws Exception {
@@ -465,6 +465,13 @@ public class VentaServiceImpl implements VentaService {
         ventaMapper.updateByPrimaryKeySelective(params);
 
         this.GenerarComprobante(c.getVenta(), initComprobante);
+
+        //Movimiento de Caja
+        CajaDato cajaDato = cajaService.getCajaIniciadaByUserSession();
+
+        if(cajaDato != null){
+            cajaService.ingresoSalidaCaja(claimsAuthorization.getUserId(), cajaDato, c.getImporte(), Constantes.CAJA_ACCION_MOVIMIENTO_INGRESO, "COBRO VENTA N° " + c.getVenta().getNumeroVenta());
+        }
 
 
         return cobroVenta;

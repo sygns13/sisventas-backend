@@ -186,4 +186,19 @@ public  class Constantes {
     public static final String CURRENCY_PEN = "PEN";
 
 
+    //Estados de CajaDato
+    public static final Integer CAJA_DATO_CREADO = 0;
+    public static final Integer CAJA_DATO_INICIADO = 1;
+    public static final Integer CAJA_DATO_CERRADO = 2;
+
+
+    //Acciones de caja
+    public static final Integer CAJA_ACCION_APERTURA = 1;
+    public static final Integer CAJA_ACCION_CIERRE = 0;
+    public static final Integer CAJA_ACCION_REAPERTURA = 2;
+
+    public static final Integer CAJA_ACCION_MOVIMIENTO_INGRESO = 3;
+    public static final Integer CAJA_ACCION_MOVIMIENTO_SALIDA = 4;
+
+
 }

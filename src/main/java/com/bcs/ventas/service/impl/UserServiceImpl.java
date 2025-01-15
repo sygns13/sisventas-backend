@@ -4,10 +4,7 @@ import com.bcs.ventas.dao.AlmacenDAO;
 import com.bcs.ventas.dao.DatosUserDAO;
 import com.bcs.ventas.dao.UserDAO;
 import com.bcs.ventas.dao.TipoDocumentoDAO;
-import com.bcs.ventas.dao.mappers.DatosUserMapper;
-import com.bcs.ventas.dao.mappers.UserMapper;
-import com.bcs.ventas.dao.mappers.TipoDocumentoMapper;
-import com.bcs.ventas.dao.mappers.VentaMapper;
+import com.bcs.ventas.dao.mappers.*;
 import com.bcs.ventas.exception.ValidationServiceException;
 import com.bcs.ventas.model.entities.*;
 import com.bcs.ventas.service.UserService;
@@ -59,6 +56,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AlmacenDAO almacenDAO;
+
+    @Autowired
+    private AlmacenMapper almacenMapper;
 
     //@Autowired
 //    private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -819,5 +819,42 @@ public class UserServiceImpl implements UserService {
         resultValidacion.put("warnings",warnings);
 
         return resultado;
+    }
+
+    @Override
+    public List<Almacen> getAlmacens(Long idEmpresa, Long idUser) throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID",idUser);
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("EMPRESA_ID",idEmpresa);
+
+        List<User> users = userMapper.listByParameterMap(params);
+
+        List<Almacen> response = new ArrayList<>();
+
+        if(!users.isEmpty()) {
+            User user = users.get(0);
+
+            if (user.getAlmacenId() == null || user.getAlmacenId().compareTo(Constantes.CANTIDAD_ZERO_LONG) <= 0) {
+                user.setAlmacen("General - Todas");
+
+                params.clear();
+                params.put("NO_BORRADO", Constantes.REGISTRO_BORRADO);
+                params.put("EMPRESA_ID", idEmpresa);
+                return almacenMapper.listByParameterMapOrderId(params);
+            } else {
+                try {
+                    Almacen almacen = almacenDAO.listarPorId(user.getAlmacenId());
+                    user.setAlmacen(almacen.getNombre());
+                    response.add(almacen);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return response;
+        }
+        else
+            return response;
     }
 }

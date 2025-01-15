@@ -1,6 +1,7 @@
 package com.bcs.ventas.controller;
 
 import com.bcs.ventas.exception.ModeloNotFoundException;
+import com.bcs.ventas.model.entities.Almacen;
 import com.bcs.ventas.model.entities.Marca;
 import com.bcs.ventas.model.entities.User;
 import com.bcs.ventas.model.entities.TipoDocumento;
@@ -201,6 +202,19 @@ public class UserController {
         userService.altabaja(id, valor);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+
+    @GetMapping("/almacens")
+    public ResponseEntity<List<Almacen>> getAlmacens(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) throws Exception{
+
+        this.SetClaims(Authorization);
+
+        Long idEmpresa = claimsAuthorization.getEmpresaId();
+        Long idUser = claimsAuthorization.getUserId();
+        List<Almacen> obj = userService.getAlmacens(idEmpresa, idUser);
+
+        return new ResponseEntity<>(obj, HttpStatus.OK);
     }
 }
 

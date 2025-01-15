@@ -107,8 +107,11 @@ public class BancoServiceImpl implements BancoService {
     }
 
     public List<Banco> listar() throws Exception {
-        //return bancoDAO.listar();
+        List<Banco> resultado = bancoDAO.listar();
 
+        return resultado;
+
+        /*
         //Oauth inicio
         Long EmpresaId = claimsAuthorization.getEmpresaId();
         //Oauth final
@@ -117,7 +120,7 @@ public class BancoServiceImpl implements BancoService {
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
-        return bancoMapper.listByParameterMap(params);
+        return bancoMapper.listByParameterMap(params);*/
     }
 
     public Page<Banco> listar(Pageable page, String buscar) throws Exception {

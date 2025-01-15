@@ -15,6 +15,8 @@
         <result property="lastUserId" column="last_user_id" />
         <result property="accessCount" column="access_count" />
         <result property="estado" column="estado" />
+        <result property="sustentoInicio" column="sustento_ini" />
+        <result property="sustentoCierre" column="sustento_fin" />
 
         <result property="empresaId" column="empresa_id" />
         <result property="createdAt" column="created_at" />
@@ -22,7 +24,7 @@
 
 
         <result property="caja.id" column="ca_id" />
-        <result property="caja.estado" column="ca_nombre" />
+        <result property="caja.nombre" column="ca_nombre" />
         <result property="caja.lockedBy" column="ca_locked_by" />
         <result property="caja.lastBalanced" column="ca_last_balanced" />
         <result property="caja.lastBalancedBy" column="ca_last_balanced_by" />
@@ -42,15 +44,15 @@
         <result property="caja.createdAt" column="ca_created_at" />
         <result property="caja.updatedAd" column="ca_updated_at" />
 
-        <result property="almacen.id" column="al_id" />
-        <result property="almacen.nombre" column="al_nombre" />
-        <result property="almacen.direccion" column="al_direccion" />
-        <result property="almacen.empresaId" column="al_empresa_id" />
-        <result property="almacen.userId" column="al_user_id" />
-        <result property="almacen.activo" column="al_activo" />
-        <result property="almacen.borrado" column="al_borrado" />
-        <result property="almacen.distritoId" column="al_distrito_id" />
-        <result property="almacen.codigo" column="al_codigo" />
+        <result property="caja.almacen.id" column="al_id" />
+        <result property="caja.almacen.nombre" column="al_nombre" />
+        <result property="caja.almacen.direccion" column="al_direccion" />
+        <result property="caja.almacen.empresaId" column="al_empresa_id" />
+        <result property="caja.almacen.userId" column="al_user_id" />
+        <result property="caja.almacen.activo" column="al_activo" />
+        <result property="caja.almacen.borrado" column="al_borrado" />
+        <result property="caja.almacen.distritoId" column="al_distrito_id" />
+        <result property="caja.almacen.codigo" column="al_codigo" />
     </resultMap>
 
     <select id="getAllEntities" resultMap="principalResultMap">
@@ -68,6 +70,8 @@
             cd.updated_at,
             cd.estado,
             cd.empresa_id,
+            cd.sustento_ini,
+            cd.sustento_fin,
 
             c.id as ca_id,
             c.nombre as ca_nombre,
@@ -119,6 +123,8 @@
             cd.updated_at,
             cd.estado,
             cd.empresa_id,
+            cd.sustento_ini,
+            cd.sustento_fin,
 
             c.id as ca_id,
             c.nombre as ca_nombre,
@@ -194,8 +200,8 @@
             <if test="CD_ESTADO != null"> AND cd.estado = #{CD_ESTADO}</if>
         </where>
 
-        <if test="ORDER_DESC != null"> order by c.id desc </if>
-        <if test="ORDER_DESC == null"> order by c.nombre, c.created_at, c.id </if>
+        <if test="ORDER_DESC != null"> order by c.id desc, cd.id desc </if>
+        <if test="ORDER_DESC == null"> order by c.nombre, c.created_at, c.id, cd.id </if>
 
         <if test="LIMIT != null"> LIMIT #{LIMIT}</if>
         <if test="OFFSET != null"> OFFSET #{OFFSET}</if>
@@ -263,6 +269,8 @@
             <if test="LAST_USER_ID != null"> last_user_id = #{LAST_USER_ID}, </if>
             <if test="ACCESS_COUNT != null"> access_count = #{ACCESS_COUNT}, </if>
             <if test="ESTADO != null"> estado = #{ESTADO}, </if>
+            <if test="SUSTENTO_INI != null"> sustento_ini = #{SUSTENTO_INI}, </if>
+            <if test="SUSTENTO_FIN != null"> sustento_fin = #{SUSTENTO_FIN}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>
