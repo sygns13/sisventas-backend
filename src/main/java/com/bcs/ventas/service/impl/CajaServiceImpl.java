@@ -210,7 +210,7 @@ public class CajaServiceImpl implements CajaService {
         params.put("CU_NO_BORRADO_LEFT",Constantes.REGISTRO_BORRADO);
         params.put("CU_ACTIVO_LEFT",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
-        params.put("BUSCAR","%"+buscar+"%");
+        params.put("C_BUSCAR","%"+buscar+"%");
 
         if(idAlmacen != null && idAlmacen > 0)
             params.put("ALMACEN_ID",idAlmacen);
@@ -234,16 +234,16 @@ public class CajaServiceImpl implements CajaService {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
-        params.put("CU_NO_BORRADO_LEFT",Constantes.REGISTRO_BORRADO);
-        params.put("CU_ACTIVO_LEFT",Constantes.REGISTRO_ACTIVO);
+        params.put("CU_NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("CU_ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
-        params.put("BUSCAR","%"+buscar+"%");
+        params.put("C_BUSCAR","%"+buscar+"%");
 
         if(idAlmacen != null && idAlmacen > 0)
             params.put("ALMACEN_ID",idAlmacen);
 
         if(idUser != null && idUser > 0)
-            params.put("CU_USER_ID_ASIGNADO_LEFT",idUser);
+            params.put("CU_USER_ID_ASIGNADO",idUser);
 
 
         List<CajaUser> cajasUser = cajaUserMapper.listCajasAsignedsByParameterMap(params);
@@ -656,7 +656,7 @@ public class CajaServiceImpl implements CajaService {
     }
 
     @Override
-    public CajaDato CerrarCaja(Long idCaja, Long idUser, BigDecimal monto) throws Exception {
+    public CajaDato CerrarCaja(Long idCaja, Long idUser, BigDecimal monto, String sustento) throws Exception {
 
        Caja caja = cajaDAO.listarPorId(idCaja);
        User user  = userDAO.listarPorId(idUser);
@@ -671,6 +671,7 @@ public class CajaServiceImpl implements CajaService {
 
             if(validacion2) {
                 CajaDato cajaDato = resultValidacion.get("cajaDato") != null ? (CajaDato) resultValidacion.get("cajaDato") : new CajaDato();
+                cajaDato.setSustentoCierre(sustento);
                 return this.grabarCierreCaja(caja, user, cajaDato, monto);
             }
         }
@@ -747,6 +748,25 @@ public class CajaServiceImpl implements CajaService {
 
             cajaDato.setMontoTemporal(cajaDato.getMontoInicio().add(montosIngresos.subtract(montosSalidas)));
         }
+
+        return cajaDato;
+    }
+
+    @Override
+    public CajaDato getCajaIniciadaSimpleByUserSession() throws Exception {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("CD_LAST_USER_ID", claimsAuthorization.getUserId());
+        params.put("CD_ESTADO",Constantes.CAJA_DATO_INICIADO);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
+        params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
+        params.put("ESTADO",Constantes.REGISTRO_ACTIVO);
+        params.put("ORDER_DESC",Constantes.REGISTRO_ACTIVO);
+
+        List<CajaDato> cajaDatoLastV1 = cajaDatoMapper.listByParameterMap(params);
+
+        CajaDato cajaDato = !cajaDatoLastV1.isEmpty() ? cajaDatoLastV1.get(0) : new CajaDato();
 
         return cajaDato;
     }
@@ -930,6 +950,7 @@ public class CajaServiceImpl implements CajaService {
 
 
 
+        /*
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ID", caja.getId());
         params.put("CD_ESTADO", Constantes.CAJA_DATO_INICIADO);
@@ -956,8 +977,24 @@ public class CajaServiceImpl implements CajaService {
         }
 
         resultValidacion.put("cajaDato",cajaDatoLastV1.get(0));
-        resultValidacion.put("errors",errors);
-        resultValidacion.put("warnings",warnings);
+        */
+
+        //Verificar Caja Iniciada
+        CajaDato cajaDatoV1 = this.getCajaIniciadaByUserSession();
+        if(cajaDatoV1 == null && cajaDatoV1.getId() != null){
+            resultado = false;
+            error = "La Cajá no se encuentra Iniciada por el Usuario";
+            errors.add(error);
+
+            resultValidacion.put("errors",errors);
+            resultValidacion.put("warnings",warnings);
+
+            return resultado;
+        }
+
+        resultValidacion.put("cajaDato", cajaDatoV1);
+        resultValidacion.put("errors", errors);
+        resultValidacion.put("warnings", warnings);
 
         return resultado;
     }
@@ -1044,6 +1081,24 @@ public class CajaServiceImpl implements CajaService {
 
         LocalDateTime fechaHora = LocalDateTime.now();
         LocalDate fecha = LocalDate.now();
+
+        //1. Actualización de Caja Matriz
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ID", caja.getId());
+        params.put("LAST_SETTLED", fechaHora);
+        params.put("LAST_USED", fechaHora);
+        params.put("LAST_USED_BY", claimsAuthorization.getUserId());
+        params.put("LAST_SETTLED_BY", claimsAuthorization.getUserId());
+        params.put("UPDATED_AT",fechaHora);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
+
+        int res= cajaMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+        }
+
+        //2. Registro de Caja Dato - Inicio de Caja
         CajaDato cajaDato = new CajaDato();
 
         cajaDato.setCaja(caja);
@@ -1063,6 +1118,50 @@ public class CajaServiceImpl implements CajaService {
 
         cajaDato = cajaDatoDAO.registrar(cajaDato);
 
+        //3. Registro de Acccion Si la direrencia de dinero entre el monto de apertura y cierre anterior es superior a cero
+        BigDecimal montoDiferencia = monto.subtract(cajaDatoLast != null ? cajaDatoLast.getMontoFinal() : new BigDecimal(0));
+        if(montoDiferencia.compareTo(new BigDecimal(0)) > 0){
+            CajaAccion cajaAccion = new CajaAccion();
+
+            cajaAccion.setCajaDato(cajaDato);
+            cajaAccion.setAccion(Constantes.CAJA_ACCION_MOVIMIENTO_INGRESO);
+            cajaAccion.setFecha(fechaHora);
+            cajaAccion.setMonto(montoDiferencia);
+            cajaAccion.setDescripcion("Ingreso de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoCierre());
+
+
+            cajaAccion.setUserId(user.getId());
+            cajaAccion.setEmpresaId(caja.getEmpresaId());
+            cajaAccion.setActivo(Constantes.REGISTRO_ACTIVO);
+            cajaAccion.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+            cajaAccion.setCreatedAt(fechaHora);
+            cajaAccion.setUpdatedAd(fechaHora);
+
+            cajaAccionDAO.registrar(cajaAccion);
+        }
+
+        //4. Registro de Acccion Si la direrencia de dinero entre el monto de apertura y cierre anterior es inferior a cero
+        if(monto.compareTo(new BigDecimal(0)) < 0){
+            CajaAccion cajaAccion = new CajaAccion();
+
+            cajaAccion.setCajaDato(cajaDato);
+            cajaAccion.setAccion(Constantes.CAJA_ACCION_MOVIMIENTO_SALIDA);
+            cajaAccion.setFecha(fechaHora);
+            cajaAccion.setMonto(montoDiferencia.abs());
+            cajaAccion.setDescripcion("Salida de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoCierre());
+
+
+            cajaAccion.setUserId(user.getId());
+            cajaAccion.setEmpresaId(caja.getEmpresaId());
+            cajaAccion.setActivo(Constantes.REGISTRO_ACTIVO);
+            cajaAccion.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+            cajaAccion.setCreatedAt(fechaHora);
+            cajaAccion.setUpdatedAd(fechaHora);
+
+            cajaAccionDAO.registrar(cajaAccion);
+        }
+
+        //5. Registro de Accion Inicio de Caja
         CajaAccion cajaAccion = new CajaAccion();
 
         cajaAccion.setCajaDato(cajaDato);
@@ -1071,7 +1170,7 @@ public class CajaServiceImpl implements CajaService {
 
         if(cajaDatoLast != null){
             cajaAccion.setMonto(monto.subtract(cajaDatoLast.getMontoFinal()));
-            cajaAccion.setDescripcion("Apertura de Caja con Monto: " + String.format("%.2f", monto) + "Monto Anterior " + String.format("%.2f",cajaDatoLast.getMontoFinal()));
+            cajaAccion.setDescripcion("Apertura de Caja con Monto: " + String.format("%.2f", monto) + "Monto Anterior " + String.format("%.2f", cajaDatoLast.getMontoFinal()));
         }
         else{
             cajaAccion.setMonto(monto);
@@ -1094,15 +1193,21 @@ public class CajaServiceImpl implements CajaService {
     @Transactional(readOnly=false,rollbackFor=Exception.class)
     private CajaDato grabarCierreCaja(Caja caja, User user, CajaDato cajaDato, BigDecimal monto) throws Exception {
 
+        //prepare data
+        cajaDato.setMontoFinal(monto);
+        cajaDato.setMontoFinalCalc(cajaDato.getMontoTemporal());
+        cajaDato.setMontoFinalDif(cajaDato.getMontoFinal().subtract(cajaDato.getMontoFinalCalc()));
+
         LocalDateTime fechaHora = LocalDateTime.now();
 
+        //1. Actualización de Caja Matriz
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("ID",cajaDato.getId());
-        params.put("FECHA_FINAL", fechaHora);
-        params.put("MONTO_FINAL", monto);
-        params.put("LAST_USER_ID", claimsAuthorization.getUserId());
+        params.put("ID", caja.getId());
+        params.put("LAST_SETTLED", fechaHora);
+        params.put("LAST_USED", fechaHora);
+        params.put("LAST_USED_BY", claimsAuthorization.getUserId());
+        params.put("LAST_SETTLED_BY", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaHora);
-
         params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= cajaMapper.updateByPrimaryKeySelective(params);
@@ -1111,13 +1216,76 @@ public class CajaServiceImpl implements CajaService {
             throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
 
+        //2. Actualización de Caja Dato - Cierre de Caja
+        params.clear();
+        params.put("ID",cajaDato.getId());
+        params.put("FECHA_FINAL", fechaHora);
+        params.put("MONTO_FINAL", cajaDato.getMontoFinal());
+        params.put("MONTO_FINAL_CALC", cajaDato.getMontoFinalCalc());
+        params.put("MONTO_FINAL_DIF", cajaDato.getMontoFinalDif());
+        params.put("LAST_USER_ID", claimsAuthorization.getUserId());
+        params.put("ESTADO", Constantes.CAJA_ACCION_CIERRE);
+        params.put("SUSTENTO_FIN", cajaDato.getSustentoCierre());
+
+        params.put("UPDATED_AT",fechaHora);
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
+
+        res= cajaDatoMapper.updateByPrimaryKeySelective(params);
+
+        if(res == 0){
+            throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
+        }
+
+        //3. Registro de Acccion Si la direrencia de dinero entre el monto declarado y el calculado es superior a cero
+        if(cajaDato.getMontoFinalDif().compareTo(new BigDecimal(0)) > 0){
+            CajaAccion cajaAccion = new CajaAccion();
+
+            cajaAccion.setCajaDato(cajaDato);
+            cajaAccion.setAccion(Constantes.CAJA_ACCION_MOVIMIENTO_INGRESO);
+            cajaAccion.setFecha(fechaHora);
+            cajaAccion.setMonto(cajaDato.getMontoFinalDif());
+            cajaAccion.setDescripcion("Ingreso de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoCierre());
+
+
+            cajaAccion.setUserId(user.getId());
+            cajaAccion.setEmpresaId(caja.getEmpresaId());
+            cajaAccion.setActivo(Constantes.REGISTRO_ACTIVO);
+            cajaAccion.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+            cajaAccion.setCreatedAt(fechaHora);
+            cajaAccion.setUpdatedAd(fechaHora);
+
+            cajaAccionDAO.registrar(cajaAccion);
+        }
+
+        //4. Registro de Acccion Si la direrencia de dinero entre el monto declarado y el calculado es inferior a cero
+        if(cajaDato.getMontoFinalDif().compareTo(new BigDecimal(0)) < 0){
+            CajaAccion cajaAccion = new CajaAccion();
+
+            cajaAccion.setCajaDato(cajaDato);
+            cajaAccion.setAccion(Constantes.CAJA_ACCION_MOVIMIENTO_SALIDA);
+            cajaAccion.setFecha(fechaHora);
+            cajaAccion.setMonto(cajaDato.getMontoFinalDif().abs());
+            cajaAccion.setDescripcion("Salida de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoCierre());
+
+
+            cajaAccion.setUserId(user.getId());
+            cajaAccion.setEmpresaId(caja.getEmpresaId());
+            cajaAccion.setActivo(Constantes.REGISTRO_ACTIVO);
+            cajaAccion.setBorrado(Constantes.REGISTRO_NO_BORRADO);
+            cajaAccion.setCreatedAt(fechaHora);
+            cajaAccion.setUpdatedAd(fechaHora);
+
+            cajaAccionDAO.registrar(cajaAccion);
+        }
+
+        //5. Registro de Cierre de Caja
         CajaAccion cajaAccion = new CajaAccion();
 
         cajaAccion.setCajaDato(cajaDato);
         cajaAccion.setAccion(Constantes.CAJA_ACCION_CIERRE);
         cajaAccion.setFecha(fechaHora);
-        cajaAccion.setMonto(new BigDecimal(0));
-        cajaAccion.setDescripcion("Cierre de Caja con Monto: " + String.format("%.2f", monto));
+        cajaAccion.setMonto(cajaDato.getMontoFinal());
+        cajaAccion.setDescripcion("Cierre de Caja con Monto: " + String.format("%.2f", cajaDato.getMontoFinal()));
 
         cajaAccion.setUserId(user.getId());
         cajaAccion.setEmpresaId(caja.getEmpresaId());

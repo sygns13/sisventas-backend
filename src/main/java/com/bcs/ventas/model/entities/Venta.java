@@ -144,6 +144,10 @@ public class Venta implements Serializable {
     @Column(name="monto_icbper", nullable = true)
     private BigDecimal montoIcbper;
 
+    @Schema(description = "ID de Caja donde se realiza la venta - de estar usando modo de ventas con caja")
+    @Column(name="caja_dato_id", nullable = true)
+    private Long CajaDatoId;
+
     @Schema(description = "Detalles de Venta")
     @OneToMany(mappedBy = "venta", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private List<DetalleVenta> detalleVentas;
@@ -474,5 +478,13 @@ public class Venta implements Serializable {
 
     public void setMontoPorCobrar(BigDecimal montoPorCobrar) {
         this.montoPorCobrar = montoPorCobrar;
+    }
+
+    public Long getCajaDatoId() {
+        return CajaDatoId;
+    }
+
+    public void setCajaDatoId(Long cajaDatoId) {
+        CajaDatoId = cajaDatoId;
     }
 }

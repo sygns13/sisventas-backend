@@ -1007,6 +1007,7 @@
             <if test="NUMERO_VENTA != null"> numero_venta = #{NUMERO_VENTA}, </if>
             <if test="CANTIDAD_ICBPER != null"> cantidad_icbper = #{CANTIDAD_ICBPER}, </if>
             <if test="MONTO_ICBPER != null"> monto_icbper = #{MONTO_ICBPER}, </if>
+            <if test="CAJA_DATO_ID != null"> caja_dato_id = #{CAJA_DATO_ID}, </if>
 
             <if test="UPDATED_AT != null"> updated_at = #{UPDATED_AT}, </if>
         </set>

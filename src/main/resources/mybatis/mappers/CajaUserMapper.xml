@@ -441,6 +441,9 @@
             <if test="CU_BORRADO != null"> AND cu.borrado = #{CU_BORRADO}</if>
             <if test="CU_USER_ID != null"> AND cu.user_id = #{CU_USER_ID}</if>
             <if test="CU_EMPRESA_ID != null"> AND cu.empresa_id = #{CU_EMPRESA_ID}</if>
+            <if test="CU_NO_BORRADO != null"> AND cu.borrado != #{CU_NO_BORRADO}</if>
+
+            <if test="C_BUSCAR != null"> AND (c.nombre like #{C_BUSCAR} )</if>
         </where>
 
         <if test="ORDER_DESC != null"> order by c.id desc, u.id desc </if>
@@ -497,6 +500,9 @@
             <if test="CU_BORRADO != null"> AND cu.borrado = #{CU_BORRADO}</if>
             <if test="CU_USER_ID != null"> AND cu.user_id = #{CU_USER_ID}</if>
             <if test="CU_EMPRESA_ID != null"> AND cu.empresa_id = #{CU_EMPRESA_ID}</if>
+            <if test="CU_NO_BORRADO != null"> AND cu.borrado != #{CU_NO_BORRADO}</if>
+
+            <if test="C_BUSCAR != null"> AND (c.nombre like #{C_BUSCAR} )</if>
         </where>
 
         <if test="ORDER_DESC != null"> order by c.id desc, u.id desc </if>

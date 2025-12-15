@@ -22,9 +22,11 @@ public interface CajaService extends GeneralService<Caja, Long> {
 
     CajaDato IniciarCaja(Long idCaja, Long idUser, BigDecimal monto, String sustento) throws Exception;
 
-    CajaDato CerrarCaja(Long idCaja, Long idUser, BigDecimal monto) throws Exception;
+    CajaDato CerrarCaja(Long idCaja, Long idUser, BigDecimal monto, String sustento) throws Exception;
 
     CajaDato getCajaIniciadaByUserSession() throws Exception;
+
+    CajaDato getCajaIniciadaSimpleByUserSession() throws Exception;
 
     CajaAccion ingresoSalidaCaja(Long userId, CajaDato cajaDato, BigDecimal monto, Integer type, String descripcion) throws Exception;
 

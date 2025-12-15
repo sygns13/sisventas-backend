@@ -12,6 +12,8 @@
         <result property="fechaFinal" column="fecha_final" />
         <result property="montoInicio" column="monto_inicio" />
         <result property="montoFinal" column="monto_final" />
+        <result property="montoFinalCalc" column="monto_final_calc" />
+        <result property="montoFinalDif" column="monto_final_dif" />
         <result property="lastUserId" column="last_user_id" />
         <result property="accessCount" column="access_count" />
         <result property="estado" column="estado" />
@@ -64,6 +66,8 @@
             cd.fecha_final,
             cd.monto_inicio,
             cd.monto_final,
+            cd.monto_final_calc,
+            cd.monto_final_dif,
             cd.last_user_id,
             cd.access_count,
             cd.created_at,
@@ -117,6 +121,8 @@
             cd.fecha_final,
             cd.monto_inicio,
             cd.monto_final,
+            cd.monto_final_calc,
+            cd.monto_final_dif,
             cd.last_user_id,
             cd.access_count,
             cd.created_at,
@@ -266,6 +272,8 @@
             <if test="FECHA_FINAL != null"> fecha_final = #{FECHA_FINAL}, </if>
             <if test="MONTO_INICIO != null"> monto_inicio = #{MONTO_INICIO}, </if>
             <if test="MONTO_FINAL != null"> monto_final = #{MONTO_FINAL}, </if>
+            <if test="MONTO_FINAL_CALC != null"> monto_final_calc = #{MONTO_FINAL_CALC}, </if>
+            <if test="MONTO_FINAL_DIF != null"> monto_final_dif = #{MONTO_FINAL_DIF}, </if>
             <if test="LAST_USER_ID != null"> last_user_id = #{LAST_USER_ID}, </if>
             <if test="ACCESS_COUNT != null"> access_count = #{ACCESS_COUNT}, </if>
             <if test="ESTADO != null"> estado = #{ESTADO}, </if>

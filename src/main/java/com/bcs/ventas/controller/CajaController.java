@@ -86,7 +86,7 @@ public class CajaController {
         return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 
-    @GetMapping("/get_by_almacen_and_user")
+    @GetMapping("/get_all_by_almacen_and_user")
     public ResponseEntity<List<CajaUser>> AllByAlmacenAndUsers(@RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization,
                                                                @RequestParam(name = "buscar", defaultValue = "") String buscar,
                                                                @RequestParam(name = "almacen_id", defaultValue = "0") long idAlmacen,
@@ -264,7 +264,7 @@ public class CajaController {
 
         this.SetClaims(Authorization);
 
-        CajaDato obj = cajaService.CerrarCaja(a.getIdCaja(), claimsAuthorization.getUserId(), a.getMonto());
+        CajaDato obj = cajaService.CerrarCaja(a.getIdCaja(), claimsAuthorization.getUserId(), a.getMonto(), a.getSustento());
 
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }

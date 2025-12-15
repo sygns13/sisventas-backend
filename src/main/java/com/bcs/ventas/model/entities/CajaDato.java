@@ -52,6 +52,14 @@ public class CajaDato implements Serializable {
     @Column(name="monto_final", nullable = true)
     private BigDecimal montoFinal;
 
+    @Schema(description = "Monto Final Calculado")
+    @Column(name="monto_final_calc", nullable = true)
+    private BigDecimal montoFinalCalc;
+
+    @Schema(description = "Monto Final Diferencia")
+    @Column(name="monto_final_dif", nullable = true)
+    private BigDecimal montoFinalDif;
+
     @Schema(description = "monto Temporal")
     @Transient
     private BigDecimal montoTemporal;
@@ -92,6 +100,22 @@ public class CajaDato implements Serializable {
     private String sustentoCierre;
 
     public CajaDato() {
+    }
+
+    public BigDecimal getMontoFinalCalc() {
+        return montoFinalCalc;
+    }
+
+    public void setMontoFinalCalc(BigDecimal montoFinalCalc) {
+        this.montoFinalCalc = montoFinalCalc;
+    }
+
+    public BigDecimal getMontoFinalDif() {
+        return montoFinalDif;
+    }
+
+    public void setMontoFinalDif(BigDecimal montoFinalDif) {
+        this.montoFinalDif = montoFinalDif;
     }
 
     public BigDecimal getMontoTemporal() {

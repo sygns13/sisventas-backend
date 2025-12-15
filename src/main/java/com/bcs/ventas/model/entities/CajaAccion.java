@@ -31,6 +31,10 @@ public class CajaAccion implements Serializable {
     @JoinColumn(name = "caja_dato_id", nullable = false, foreignKey = @ForeignKey(name = "FK_caja_datos_caja_accions"))
     private CajaDato cajaDato;
 
+    @Schema(description = "Caja Asociada a la Accion")
+    @Transient
+    private Caja caja;
+
     @Schema(description = "Accion de la Caja")
     @Column(name="accion", nullable = true)
     private Integer accion;
@@ -82,6 +86,14 @@ public class CajaAccion implements Serializable {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="updated_at", nullable = true)
     private LocalDateTime updatedAd;
+
+    public Caja getCaja() {
+        return caja;
+    }
+
+    public void setCaja(Caja caja) {
+        this.caja = caja;
+    }
 
     public CajaAccion() {
     }

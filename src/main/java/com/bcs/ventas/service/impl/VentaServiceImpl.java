@@ -173,6 +173,13 @@ public class VentaServiceImpl implements VentaService {
 
         boolean validacion = this.validacionRegistro(v, resultValidacion);
 
+        //Verificar Si Aplica Caja
+        CajaDato cajaDato = cajaService.getCajaIniciadaSimpleByUserSession();
+
+        if(cajaDato != null){
+            v.setCajaDatoId(cajaDato.getId());
+        }
+
         if(validacion){
             //Get Sequence
             FiltroVenta filtroSeq= new FiltroVenta();
@@ -218,6 +225,13 @@ public class VentaServiceImpl implements VentaService {
         v.setUser(user);
 
         Map<String, Object> resultValidacion = new HashMap<String, Object>();
+
+        //Verificar Si Aplica Caja
+        CajaDato cajaDato = cajaService.getCajaIniciadaSimpleByUserSession();
+
+        if(cajaDato != null){
+            v.setCajaDatoId(cajaDato.getId());
+        }
 
         boolean validacion = this.validacionModificado(v, resultValidacion);
 
@@ -466,12 +480,15 @@ public class VentaServiceImpl implements VentaService {
 
         this.GenerarComprobante(c.getVenta(), initComprobante);
 
-        //Movimiento de Caja
-        CajaDato cajaDato = cajaService.getCajaIniciadaByUserSession();
+        //Movimiento de Caja solo si es venta en efectivo
+        if(Constantes.ID_TIPO_METODO_PAGO_CASH.equals(cobroVenta.getMetodoPago().getTipoId())){
+            CajaDato cajaDato = cajaService.getCajaIniciadaSimpleByUserSession();
 
-        if(cajaDato != null){
-            cajaService.ingresoSalidaCaja(claimsAuthorization.getUserId(), cajaDato, c.getImporte(), Constantes.CAJA_ACCION_MOVIMIENTO_INGRESO, "COBRO VENTA N° " + c.getVenta().getNumeroVenta());
+            if(cajaDato != null){
+                cajaService.ingresoSalidaCaja(claimsAuthorization.getUserId(), cajaDato, c.getImporte(), Constantes.CAJA_ACCION_MOVIMIENTO_INGRESO, "COBRO VENTA N° " + c.getVenta().getNumeroVenta());
+            }
         }
+
 
 
         return cobroVenta;
@@ -733,6 +750,9 @@ public class VentaServiceImpl implements VentaService {
 
         if(v.getMontoIcbper() != null)
             params.put("MONTO_ICBPER", v.getMontoIcbper());
+
+        if(v.getCajaDatoId() != null)
+            params.put("CAJA_DATO_ID", v.getCajaDatoId());
 
 
         params.put("USER_ID", claimsAuthorization.getUserId());
@@ -1716,6 +1736,14 @@ public class VentaServiceImpl implements VentaService {
         params.put("MONTO_ICBPER", venta.getMontoIcbper());
 
         params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
+
+        //Verificar Si Aplica Caja
+        CajaDato cajaDato = cajaService.getCajaIniciadaSimpleByUserSession();
+
+        if(cajaDato != null){
+            params.put("CAJA_DATO_ID", cajaDato.getId());
+        }
+
         int resultado = ventaMapper.updateByPrimaryKeySelective(params);
 
         return venta;
