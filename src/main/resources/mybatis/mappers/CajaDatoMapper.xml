@@ -11,6 +11,8 @@
         <result property="fechaInicio" column="fecha_inicio" />
         <result property="fechaFinal" column="fecha_final" />
         <result property="montoInicio" column="monto_inicio" />
+        <result property="montoInicioCalc" column="monto_inicio_calc" />
+        <result property="montoInicioDif" column="monto_inicio_dif" />
         <result property="montoFinal" column="monto_final" />
         <result property="montoFinalCalc" column="monto_final_calc" />
         <result property="montoFinalDif" column="monto_final_dif" />
@@ -65,6 +67,8 @@
             cd.fecha_inicio,
             cd.fecha_final,
             cd.monto_inicio,
+            cd.monto_inicio_calc,
+            cd.monto_inicio_dif,
             cd.monto_final,
             cd.monto_final_calc,
             cd.monto_final_dif,
@@ -120,6 +124,8 @@
             cd.fecha_inicio,
             cd.fecha_final,
             cd.monto_inicio,
+            cd.monto_inicio_calc,
+            cd.monto_inicio_dif,
             cd.monto_final,
             cd.monto_final_calc,
             cd.monto_final_dif,
@@ -271,6 +277,8 @@
             <if test="FECHA_INICIO != null"> fecha_inicio = #{FECHA_INICIO}, </if>
             <if test="FECHA_FINAL != null"> fecha_final = #{FECHA_FINAL}, </if>
             <if test="MONTO_INICIO != null"> monto_inicio = #{MONTO_INICIO}, </if>
+            <if test="MONTO_INICIO_CALC != null"> monto_inicio_calc = #{MONTO_INICIO_CALC}, </if>
+            <if test="MONTO_INICIO_DIF != null"> monto_inicio_dif = #{MONTO_INICIO_DIF}, </if>
             <if test="MONTO_FINAL != null"> monto_final = #{MONTO_FINAL}, </if>
             <if test="MONTO_FINAL_CALC != null"> monto_final_calc = #{MONTO_FINAL_CALC}, </if>
             <if test="MONTO_FINAL_DIF != null"> monto_final_dif = #{MONTO_FINAL_DIF}, </if>

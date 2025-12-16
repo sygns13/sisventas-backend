@@ -1098,6 +1098,8 @@ public class CajaServiceImpl implements CajaService {
             throw new RuntimeException("No se pudo realizar la transacción, por favor probar nuevamente o comunicarse con un Administrador del Sistema");
         }
 
+        BigDecimal montoInicioCalc = cajaDatoLast != null ? cajaDatoLast.getMontoFinal() : new BigDecimal(0);
+        BigDecimal montoInicioDiferencia = monto.subtract(montoInicioCalc);
         //2. Registro de Caja Dato - Inicio de Caja
         CajaDato cajaDato = new CajaDato();
 
@@ -1106,6 +1108,8 @@ public class CajaServiceImpl implements CajaService {
         cajaDato.setFechaInicio(fechaHora);
         cajaDato.setFechaFinal(null);
         cajaDato.setMontoInicio(monto);
+        cajaDato.setMontoInicioCalc(montoInicioCalc);
+        cajaDato.setMontoInicioDif(montoInicioDiferencia);
         cajaDato.setMontoFinal(null);
         cajaDato.setLastUserId(user.getId());
         cajaDato.setAccessCount(Constantes.CANTIDAD_ZERO);
@@ -1119,15 +1123,14 @@ public class CajaServiceImpl implements CajaService {
         cajaDato = cajaDatoDAO.registrar(cajaDato);
 
         //3. Registro de Acccion Si la direrencia de dinero entre el monto de apertura y cierre anterior es superior a cero
-        BigDecimal montoDiferencia = monto.subtract(cajaDatoLast != null ? cajaDatoLast.getMontoFinal() : new BigDecimal(0));
-        if(montoDiferencia.compareTo(new BigDecimal(0)) > 0){
+        if(montoInicioDiferencia.compareTo(new BigDecimal(0)) > 0){
             CajaAccion cajaAccion = new CajaAccion();
 
             cajaAccion.setCajaDato(cajaDato);
             cajaAccion.setAccion(Constantes.CAJA_ACCION_MOVIMIENTO_INGRESO);
             cajaAccion.setFecha(fechaHora);
-            cajaAccion.setMonto(montoDiferencia);
-            cajaAccion.setDescripcion("Ingreso de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoCierre());
+            cajaAccion.setMonto(montoInicioDiferencia);
+            cajaAccion.setDescripcion("Ingreso de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoInicio());
 
 
             cajaAccion.setUserId(user.getId());
@@ -1141,14 +1144,14 @@ public class CajaServiceImpl implements CajaService {
         }
 
         //4. Registro de Acccion Si la direrencia de dinero entre el monto de apertura y cierre anterior es inferior a cero
-        if(monto.compareTo(new BigDecimal(0)) < 0){
+        if(montoInicioDiferencia.compareTo(new BigDecimal(0)) < 0){
             CajaAccion cajaAccion = new CajaAccion();
 
             cajaAccion.setCajaDato(cajaDato);
             cajaAccion.setAccion(Constantes.CAJA_ACCION_MOVIMIENTO_SALIDA);
             cajaAccion.setFecha(fechaHora);
-            cajaAccion.setMonto(montoDiferencia.abs());
-            cajaAccion.setDescripcion("Salida de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoCierre());
+            cajaAccion.setMonto(montoInicioDiferencia.abs());
+            cajaAccion.setDescripcion("Salida de Dinero (Cuadrar Caja) con sustento: " + cajaDato.getSustentoInicio());
 
 
             cajaAccion.setUserId(user.getId());
@@ -1167,13 +1170,12 @@ public class CajaServiceImpl implements CajaService {
         cajaAccion.setCajaDato(cajaDato);
         cajaAccion.setAccion(Constantes.CAJA_ACCION_APERTURA);
         cajaAccion.setFecha(fechaHora);
+        cajaAccion.setMonto(monto);
 
         if(cajaDatoLast != null){
-            cajaAccion.setMonto(monto.subtract(cajaDatoLast.getMontoFinal()));
             cajaAccion.setDescripcion("Apertura de Caja con Monto: " + String.format("%.2f", monto) + "Monto Anterior " + String.format("%.2f", cajaDatoLast.getMontoFinal()));
         }
         else{
-            cajaAccion.setMonto(monto);
             cajaAccion.setDescripcion("Apertura de Caja con Monto: " + String.format("%.2f", monto));
         }
 
@@ -1224,7 +1226,7 @@ public class CajaServiceImpl implements CajaService {
         params.put("MONTO_FINAL_CALC", cajaDato.getMontoFinalCalc());
         params.put("MONTO_FINAL_DIF", cajaDato.getMontoFinalDif());
         params.put("LAST_USER_ID", claimsAuthorization.getUserId());
-        params.put("ESTADO", Constantes.CAJA_ACCION_CIERRE);
+        params.put("ESTADO", Constantes.CAJA_DATO_CERRADO);
         params.put("SUSTENTO_FIN", cajaDato.getSustentoCierre());
 
         params.put("UPDATED_AT",fechaHora);

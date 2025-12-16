@@ -48,6 +48,14 @@ public class CajaDato implements Serializable {
     @Column(name="monto_inicio", nullable = true)
     private BigDecimal montoInicio;
 
+    @Schema(description = "Monto de Inicio Calculado")
+    @Column(name="monto_inicio_calc", nullable = true)
+    private BigDecimal montoInicioCalc;
+
+    @Schema(description = "Monto de Inicio Diferencia")
+    @Column(name="monto_inicio_dif", nullable = true)
+    private BigDecimal montoInicioDif;
+
     @Schema(description = "Monto Final")
     @Column(name="monto_final", nullable = true)
     private BigDecimal montoFinal;
@@ -100,6 +108,22 @@ public class CajaDato implements Serializable {
     private String sustentoCierre;
 
     public CajaDato() {
+    }
+
+    public BigDecimal getMontoInicioCalc() {
+        return montoInicioCalc;
+    }
+
+    public void setMontoInicioCalc(BigDecimal montoInicioCalc) {
+        this.montoInicioCalc = montoInicioCalc;
+    }
+
+    public BigDecimal getMontoInicioDif() {
+        return montoInicioDif;
+    }
+
+    public void setMontoInicioDif(BigDecimal montoInicioDif) {
+        this.montoInicioDif = montoInicioDif;
     }
 
     public BigDecimal getMontoFinalCalc() {
