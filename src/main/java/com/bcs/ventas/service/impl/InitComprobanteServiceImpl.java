@@ -134,14 +134,14 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         params.put("BORRADO",Constantes.REGISTRO_NO_BORRADO);
         params.put("ACTIVO",Constantes.REGISTRO_ACTIVO);
         params.put("EMPRESA_ID",EmpresaId);
-        params.put("ALMACEN_ID_GENERAL",Constantes.CANTIDAD_ZERO_LONG);
+        //params.put("ALMACEN_ID_GENERAL",Constantes.CANTIDAD_ZERO_LONG);
 
         if(tipoComprobante.compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
             params.put("TIPO_COMPROBANTE_ID",tipoComprobante);
         }
 
         if(almacenId.compareTo(Constantes.CANTIDAD_ZERO_LONG) >= 0){
-            params.put("ALMACEN_ID",almacenId);
+            params.put("ONLY_ALMACEN",almacenId);
         }
 
         List<InitComprobante> initComprobantes = initComprobanteMapper.listByParameterMap(params);
@@ -167,7 +167,7 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
         params.put("NO_BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("EMPRESA_ID",EmpresaId);
         params.put("BUSCAR","%"+buscar+"%");
-        params.put("ALMACEN_ID_GENERAL",Constantes.CANTIDAD_ZERO_LONG);
+        //params.put("ALMACEN_ID_GENERAL",Constantes.CANTIDAD_ZERO_LONG);
 
         if(tipoComprobante.compareTo(Constantes.CANTIDAD_ZERO_LONG) > 0){
             params.put("TIPO_COMPROBANTE_ID",tipoComprobante);
@@ -175,7 +175,7 @@ public class InitComprobanteServiceImpl implements InitComprobanteService {
 
 
         if(almacenId.compareTo(Constantes.CANTIDAD_ZERO_LONG) >= 0){
-            params.put("ALMACEN_ID",almacenId);
+            params.put("ONLY_ALMACEN",almacenId);
         }
 
         Long total = initComprobanteMapper.getTotalElements(params);

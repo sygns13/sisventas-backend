@@ -225,6 +225,8 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT", t.getUpdatedAd());
 
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
+
         return tipoProductoMapper.updateByPrimaryKeySelective(params);
     }
 
@@ -241,6 +243,8 @@ public class TipoProductoServiceImpl implements TipoProductoService {
         params.put("BORRADO",Constantes.REGISTRO_BORRADO);
         params.put("USER_ID", claimsAuthorization.getUserId());
         params.put("UPDATED_AT",fechaUpdate);
+
+        params.put("EMPRESA_ID",claimsAuthorization.getEmpresaId());
 
         int res= tipoProductoMapper.updateByPrimaryKeySelective(params);
 
